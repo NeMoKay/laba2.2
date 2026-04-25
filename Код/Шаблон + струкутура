@@ -1,0 +1,71 @@
+#include <iostream>
+#include <stdexcept>
+using namespace std;
+
+
+
+
+
+
+
+
+template <typename T>
+
+struct number{
+    T num;
+    number(){
+        num = 0;
+    }
+};
+
+template <typename T>
+number<T> summ(number<T> a, number<T> b){
+    if(a.num < 0 || b.num < 0){
+        throw invalid_argument("Ошибка знаков");
+    }
+    number<T> rezult;
+    rezult.num = a.num + b.num;
+    return rezult;
+}
+template <typename T>
+number<T> multiply(number<T> a, number<T> b){
+    if(a.num < 0 || b.num < 0){
+        throw invalid_argument("Ошибка знаков");
+    }
+    number<T> rezult;
+    rezult.num = a.num * b.num;
+    return rezult;
+}
+
+template <typename T>
+number<T> save_summ(number<T> a, number<T> b){
+    number<T> rezult;
+    while(1){
+        try{
+            rezult = summ(a, b);
+            break;
+        }
+        catch(invalid_argument& e){
+            if(a.num < 0){
+                a.num = a.num * -1;
+            }
+            else{
+                b.num = b.num * -1;
+            }
+        }
+    }
+    return rezult;
+}
+
+
+int main(){
+    number<int> A, B;
+    A.num = 10;
+    B.num = -20;
+    auto s = save_summ(A, B);
+    number<double> Ad, Bd;
+    Ad.num = -10.1;
+    Bd.num = 20.2;
+    auto sd = save_summ(Ad, Bd);
+    cout << s.num << endl << sd.num << endl;
+}

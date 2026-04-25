@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Сумматор</title>
+
+    <style>
+        body {
+            background-image: url("/photo/alena.png");
+            background-size: cover;        /* растянуть на весь экран */
+            background-repeat: no-repeat;  /* не повторять */
+            background-position: center;   /* центрировать */
+            font-family: Arial, sans-serif;
+            color: black;
+        }
+
+        /* чтобы текст был читаемым */
+        .content {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            width: 300px;
+            margin: 50px auto;
+            border-radius: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="content">
+        <h1>Сумматор</h1>
+        <h2>Сложение двух чисел</h2>
+
+        <form method="post" action="/">
+            Число 1: <input type="number" name="a" required><br><br>
+            Число 2: <input type="number" name="b" required><br><br>
+            <input type="submit" value="Вычислить">
+        </form>
+
+        <h3>Результат: {{ result }}</h3>
+    </div>
+</body>
+</html>

@@ -1,0 +1,50 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Employee {
+    private:
+        string name;
+        double salary;
+    protected:
+        string position;
+    public:
+        Employee(string new_name, double new_salary, string new_position){
+            name = new_name;
+            salary = new_salary;
+            position = new_position;
+        }
+        void ShowInfo(){
+            cout << "Имя: " << name << endl << "Должность: " << position << endl << "Зарплата: " << salary << " руб." <<  endl;
+        }
+        void Promote(string new_position){
+            position = new_position;
+            cout << "Должность изменена на: " << position << endl;
+        }
+        void SetSalary(double new_salary){
+            salary = new_salary;
+            cout << "Зарплата изменена: стала " << new_salary << " руб." << endl;
+        }
+
+       
+};
+
+
+class Manager : public Employee {
+    string name;
+    double salary;
+public:
+    Manager(string new_name, double new_salary, string new_position) : Employee(new_name, new_salary, new_position){};
+};
+
+
+int main() {
+    Manager m("Егор Теремков", 125000, "Менеджер отдела продаж");
+
+    m.ShowInfo();                // Вывод начальных данных
+    m.SetSalary(255000);          // Изменяем зарплату
+    m.Promote("Директор по продажам"); // Повышаем
+    m.ShowInfo();                // Вывод новых данных
+
+    return 0;
+}

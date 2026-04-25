@@ -1,0 +1,60 @@
+#include <iostream>
+ 
+enum Ports {TOKYO, LOS_ANGELES};
+ 
+class Vessel {
+public:
+    virtual void deliver(int a, int b, int c) const {}
+};
+ 
+class Plane: public Vessel {
+public:
+    void deliver(int cargo, int port1, int port2) const override;
+};
+ 
+void Plane::deliver (int cargo, int port1, int port2) const{
+        std::cout << "Доставка груза " << cargo << " из порта " << port1 
+        << " в порт " << port2 << " самолетом\n";
+}
+ 
+class Ship: public Vessel {
+public:
+    void deliver(int cargo, int port1, int port2) const override{
+        std::cout << "Доставка груза " << cargo << " из порта " << port1 
+        << " в порт " << port2 << " по морю\n";
+    }
+};
+ 
+int main() {
+ 
+    Plane pl01;
+    Ship sh01;
+    Vessel* transport01 = &pl01;
+    Vessel* transport02 = &sh01;
+    transport01->deliver(1,TOKYO, LOS_ANGELES);
+    transport02->deliver(2, LOS_ANGELES, TOKYO);
+    return 0;
+}
+//=--------------------Перегрузка опов
+#include <iostream>
+using namespace std;
+
+class Box {
+public:
+    int width, height;
+
+    Box(int w, int h) : width(w), height(h) {}
+
+    // Перегрузка оператора +
+    Box operator+(const Box& other) {
+        return Box(width + other.width, height + other.height);
+    }
+};
+
+int main() {
+    Box box1(10, 20);
+    Box box2(30, 40);
+
+    Box result = box1 + box2;  // Вызов перегруженного оператора
+    cout << "Ширина: " << result.width << ", Высота: " << result.height << endl;
+}

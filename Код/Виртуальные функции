@@ -1,0 +1,20 @@
+class Vehicle {
+public:
+    virtual void move() { cout << "Vehicle is moving"; }
+};
+
+class Car : public Vehicle {
+public:
+    void move() override {  // Ключевое слово override
+        cout << "Car is driving";
+        Vehicle::move();  // Вызов родительского метода
+    }
+};
+
+class Helicopter : public Vehicle {
+public:
+    void move() override {  // Ключевое слово override
+        cout << "Helicopter is flying";
+        Vehicle::move();  // Вызов родительского метода
+    }
+};

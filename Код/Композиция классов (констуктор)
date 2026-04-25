@@ -1,0 +1,52 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+class Engine {
+public:
+    int horsepower;
+
+    // Конструктор, который принимает значение лошадиных сил и инициализирует поле horsepower
+    Engine(int hp) : horsepower(hp) {}
+
+    void displayInfo(){
+        cout << "Двигатель: " << horsepower << " л.с." << endl;
+    }
+
+};
+
+class Car {
+
+    string brand;
+    string model;
+    int year;
+    Engine engine;
+    
+    public:
+    //--------------------- Вот это
+    Car(string b, string m, int y, int hp) : brand(b), model(m), year(y), engine(hp){
+        engine = Engine(hp);
+    }
+    //---------------------
+    void displayInfo(){
+        cout <<"Марка: " <<  brand << ", Модель: " << model << ", Год: " << year << endl;
+        engine.displayInfo();
+
+    }
+    // Допишите класс Car ...
+};
+
+int main() {
+    string brand, model;
+    int year, horsepower;
+
+    cin >> brand;
+    cin >> model;
+    cin >> year;
+    cin >> horsepower;
+
+    Car car(brand, model, year, horsepower);
+    car.displayInfo();
+
+    return 0;
+}
