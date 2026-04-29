@@ -3,7 +3,7 @@ CXX = clang++
 CXXFLAGS = -std=c++17 -Iinclude -I/opt/homebrew/include
 LDLIBS   = -L/opt/homebrew/lib -lgtest -lgtest_main -lpthread
 
-SRC_MAIN = src/main.cpp src/main_func.cpp src/sequence.cpp 
+SRC_MAIN = src/main.cpp src/main_func.cpp 
 SRC_TEST = tests/test.cpp
 
 OBJ_MAIN = $(SRC_MAIN:.cpp=.o)
