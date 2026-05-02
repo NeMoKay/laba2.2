@@ -30,7 +30,7 @@ private:
     
     Node *head = nullptr;
     Node *tail = nullptr;
-    int size;
+    size_t size;
 public:
 
     LinkedList (T* items, int count){
@@ -213,25 +213,13 @@ public:
 
     LinkedList<T>* Concat(LinkedList<T> *list){
         if(list == nullptr){
-            LinkedList *copy_list(list);
-            return copy_list;
+            return this;
         }
-
-        int len = size + list->size;
-
-        LinkedList<T> *adds_lists = new LinkedList;
-
-        Node *now_elem = head;
-        for(int i = 0; i < len; i++){
-            
-            if(i == size){
-                now_elem = list->head;
-            }
-            adds_lists->Append(now_elem->value);
-            now_elem = now_elem->next; 
+        
+        for(int i = 0; i < list->GetLength(); i++){
+            this->Append(list->Get(i));
         }
-
-        return adds_lists;
+        return this;
     }
 
 

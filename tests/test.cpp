@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 #include "iostream"
-#include "Dynamic_Array.hpp"
-#include "LinkedList.hpp"
+#include "sequence.hpp"
 using namespace std;
 
 
@@ -47,6 +46,7 @@ TEST_F(Dynamic_Array_Fixture, SizeConstructor_invalid_argument){
     EXPECT_THROW(DynamicArray<int>(0), invalid_argument);
     EXPECT_THROW(DynamicArray<int>(-5), invalid_argument);
 }
+
 
 TEST_F(Dynamic_Array_Fixture, ArrayConstructor){
     int data[3] = {1, 2, 3};
@@ -354,24 +354,26 @@ TEST_F(LinkedList_Fixture, InsertAt_invalid_argument){
 TEST_F(LinkedList_Fixture, Concat){
     int extraData[2] = {1, 2};
     LinkedList<int> extraList(extraData, 2);
+    int initialLen = List_int->GetLength();
     LinkedList<int>* concatenated = List_int->Concat(&extraList);
-
-    EXPECT_EQ(concatenated->GetLength(), 7);
-    EXPECT_EQ(concatenated->Get(0), 42);
-    EXPECT_EQ(concatenated->Get(4), 228);
-    EXPECT_EQ(concatenated->Get(5), 1);
-    EXPECT_EQ(concatenated->Get(6), 2);
-
-    delete concatenated;
+    EXPECT_EQ(concatenated, List_int);
+    EXPECT_EQ(List_int->GetLength(), initialLen + 2);
+    EXPECT_EQ(List_int->Get(0), 42);
+    EXPECT_EQ(List_int->Get(4), 228);
+    EXPECT_EQ(List_int->Get(5), 1);
+    EXPECT_EQ(List_int->Get(6), 2);
 }
 
 TEST_F(LinkedList_Fixture, Concat_0){
     LinkedList<int> empty;
+    int firstVal = List_int->Get(0);
+    int lastVal = List_int->Get(4);
+    int initialLen = List_int->GetLength();
     LinkedList<int>* result = List_int->Concat(&empty);
-    EXPECT_EQ(result->GetLength(), List_int->GetLength());
-    EXPECT_EQ(result->Get(0), List_int->Get(0));
-    EXPECT_EQ(result->Get(4), List_int->Get(4));
-    delete result;
+    EXPECT_EQ(result, List_int);
+    EXPECT_EQ(result->GetLength(), initialLen);
+    EXPECT_EQ(result->Get(0), firstVal);
+    EXPECT_EQ(result->Get(4), lastVal);
 }
 
 TEST_F(LinkedList_Fixture, 0_Concat){
@@ -379,10 +381,10 @@ TEST_F(LinkedList_Fixture, 0_Concat){
     int extraData[2] = {1, 2};
     LinkedList<int> extra(extraData, 2);
     LinkedList<int>* result = empty.Concat(&extra);
+    EXPECT_EQ(result, &empty);
     EXPECT_EQ(result->GetLength(), 2);
     EXPECT_EQ(result->Get(0), 1);
     EXPECT_EQ(result->Get(1), 2);
-    delete result;
 }
 
 //Деструктор---------------------------------------------------------------------

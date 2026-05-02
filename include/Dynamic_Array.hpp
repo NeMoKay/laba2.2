@@ -8,7 +8,7 @@ template <class T>
 class DynamicArray{
 private:
     T* data;
-    int size;
+    size_t size;
 public:
 
     DynamicArray(){
@@ -32,11 +32,11 @@ public:
         }
     }
 
-    DynamicArray(const DynamicArray<T> & other){
-        size = other.size;
+    DynamicArray(const DynamicArray<T> & array){
+        size = array.size;
         data = new T[size];
         for(int i = 0; i < size; i++){
-            data[i] = other.data[i];
+            data[i] = array.data[i];
         }
     }
 
@@ -75,6 +75,13 @@ public:
         data = new_data;
         size = newSize;
     };
+
+    int GetSize(){
+        return size;
+    }
+    T operator[](int index){
+        return Get(index); 
+    }
 
 
     void show(){
