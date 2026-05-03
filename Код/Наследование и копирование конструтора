@@ -2,7 +2,7 @@
 #include <string>
 using namespace std;
 
-class Employee {
+class Employee{
     private:
         string name;
         double salary;
@@ -30,7 +30,7 @@ class Employee {
 };
 
 
-class Manager : public Employee {
+class Manager : public Employee{
     string name;
     double salary;
 public:
@@ -38,7 +38,7 @@ public:
 };
 
 
-int main() {
+int main(){
     Manager m("Егор Теремков", 125000, "Менеджер отдела продаж");
 
     m.ShowInfo();                // Вывод начальных данных

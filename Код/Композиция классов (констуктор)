@@ -2,12 +2,12 @@
 #include <string>
 using namespace std;
 
-class Engine {
+class Engine{
 public:
     int horsepower;
 
     // Конструктор, который принимает значение лошадиных сил и инициализирует поле horsepower
-    Engine(int hp) : horsepower(hp) {}
+    Engine(int hp) : horsepower(hp){}
 
     void displayInfo(){
         cout << "Двигатель: " << horsepower << " л.с." << endl;
@@ -15,7 +15,7 @@ public:
 
 };
 
-class Car {
+class Car{
 
     string brand;
     string model;
@@ -36,7 +36,7 @@ class Car {
     // Допишите класс Car ...
 };
 
-int main() {
+int main(){
     string brand, model;
     int year, horsepower;
 

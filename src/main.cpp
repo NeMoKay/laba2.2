@@ -12,29 +12,24 @@
 using namespace std;
 
 
+
 int main(){
     
-    int size = 5;
-    int sss[5] ={1, 2, 3, 4, 5};
+    BitSequence<int> A;
 
-    ImmutableArraySequence<int> A(sss,5);
-    Sequence<int>* B;
+    A.Append(1);
+    A.Append(1);
+    A.Append(1);
+    A.Append(0);
+    A.Append(1);
+    A.Append(0);
+    A.Append(0);
+    A.Append(0);
+    A.Append(0);
+    A.Append(0);
 
+    cout << (A[7] ^ A[4]) << endl;
     
-    B = A.Append(10);
-
-
-    A.show();
-
-    cout << endl;
-
-    B->show();
-    
-
-    
-
-    
-    
-
+    // A.show();
     return 0;
 }

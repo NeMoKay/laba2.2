@@ -1,13 +1,13 @@
 #include <iostream>
  
-enum Ports {TOKYO, LOS_ANGELES};
+enum Ports{TOKYO, LOS_ANGELES};
  
-class Vessel {
+class Vessel{
 public:
-    virtual void deliver(int a, int b, int c) const {}
+    virtual void deliver(int a, int b, int c) const{}
 };
  
-class Plane: public Vessel {
+class Plane: public Vessel{
 public:
     void deliver(int cargo, int port1, int port2) const override;
 };
@@ -17,7 +17,7 @@ void Plane::deliver (int cargo, int port1, int port2) const{
         << " в порт " << port2 << " самолетом\n";
 }
  
-class Ship: public Vessel {
+class Ship: public Vessel{
 public:
     void deliver(int cargo, int port1, int port2) const override{
         std::cout << "Доставка груза " << cargo << " из порта " << port1 
@@ -25,7 +25,7 @@ public:
     }
 };
  
-int main() {
+int main(){
  
     Plane pl01;
     Ship sh01;
@@ -39,19 +39,19 @@ int main() {
 #include <iostream>
 using namespace std;
 
-class Box {
+class Box{
 public:
     int width, height;
 
-    Box(int w, int h) : width(w), height(h) {}
+    Box(int w, int h) : width(w), height(h){}
 
     // Перегрузка оператора +
-    Box operator+(const Box& other) {
+    Box operator+(const Box& other){
         return Box(width + other.width, height + other.height);
     }
 };
 
-int main() {
+int main(){
     Box box1(10, 20);
     Box box2(30, 40);
 

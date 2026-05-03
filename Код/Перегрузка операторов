@@ -3,7 +3,7 @@
 using namespace std;
 
 // Базовый абстрактный класс Vector
-class Vector {
+class Vector{
 protected:
     int x;
     int y;
@@ -22,21 +22,21 @@ class Vector2D : public Vector{
         cout << "(" << x << ", " << y << ")";
     }
     Vector2D add(Vector2D& A, Vector2D& B){
-        return {A.x + B.x, A.y + B.y};
+        return{A.x + B.x, A.y + B.y};
     }
     Vector2D diff(Vector2D& A, Vector2D& B){
-        return {A.x - B.x, A.y - B.y};
+        return{A.x - B.x, A.y - B.y};
     }
     Vector2D add(Vector2D& A, Vector2D& B){
-        return {A.x + B.x, A.y + B.y};
+        return{A.x + B.x, A.y + B.y};
     }
     Vector2D add(Vector2D& A, Vector2D& B){
-        return {A.x + B.x, A.y + B.y};
+        return{A.x + B.x, A.y + B.y};
     }
 
 };
 
-int main() {
+int main(){
     Vector2D* v1 = new Vector2D(1.0, 2.0);
     Vector2D* v2 = new Vector2D(3.0, 4.0);
 

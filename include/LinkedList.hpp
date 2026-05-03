@@ -67,13 +67,13 @@ public:
         }
     }
 
-    LinkedList() {
+    LinkedList(){
         head = nullptr;
         tail = nullptr;
         size = 0;
     }
 
-    LinkedList(const LinkedList<T>& list) {
+    LinkedList(const LinkedList<T>& list){
         head = nullptr;
         tail = nullptr;
         size = 0;
@@ -88,7 +88,7 @@ public:
 
 
 
-    T GetFirst(){
+    T GetFirst() {
         if(head == nullptr){
             throw invalid_argument("Список пуст");
         }
@@ -101,7 +101,7 @@ public:
         return tail->value;
     }
 
-    T Get(int index){
+    T Get(int index) const{
         if(index < 0 || index >= size){
             throw invalid_argument("Индекс вне списка");
         }
@@ -145,7 +145,7 @@ public:
         return result;
     }
 
-    int GetLength(){
+    int GetLength() const{
         return size;
     }
 
@@ -221,6 +221,8 @@ public:
         }
         return this;
     }
+
+
 
 
     void show(){

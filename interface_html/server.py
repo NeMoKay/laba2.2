@@ -13,7 +13,7 @@ except FileNotFoundError:
 @app.route('/', methods=['GET', 'POST'])
 def index():
     result = ''
-    if request.method == 'POST':
+    ifrequest.method == 'POST':
         try:
             a = int(request.form['a'])
             b = int(request.form['b'])
@@ -25,6 +25,6 @@ def index():
 
 
 # 👇 ВАЖНО для интернета
-if __name__ == '__main__':
+if__name__ == '__main__':
     port = int(os.environ.get("PORT", 8080))
     app.run(host='0.0.0.0', port=port)

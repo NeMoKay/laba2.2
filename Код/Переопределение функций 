@@ -7,7 +7,7 @@ using namespace std;
 
 template <typename T>
 
-struct MathOperations {
+struct MathOperations{
     T a;
     T b;
 
@@ -28,7 +28,7 @@ struct MathOperations {
     }
 };
 
-int main() {
+int main(){
     int a = 5, b = 3;
     double x = 2.5, y = 1.5;
     MathOperations<int> mathOperations1(a, b);
