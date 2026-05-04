@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sequence Interface</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            line-height: 1.6; 
+            color: #333; 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        h1, h2, h3 {
+            color: #2c3e50;
+            margin-top: 20px;
+        }
+        
+        .container {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        .sequence-display {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f0f7ff;
+        }
+        
+        .sequence-element {
+            display: inline-block;
+            margin: 0 5px;
+            padding: 8px 12px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .sequence-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .sequence-info {
+            margin-top: 10px;
+            color: #555;
+            font-size: 14px;
+        }
+        
+        .bit-sequence {
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        
+        .bit-sequence span {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin: 0 5px;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .bit-sequence span.one {
+            background-color: #2ecc71;
+            color: white;
+        }
+        
+        .bit-sequence span.zero {
+            background-color: #e74c3c;
+            color: white;
+        }
+        
+        .operation-description {
+            margin-top: 10px;
+            color: #777;
+            font-size: 14px;
+            padding: 5px 10px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sequence Operations Interface</h1>
+        
+        <div class="form-group">
+            <label for="sequence_type">Sequence Type:</label>
+            <select id="sequence_type" name="sequence_type">
+                <option value="ArraySequence">ArraySequence</option>
+                <option value="ListSequence">ListSequence</option>
+                <option value="BitSequence">BitSequence</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="sequence_data">Initial Elements (comma separated):</label>
+            <input type="text" id="sequence_data" name="sequence_data" placeholder="1,2,3,4,5">
+        </div>
+        
+        <div class="form-group">
+            <label for="operation">Operation:</label>
+            <select id="operation" name="operation">
+                <option value="append">Append</option>
+                <option value="prepend">Prepend</option>
+                <option value="insert">Insert At</option>
+                <option value="get">Get Element</option>
+                <option value="get_subsequence">Get Subsequence</option>
+                <option value="concat">Concat</option>
+                <option value="map">Map</option>
+                <option value="where">Where</option>
+                <option value="reduce">Reduce</option>
+                <option value="bit_ops">Bit Operations</option>
+            </select>
+        </div>
+        
+        <div class="operation-description" id="operation_description">
+            Select an operation to see its description
+        </div>
+        
+        <div id="operation_params">
+     
+        </div>
+        
+        <button type="button" onclick="executeOperation()">Execute</button>
+        
+        <div class="sequence-display">
+            <div class="sequence-title">Current Sequence:</div>
+            <div id="sequence_elements"></div>
+            <div class="sequence-info">Length: <span id="sequence_length">0</span></div>
+        </div>
+    </div>
+
+    <script>
+     
+        let sequenceData = [];
+        let sequenceType = "ArraySequence";
+        
+        function updateOperationDescription() {
+            const operation = document.getElementById('operation').value;
+            const descriptionDiv = document.getElementById('operation_description');
+            
+            switch(operation) {
+                case 'append':
+                    descriptionDiv.textContent = "Adds an element to the end of the sequence";
+                    break;
+                case 'prepend':
+                    descriptionDiv.textContent = "Adds an element to the beginning of the sequence";
+                    break;
+                case 'insert':
+                    descriptionDiv.textContent = "Inserts an element at the specified index";
+                    break;
+                case 'get':
+                    descriptionDiv.textContent = "Gets the element at the specified index";
+                    break;
+                case 'get_subsequence':
+                    descriptionDiv.textContent = "Gets a subsequence from startIndex to endIndex";
+                    break;
+                case 'concat':
+                    descriptionDiv.textContent = "Concatenates another sequence to the current one";
+                    break;
+                case 'map':
+                    descriptionDiv.textContent = "Applies a function to each element and returns a new sequence";
+                    break;
+                case 'where':
+                    descriptionDiv.textContent = "Filters elements based on a condition function";
+                    break;
+                case 'reduce':
+                    descriptionDiv.textContent = "Applies a function to reduce the sequence to a single value";
+                    break;
+                case 'bit_ops':
+                    descriptionDiv.textContent = "Performs bitwise operations (only available for BitSequence)";
+                    break;
+                default:
+                    descriptionDiv.textContent = "Select an operation to see its description";
+            }
+        }
+        
+  
+        function updateSequenceDisplay() {
+            const sequenceElementsDiv = document.getElementById('sequence_elements');
+            const sequenceLengthSpan = document.getElementById('sequence_length');
+            
+            sequenceElementsDiv.innerHTML = '';
+            
+            if (sequenceType === 'BitSequence') {
+         
+                let bitHTML = '<div class="bit-sequence">';
+                for (let i = 0; i < sequenceData.length; i++) {
+                    bitHTML += `<span class="${sequenceData[i] ? 'one' : 'zero'}">${sequenceData[i] ? '1' : '0'}</span>`;
+                }
+                bitHTML += '</div>';
+                sequenceElementsDiv.innerHTML = bitHTML;
+            } else {
+
+                for (let i = 0; i < sequenceData.length; i++) {
+                    sequenceElementsDiv.innerHTML += `<span class="sequence-element">${sequenceData[i]}</span>`;
+                }
+            }
+            
+            sequenceLengthSpan.textContent = sequenceData.length;
+        }
+
+        function updateOperationParams() {
+            const operation = document.getElementById('operation').value;
+            const paramsDiv = document.getElementById('operation_params');
+            paramsDiv.innerHTML = '';
+            
+         
+            updateOperationDescription();
+            
+            switch(operation) {
+                case 'append':
+                case 'prepend':
+                    paramsDiv.innerHTML = `
+                        <div class="form-group">
+                            <label for="item_value">Item Value:</label>
+                            <input type="text" id="item_value" name="item_value" placeholder="Value to add">
+                        </div>
+                    `;
+                    break;
+                    
+                case 'insert':
+                    paramsDiv.innerHTML = `
+                        <div class="form-group">
+                            <label for="item_value">Item Value:</label>
+                            <input type="text" id="item_value" name="item_value" placeholder="Value to insert">
+                        </div>
+                        <div class="form-group">
+                            <label for="insert_index">Index:</label>
+                            <input type="number" id="insert_index" name="insert_index" min="0" value="0">
+                        </div>
+                    `;
+                    break;
+                    
+                case 'get':
+                    paramsDiv.innerHTML = `
+                        <div class="form-group">
+                            <label for="get_index">Index:</label>
+                            <input type="number" id="get_index" name="get_index" min="0" value="0">
+                        </div>
+                    `;
+                    break;
+                    
+                case 'get_subsequence':
+                    paramsDiv.innerHTML = `
+                        <div class="form-group">
+                            <label for="start_index">Start Index:</label>
+                            <input type="number" id="start_index" name="start_index" min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="end_index">End Index:</label>
+                            <input type="number" id="end_index" name="end_index" min="0" value="0">
+                        </div>
+                    `;
+                    break;
+                    
+                case 'concat':
+                    paramsDiv.innerHTML = `
+                        <div class="form-group">
+                            <label for="concat_data">Elements to Concat (comma separated):</label>
+                            <input type="text" id="concat_data" name="concat_data" placeholder="6,7,8">
+                        </div>
+                    `;
+                    break;
+                    
+                case 'map':
+                    paramsDiv.innerHTML = `
+                        <div class="form-group">
+                            <label for="map_function">Function:</label>
+                            <select id="map_function" name="map_function">
+                                <option value="square">Square (x²)</option>
+                                <option value="double">Double (x*2)</option>
+                                <option value="increment">Increment (x+1)</option>
+                                <option value="decrement">Decrement (x-1)</option>
+                                <option value="custom">Custom Function</option>
+                            </select>
+                        </div>
+                        <div id="custom_map_function" class="form-group hidden">
+                            <label for="custom_function">Custom Function (x -> ?):</label>
+                            <input type="text" id="custom_function" name="custom_function" placeholder="x*2+1">
+                        </div>
+                    `;
+                    break;
+                    
+                case 'where':
+                    paramsDiv.innerHTML = `
+                        <div class="form-group">
+                            <label for="where_function">Condition Function:</label>
+                            <select id="where_function" name="where_function">
+                                <option value="even">Even Numbers</option>
+                                <option value="odd">Odd Numbers</option>
+                                <option value="positive">Positive Numbers</option>
+                                <option value="negative">Negative Numbers</option>
+                                <option value="custom">Custom Condition</option>
+                            </select>
+                        </div>
+                        <div id="custom_where_function" class="form-group hidden">
+                            <label for="custom_condition">Custom Condition (x -> bool):</label>
+                            <input type="text" id="custom_condition" name="custom_condition" placeholder="x > 5">
+                        </div>
+                    `;
+                    break;
+                    
+                case 'reduce':
+                    paramsDiv.innerHTML = `
+                        <div class="form-group">
+                            <label for="reduce_function">Reduction Function:</label>
+                            <select id="reduce_function" name="reduce_function">
+                                <option value="sum">Sum (+)</option>
+                                <option value="product">Product (*)</option>
+                                <option value="max">Maximum</option>
+                                <option value="min">Minimum</option>
+                                <option value="custom">Custom Function</option>
+                            </select>
+                        </div>
+                        <div id="custom_reduce_function" class="form-group hidden">
+                            <label for="custom_reduce">Custom Function (acc, x -> ?):</label>
+                            <input type="text" id="custom_reduce" name="custom_reduce" placeholder="acc + x * 2">
+                        </div>
+                        <div class="form-group">
+                            <label for="initial_value">Initial Value:</label>
+                            <input type="text" id="initial_value" name="initial_value" placeholder="0">
+                        </div>
+                    `;
+                    break;
+                    
+                case 'bit_ops':
+                    if (document.getElementById('sequence_type').value === 'BitSequence') {
+                        paramsDiv.innerHTML = `
+                            <div class="form-group">
+                                <label for="bit_operation">Bit Operation:</label>
+                                <select id="bit_operation" name="bit_operation">
+                                    <option value="and">AND</option>
+                                    <option value="or">OR</option>
+                                    <option value="xor">XOR</option>
+                                    <option value="not">NOT</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="bit_sequence">Second Bit Sequence (comma separated):</label>
+                                <input type="text" id="bit_sequence" name="bit_sequence" placeholder="1,0,1">
+                            </div>
+                        `;
+                    } else {
+                        paramsDiv.innerHTML = '<p>Bit operations are only available for BitSequence</p>';
+                    }
+                    break;
+                    
+                default:
+                    paramsDiv.innerHTML = '';
+            }
+            
+
+            document.getElementById('map_function')?.addEventListener('change', function() {
+                const customDiv = document.getElementById('custom_map_function');
+                if (this.value === 'custom') {
+                    customDiv.classList.remove('hidden');
+                } else {
+                    customDiv.classList.add('hidden');
+                }
+            });
+            
+     
+            document.getElementById('where_function')?.addEventListener('change', function() {
+                const customDiv = document.getElementById('custom_where_function');
+                if (this.value === 'custom') {
+                    customDiv.classList.remove('hidden');
+                } else {
+                    customDiv.classList.add('hidden');
+                }
+            });
+         
+            document.getElementById('reduce_function')?.addEventListener('change', function() {
+                const customDiv = document.getElementById('custom_reduce_function');
+                if (this.value === 'custom') {
+                    customDiv.classList.remove('hidden');
+                } else {
+                    customDiv.classList.add('hidden');
+                }
+            });
+        }
+
+        document.getElementById('operation').addEventListener('change', updateOperationParams);
+        document.getElementById('sequence_type').addEventListener('change', function() {
+            updateOperationParams();
+
+            sequenceData = [];
+            updateSequenceDisplay();
+        });
+        
+
+        function executeOperation() {
+            const sequenceType = document.getElementById('sequence_type').value;
+            const sequenceDataInput = document.getElementById('sequence_data').value;
+            const operation = document.getElementById('operation').value;
+            
+
+            if (sequenceDataInput) {
+                if (sequenceType === 'BitSequence') {
+                    const bits = parseBits(sequenceDataInput);
+                    sequenceData = bits;
+                } else {
+                    const elements = parseElements(sequenceDataInput);
+                    sequenceData = elements;
+                }
+            }
+            
+         
+            try {
+                let result = '';
+                
+                switch(operation) {
+                    case 'append':
+                        const itemValue = document.getElementById('item_value').value;
+                        if (sequenceType === 'BitSequence') {
+                            sequenceData.push(itemValue === '1' || itemValue.toLowerCase() === 'true');
+                        } else {
+                            sequenceData.push(parseSingleElement(itemValue));
+                        }
+                        result = `Appended ${itemValue} to the sequence`;
+                        break;
+                        
+                    case 'prepend':
+                        const prependValue = document.getElementById('item_value').value;
+                        if (sequenceType === 'BitSequence') {
+                            sequenceData.unshift(prependValue === '1' || prependValue.toLowerCase() === 'true');
+                        } else {
+                            sequenceData.unshift(parseSingleElement(prependValue));
+                        }
+                        result = `Prepended ${prependValue} to the sequence`;
+                        break;
+                        
+                    case 'insert':
+                        const insertValue = document.getElementById('item_value').value;
+                        const insertIndex = parseInt(document.getElementById('insert_index').value);
+                        
+                        if (insertIndex < 0 || insertIndex > sequenceData.length) {
+                            throw new Error("Index out of range");
+                        }
+                        
+                        if (sequenceType === 'BitSequence') {
+                            sequenceData.splice(insertIndex, 0, insertValue === '1' || insertValue.toLowerCase() === 'true');
+                        } else {
+                            sequenceData.splice(insertIndex, 0, parseSingleElement(insertValue));
+                        }
+                        
+                        result = `Inserted ${insertValue} at index ${insertIndex}`;
+                        break;
+                        
+                    case 'get':
+                        const getIndex = parseInt(document.getElementById('get_index').value);
+                        
+                        if (getIndex < 0 || getIndex >= sequenceData.length) {
+                            throw new Error("Index out of range");
+                        }
+                        
+                        result = `Element at index ${getIndex}: ${sequenceData[getIndex]}`;
+                        break;
+                        
+                    case 'get_subsequence':
+                        const startIndex = parseInt(document.getElementById('start_index').value);
+                        const endIndex = parseInt(document.getElementById('end_index').value);
+                        
+                        if (startIndex < 0 || endIndex >= sequenceData.length || startIndex > endIndex) {
+                            throw new Error("Invalid indices");
+                        }
+                        
+                        const subsequence = sequenceData.slice(startIndex, endIndex + 1);
+                        result = `Subsequence from ${startIndex} to ${endIndex}: [${subsequence.join(', ')}]`;
+                        break;
+                        
+                    case 'concat':
+                        const concatData = document.getElementById('concat_data').value;
+                        const concatElements = parseElements(concatData);
+                        
+                        if (sequenceType === 'BitSequence') {
+                            const bits = parseBits(concatData);
+                            sequenceData = sequenceData.concat(bits);
+                        } else {
+                            sequenceData = sequenceData.concat(concatElements);
+                        }
+                        
+                        result = `Concatenated sequence with ${concatData}`;
+                        break;
+                        
+                    case 'map':
+                        const mapFunction = document.getElementById('map_function').value;
+                        let mapResult = [];
+                        
+                        for (let i = 0; i < sequenceData.length; i++) {
+                            let mappedValue;
+                            
+                            switch(mapFunction) {
+                                case 'square':
+                                    mappedValue = sequenceData[i] * sequenceData[i];
+                                    break;
+                                case 'double':
+                                    mappedValue = sequenceData[i] * 2;
+                                    break;
+                                case 'increment':
+                                    mappedValue = sequenceData[i] + 1;
+                                    break;
+                                case 'decrement':
+                                    mappedValue = sequenceData[i] - 1;
+                                    break;
+                                case 'custom':
+                                    const customFunction = document.getElementById('custom_function').value;
+                                    mappedValue = evaluateCustomFunction(customFunction, sequenceData[i]);
+                                    break;
+                                default:
+                                    mappedValue = sequenceData[i];
+                            }
+                            
+                            mapResult.push(mappedValue);
+                        }
+                        
+                        sequenceData = mapResult;
+                        result = "Applied map function to the sequence";
+                        break;
+                        
+                    case 'where':
+                        const whereFunction = document.getElementById('where_function').value;
+                        let whereResult = [];
+                        
+                        for (let i = 0; i < sequenceData.length; i++) {
+                            let shouldInclude = false;
+                            
+                            switch(whereFunction) {
+                                case 'even':
+                                    shouldInclude = sequenceData[i] % 2 === 0;
+                                    break;
+                                case 'odd':
+                                    shouldInclude = sequenceData[i] % 2 !== 0;
+                                    break;
+                                case 'positive':
+                                    shouldInclude = sequenceData[i] > 0;
+                                    break;
+                                case 'negative':
+                                    shouldInclude = sequenceData[i] < 0;
+                                    break;
+                                case 'custom':
+                                    const customCondition = document.getElementById('custom_condition').value;
+                                    shouldInclude = evaluateCustomCondition(customCondition, sequenceData[i]);
+                                    break;
+                                default:
+                                    shouldInclude = true;
+                            }
+                            
+                            if (shouldInclude) {
+                                whereResult.push(sequenceData[i]);
+                            }
+                        }
+                        
+                        sequenceData = whereResult;
+                        result = "Applied filter condition to the sequence";
+                        break;
+                        
+                    case 'reduce':
+                        const reduceFunction = document.getElementById('reduce_function').value;
+                        const initialValue = parseSingleElement(document.getElementById('initial_value').value || '0');
+                        let reduceResult = initialValue;
+                        
+                        for (let i = 0; i < sequenceData.length; i++) {
+                            switch(reduceFunction) {
+                                case 'sum':
+                                    reduceResult += sequenceData[i];
+                                    break;
+                                case 'product':
+                                    reduceResult *= sequenceData[i];
+                                    break;
+                                case 'max':
+                                    reduceResult = Math.max(reduceResult, sequenceData[i]);
+                                    break;
+                                case 'min':
+                                    reduceResult = Math.min(reduceResult, sequenceData[i]);
+                                    break;
+                                case 'custom':
+                                    const customReduce = document.getElementById('custom_reduce').value;
+                                    reduceResult = evaluateCustomReduce(customReduce, reduceResult, sequenceData[i]);
+                                    break;
+                                default:
+                                    reduceResult = sequenceData[i];
+                            }
+                        }
+                        
+                        result = `Reduced sequence to: ${reduceResult}`;
+                        break;
+                        
+                    case 'bit_ops':
+                        if (sequenceType !== 'BitSequence') {
+                            throw new Error("Bit operations are only available for BitSequence");
+                        }
+                        
+                        const bitOperation = document.getElementById('bit_operation').value;
+                        const secondBitSequence = parseBits(document.getElementById('bit_sequence').value);
+                        
+                        if (bitOperation !== 'not' && sequenceData.length !== secondBitSequence.length) {
+                            throw new Error("Bit sequences must have the same length for operations");
+                        }
+                        
+                        switch(bitOperation) {
+                            case 'and':
+                                sequenceData = sequenceData.map((bit, i) => bit && secondBitSequence[i]);
+                                result = "Performed AND operation";
+                                break;
+                            case 'or':
+                                sequenceData = sequenceData.map((bit, i) => bit || secondBitSequence[i]);
+                                result = "Performed OR operation";
+                                break;
+                            case 'xor':
+                                sequenceData = sequenceData.map((bit, i) => bit !== secondBitSequence[i]);
+                                result = "Performed XOR operation";
+                                break;
+                            case 'not':
+                                sequenceData = sequenceData.map(bit => !bit);
+                                result = "Performed NOT operation";
+                                break;
+                        }
+                        break;
+                }
+                
+
+                updateSequenceDisplay();
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            }
+        }
+
+        function parseElements(str) {
+
+            return str.replace(/\s+/g, '').split(',')
+                .filter(item => item !== '')
+                .map(item => parseSingleElement(item));
+        }
+        
+        function parseSingleElement(item) {
+ 
+            const num = parseInt(item);
+            return isNaN(num) ? item : num;
+        }
+        
+        function parseBits(str) {
+
+            return str.replace(/\s+/g, '').split(',')
+                .filter(bit => bit !== '')
+                .map(bit => {
+                    const value = bit.toLowerCase();
+                    return value === '1' || value === 'true' || value === 't';
+                });
+        }
+        
+
+        function evaluateCustomFunction(func, x) {
+            try {
+
+                const f = new Function('x', `return ${func};`);
+                return f(x);
+            } catch (e) {
+                throw new Error(`Invalid function: ${func}`);
+            }
+        }
+        
+        function evaluateCustomCondition(func, x) {
+            try {
+  
+                const f = new Function('x', `return ${func};`);
+                return f(x);
+            } catch (e) {
+                throw new Error(`Invalid condition: ${func}`);
+            }
+        }
+        
+        function evaluateCustomReduce(func, acc, x) {
+            try {
+                const f = new Function('acc', 'x', `return ${func};`);
+                return f(acc, x);
+            } catch (e) {
+                throw new Error(`Invalid reduce function: ${func}`);
+            }
+        }
+        
+        window.onload = function() {
+            updateOperationParams();
+            updateSequenceDisplay();
+        };
+    </script>
+</body>
+</html>
