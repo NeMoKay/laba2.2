@@ -319,7 +319,7 @@ public:
     }
 
     ListSequence (const ListSequence <T> &list){
-        items = new LinkedList(*(list.items));
+        items = new LinkedList<T>(*(list.items));
     }
     ListSequence(const ArraySequence<T>& arraySeq){
         items = new LinkedList<T>;

@@ -1,6 +1,9 @@
 
 #pragma once
 #include "sequence.hpp"
+#include <iostream>
+#include <stdexcept>
+#include <cstddef>
 using namespace std;
 
 

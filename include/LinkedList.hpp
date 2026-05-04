@@ -1,4 +1,7 @@
 #pragma once
+#include <iostream>
+#include <stdexcept>
+#include <cstddef>
 
 using namespace std;
 

@@ -3,7 +3,7 @@ CXX = clang++
 CXXFLAGS = -std=c++17 -Iinclude -I/opt/homebrew/include
 LDLIBS   = -L/opt/homebrew/lib -lgtest -lgtest_main -lpthread
 
-SRC_MAIN = src/main.cpp src/main_func.cpp 
+SRC_MAIN = src/main.cpp
 SRC_TEST = tests/test.cpp
 
 OBJ_MAIN = $(SRC_MAIN:.cpp=.o)
@@ -23,3 +23,14 @@ clean:
 	rm -f $(OBJ_MAIN) main test
 
 .PHONY: main test clean
+
+
+
+web_interface: interface_html/web_interface.cpp
+	g++ -std=c++11 -o web_interface interface_html/web_interface.cpp -I..
+	
+clean_web:
+	rm -f web_interface
+
+run_server: web_interface
+	cd interface_html && python3 server.py
