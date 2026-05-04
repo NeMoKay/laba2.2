@@ -540,11 +540,17 @@ TEST_F(Bit_Fixture, dont_ecv_ecv){
 }
 
 
-// ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ДЛЯ ТЕСТОВ =====
-int double_val(int x){ return x * 2; }
-bool is_big(int x){ return x > 60; }
-int sum_func(int acc, int x){ return acc + x; }
-// ==============================================
+
+int double_val(int x){
+     return x * 2; 
+}
+bool is_big(int x){ 
+    return x > 60; 
+}
+int sum_func(int acc, int x){ 
+    return acc + x; 
+}
+
 
 
 //-----------------------------------БЛОК ArraySequence---------------------------------------
@@ -635,8 +641,6 @@ TEST_F(ArraySequence_Fixture, get_length){
     EXPECT_EQ(seq_str->GetLength(), 3);
 }
 
-//Операции------------------------------------------------------
-
 TEST_F(ArraySequence_Fixture, append){
     seq_int->Append(100);
     EXPECT_EQ(seq_int->GetLength(), 6);
@@ -708,7 +712,6 @@ TEST_F(ArraySequence_Fixture, subseq_bad){
     EXPECT_THROW(seq_int->GetSubsequence(2, 10), invalid_argument);
 }
 
-//Map-Reduce----------------------------------------------------
 
 TEST_F(ArraySequence_Fixture, map){
     Sequence<int>* mapped = seq_int->Map(double_val);
@@ -731,6 +734,7 @@ TEST_F(ArraySequence_Fixture, reduce){
     int total = seq_int->Reduce(sum_func, 0);
     EXPECT_EQ(total, 42 + 52 + 69 + 67 + 228);
 }
+
 
 //Деструктор----------------------------------------------------
 
@@ -813,7 +817,6 @@ TEST_F(ListSequence_Fixture, get_bad){
     EXPECT_THROW(seq_int->Get(5), invalid_argument);
 }
 
-//Операции------------------------------------------------------
 
 TEST_F(ListSequence_Fixture, append){
     seq_int->Append(100);
@@ -853,8 +856,6 @@ TEST_F(ListSequence_Fixture, subseq){
     EXPECT_EQ(sub->Get(0), 52);
     delete sub;
 }
-
-//Map-Reduce----------------------------------------------------
 
 TEST_F(ListSequence_Fixture, map){
     Sequence<int>* mapped = seq_int->Map(double_val);
@@ -924,16 +925,4 @@ TEST_F(MutableImmutable_Fixture, immutable_list_copy){
     EXPECT_EQ(seq2->GetLength(), 4);
     delete seq2;
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
