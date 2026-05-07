@@ -1,5 +1,7 @@
+#pragma once
 
 #include "iostream"
+#include <cstddef>
 #include <stdexcept>
 using namespace std;
 
@@ -9,10 +11,10 @@ class BitProxy{
 private:
 
     T& start_data;
-    int bitIndex;
+    size_t bitIndex;
 
 public:
-    BitProxy(T& value, int index) : start_data(value), bitIndex(index) {}
+    BitProxy(T& value, size_t index) : start_data(value), bitIndex(index){}
 
     BitProxy& operator=(bool value){
         if(value == 1){
@@ -39,25 +41,19 @@ private:
 
 protected:
 
-    void CheckIndex(int index){
-        if(index < 0 || index >= static_cast<int>(sizeof(T) * 8)){
+    void CheckIndex(size_t index){
+        if(index >= sizeof(T) * 8){
             throw invalid_argument("Индекс вне диапазона");
         }
     }
 
 public:
 
-    Bit(){
-        value = 0;
-    } 
+    Bit() : value(0) {} 
 
-    Bit(T val){
-        value = val;
-    }
+    Bit(T val) : value(val) {}
 
-    Bit(const Bit& operand){
-        value = operand.value;
-    }
+    Bit(const Bit& operand) : value(operand.value) {}
 
 
     Bit& operator=(const Bit& operand){
@@ -67,16 +63,16 @@ public:
         return *this;
     }
     
-    int GetBitCount(){
+    size_t GetBitCount(){
         return sizeof(T) * 8;
     }
     
-    bool operator[](int index) const{
+    bool operator[](size_t index) const{
         CheckIndex(index);
         return (value >> index) & static_cast<T>(1);
     }
     
-    BitProxy<T> operator[](int index){
+    BitProxy<T> operator[](size_t index){
         CheckIndex(index);
         return BitProxy<T>(value, index);
     }
@@ -114,4 +110,3 @@ public:
         return value != operand.value;
     }
 };
-

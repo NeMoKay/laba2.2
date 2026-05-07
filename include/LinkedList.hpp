@@ -1,4 +1,5 @@
 #pragma once
+
 #include <iostream>
 #include <stdexcept>
 #include <cstddef>
@@ -33,23 +34,21 @@ private:
     
     Node *head = nullptr;
     Node *tail = nullptr;
-    size_t size;
+    
 public:
 
-    LinkedList (T* items, int count){
-
-        if(count <= 0){
+    LinkedList(T* items, size_t count){
+        if(count == 0){
             throw invalid_argument("Размер <= 0 ");
         }
         if(items == nullptr){
             throw invalid_argument("Переданный масив пуст");
         }
 
-        size = count;
         Node *prev_elem = nullptr;
         Node *now_elem = nullptr;
 
-        for(int i = 0; i < count; i++){
+        for(size_t i = 0; i < count; i++){
             now_elem = new Node;
 
             now_elem->value = items[i];
@@ -70,20 +69,12 @@ public:
         }
     }
 
-    LinkedList(){
-        head = nullptr;
-        tail = nullptr;
-        size = 0;
-    }
+    LinkedList() : head(nullptr), tail(nullptr) {}
 
-    LinkedList(const LinkedList<T>& list){
-        head = nullptr;
-        tail = nullptr;
-        size = 0;
-
+    LinkedList(const LinkedList<T>& list) : head(nullptr), tail(nullptr){
         Node* now_elem = list.head;
 
-        for(int i = 0; i < list.size; i++){
+        while(now_elem != nullptr){
             Append(now_elem->value);
             now_elem = now_elem->next;
         }
@@ -104,21 +95,22 @@ public:
         return tail->value;
     }
 
-    T Get(int index) const{
-        if(index < 0 || index >= size){
+    T Get(size_t index) const{
+        size_t length = GetLength(); // ИСПРАВЛЕНО
+        if(index >= length){
             throw invalid_argument("Индекс вне списка");
         }
 
-        if(index < size / 2){
+        if(index < length / 2){
             Node *now_elem = head;
-            for(int i = 0; i < index; i++){
+            for(size_t i = 0; i < index; i++){
                 now_elem = now_elem->next;
             }
             return now_elem->value;
         }
         else{
             Node *now_elem = tail;
-            for(int i = 0; i < size - index - 1; i++){
+            for(size_t i = 0; i < length - index - 1; i++){
                 now_elem = now_elem->prev;
             }
             return now_elem->value;
@@ -126,37 +118,47 @@ public:
         }
     }
 
-    LinkedList<T>* GetSubList(int startIndex, int endIndex){
-        if(startIndex < 0 || endIndex < 0 || endIndex < startIndex || startIndex >= size || endIndex >= size){
+    LinkedList<T>* GetSubList(size_t startIndex, size_t endIndex){
+        size_t length = GetLength(); // ИСПРАВЛЕНО
+        if(endIndex < startIndex || startIndex >= length || endIndex >= length){
             throw invalid_argument("Ошибка индекса");
         }
 
-        int len = endIndex - startIndex + 1;
+        size_t len = endIndex - startIndex + 1;
         T* items = new T[len];
 
         Node *now_elem = head;
-        int index = 0;
-        for(int i = 0; i <= endIndex; i++){
+        size_t index = 0;
+        size_t current_pos = 0;
+        while(now_elem != nullptr){
 
-            if(i >= startIndex){
+            if(current_pos >= startIndex && current_pos <= endIndex){
                 items[index] = now_elem->value;
                 index++;
             }
             now_elem = now_elem->next;
+            current_pos++;
         }
         LinkedList<T>* result = new LinkedList<T>(items, len);
+        delete[] items;
         return result;
     }
 
-    int GetLength() const{
-        return size;
+    size_t GetLength() const{
+        size_t count = 0;
+        Node *now_elem = head;
+        while(now_elem != nullptr){
+            count++;
+            now_elem = now_elem->next;
+        }
+        return count;
     }
 
     void Append(T item){
         Node *new_elem = new Node;
         new_elem->value = item;
         
-        if(size != 0){
+        if(head != nullptr){
             new_elem->prev = tail;
             tail->next = new_elem;
             tail = new_elem;
@@ -165,14 +167,13 @@ public:
             head = new_elem;
             tail = new_elem;
         }
-        size++;
         
     }
     void Prepend(T item){
         Node *new_elem = new Node;
         new_elem->value = item;
 
-        if(size != 0){
+        if(head != nullptr){
             new_elem->next = head;
             head->prev = new_elem;
             head = new_elem;
@@ -182,36 +183,34 @@ public:
             tail = new_elem;
         }
         
-        size++;
     }
 
-    void InsertAt(T item, int index){
-        if(index < 0 || index > size){
-            throw invalid_argument("Индекс все диапазона + 1");
+    void InsertAt(T item, size_t index){
+        size_t length = GetLength(); // ИСПРАВЛЕНО
+        if(index > length){
+            throw invalid_argument("Индекс вне диапазона + 1");
         }
 
         if(index == 0){
             this->Prepend(item);
             return;
         }
-        if(index == size){
+        if(index == length){
             this->Append(item);
             return;
         }
 
         Node *now_elem = head;
-        Node *new_elem = new Node;
-        for(int i = 0; i < index; i++){
+        for(size_t i = 0; i < index; i++){
             now_elem = now_elem->next;
         }
 
+        Node *new_elem = new Node;
+        new_elem->value = item;
         new_elem->prev = now_elem->prev;
         new_elem->next = now_elem;
         (now_elem->prev)->next = new_elem;
         now_elem->prev = new_elem;
-        
-        new_elem->value = item;
-        size++;
     }
 
     LinkedList<T>* Concat(LinkedList<T> *list){
@@ -219,38 +218,23 @@ public:
             return this;
         }
         
-        for(int i = 0; i < list->GetLength(); i++){
+        size_t other_length = list->GetLength();
+        for(size_t i = 0; i < other_length; i++){
             this->Append(list->Get(i));
         }
         return this;
     }
 
-
-
-
-    void show(){
-        Node *now_node = head;
-        for(int i = 0; i < size; i++){
-            cout << now_node->value << endl;
-            now_node = now_node->next;
-        }
-    }
-
-
     ~LinkedList(){
         Node *now_elem = head;
-        for(int i = 0; i < size; i++){
+        while(now_elem != nullptr){
             Node *next_elem = now_elem->next;
             delete now_elem;
             now_elem = next_elem;
         }
         head = nullptr;
         tail = nullptr;
-        size = 0;
     }
 
 
 };
-
-
-
