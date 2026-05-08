@@ -1,6 +1,6 @@
 CXX = clang++
 
-CXXFLAGS = -std=c++17 -Iinclude -I/opt/homebrew/include
+CXXFLAGS = -std=c++23 -Iinclude -I/opt/homebrew/include
 LDLIBS   = -L/opt/homebrew/lib -lgtest -lgtest_main -lpthread
 
 SRC_MAIN = src/main.cpp

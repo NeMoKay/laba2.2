@@ -15,226 +15,263 @@ private:
         Node *next;
         Node *prev;
 
-        Node(T new_value, Node *new_next, Node *new_prev){
-            value = new_value;
-            next = new_next;
-            prev = new_prev;
-        }
-        Node(){
-            next = nullptr;
-            prev = nullptr;
-        }
-        Node(T val){
-            next = nullptr;
-            prev = nullptr;
-            value = val;
-        }
-
+        Node(T new_value, Node *new_next, Node *new_prev);
+        Node();
+        Node(T val);
     };
     
-    Node *head = nullptr;
-    Node *tail = nullptr;
+    Node *head;
+    Node *tail;
     
 public:
+    LinkedList(T* items, size_t count);
+    LinkedList();
+    LinkedList(const LinkedList<T>& list);
 
-    LinkedList(T* items, size_t count){
-        if(count == 0){
-            throw invalid_argument("Размер <= 0 ");
-        }
-        if(items == nullptr){
-            throw invalid_argument("Переданный масив пуст");
-        }
+    T GetFirst();
+    T GetLast();
+    T Get(size_t index) const;
+    LinkedList<T>* GetSubList(size_t startIndex, size_t endIndex);
+    size_t GetLength() const;
 
-        Node *prev_elem = nullptr;
-        Node *now_elem = nullptr;
+    void Append(T item);
+    void Prepend(T item);
+    void InsertAt(T item, size_t index);
+    LinkedList<T>* Concat(LinkedList<T> *list);
 
-        for(size_t i = 0; i < count; i++){
-            now_elem = new Node;
+    ~LinkedList();
+};
 
-            now_elem->value = items[i];
-            now_elem->prev = prev_elem;
-            if(i != 0){
-                prev_elem->next = now_elem;
-            }
 
-            prev_elem = now_elem;
-            if(i == 0){
-                head = now_elem;
+//private Node
 
-            }
-            if(i == count - 1){
-                tail = now_elem;
-            }
+template <class T>
+LinkedList<T>::Node::Node(T new_value, Node *new_next, Node *new_prev){
+    value = new_value;
+    next = new_next;
+    prev = new_prev;
+}
 
-        }
+template <class T>
+LinkedList<T>::Node::Node(){
+    next = nullptr;
+    prev = nullptr;
+}
+
+template <class T>
+LinkedList<T>::Node::Node(T val){
+    next = nullptr;
+    prev = nullptr;
+    value = val;
+}
+
+
+//public
+
+template <class T>
+LinkedList<T>::LinkedList(T* items, size_t count){
+    if(count == 0){
+        throw invalid_argument("Размер <= 0 ");
+    }
+    if(items == nullptr){
+        throw invalid_argument("Переданный масив пуст");
     }
 
-    LinkedList() : head(nullptr), tail(nullptr) {}
+    head = nullptr;
+    tail = nullptr;
+    Node *prev_elem = nullptr;
+    Node *now_elem = nullptr;
 
-    LinkedList(const LinkedList<T>& list) : head(nullptr), tail(nullptr){
-        Node* now_elem = list.head;
+    for(size_t i = 0; i < count; i++){
+        now_elem = new Node;
 
-        while(now_elem != nullptr){
-            Append(now_elem->value);
-            now_elem = now_elem->next;
+        now_elem->value = items[i];
+        now_elem->prev = prev_elem;
+        if(i != 0){
+            prev_elem->next = now_elem;
+        }
+
+        prev_elem = now_elem;
+        if(i == 0){
+            head = now_elem;
+        }
+        if(i == count - 1){
+            tail = now_elem;
         }
     }
+}
 
+template <class T>
+LinkedList<T>::LinkedList() : head(nullptr), tail(nullptr) {}
 
+template <class T>
+LinkedList<T>::LinkedList(const LinkedList<T>& list) : head(nullptr), tail(nullptr){
+    Node* now_elem = list.head;
 
-    T GetFirst() {
-        if(head == nullptr){
-            throw invalid_argument("Список пуст");
-        }
-        return head->value;
+    while(now_elem != nullptr){
+        Append(now_elem->value);
+        now_elem = now_elem->next;
     }
-    T GetLast(){
-        if(tail == nullptr){
-            throw invalid_argument("Список пуст");
-        }
-        return tail->value;
+}
+
+template <class T>
+T LinkedList<T>::GetFirst() {
+    if(head == nullptr){
+        throw invalid_argument("Список пуст");
     }
+    return head->value;
+}
 
-    T Get(size_t index) const{
-        size_t length = GetLength(); // ИСПРАВЛЕНО
-        if(index >= length){
-            throw invalid_argument("Индекс вне списка");
-        }
-
-        if(index < length / 2){
-            Node *now_elem = head;
-            for(size_t i = 0; i < index; i++){
-                now_elem = now_elem->next;
-            }
-            return now_elem->value;
-        }
-        else{
-            Node *now_elem = tail;
-            for(size_t i = 0; i < length - index - 1; i++){
-                now_elem = now_elem->prev;
-            }
-            return now_elem->value;
-            
-        }
+template <class T>
+T LinkedList<T>::GetLast(){
+    if(tail == nullptr){
+        throw invalid_argument("Список пуст");
     }
+    return tail->value;
+}
 
-    LinkedList<T>* GetSubList(size_t startIndex, size_t endIndex){
-        size_t length = GetLength(); // ИСПРАВЛЕНО
-        if(endIndex < startIndex || startIndex >= length || endIndex >= length){
-            throw invalid_argument("Ошибка индекса");
-        }
-
-        size_t len = endIndex - startIndex + 1;
-        T* items = new T[len];
-
-        Node *now_elem = head;
-        size_t index = 0;
-        size_t current_pos = 0;
-        while(now_elem != nullptr){
-
-            if(current_pos >= startIndex && current_pos <= endIndex){
-                items[index] = now_elem->value;
-                index++;
-            }
-            now_elem = now_elem->next;
-            current_pos++;
-        }
-        LinkedList<T>* result = new LinkedList<T>(items, len);
-        delete[] items;
-        return result;
+template <class T>
+T LinkedList<T>::Get(size_t index) const{
+    size_t length = GetLength();
+    if(index >= length){
+        throw invalid_argument("Индекс вне списка");
     }
 
-    size_t GetLength() const{
-        size_t count = 0;
-        Node *now_elem = head;
-        while(now_elem != nullptr){
-            count++;
-            now_elem = now_elem->next;
-        }
-        return count;
-    }
-
-    void Append(T item){
-        Node *new_elem = new Node;
-        new_elem->value = item;
-        
-        if(head != nullptr){
-            new_elem->prev = tail;
-            tail->next = new_elem;
-            tail = new_elem;
-        }
-        else{
-            head = new_elem;
-            tail = new_elem;
-        }
-        
-    }
-    void Prepend(T item){
-        Node *new_elem = new Node;
-        new_elem->value = item;
-
-        if(head != nullptr){
-            new_elem->next = head;
-            head->prev = new_elem;
-            head = new_elem;
-        }
-        else{
-            head = new_elem;
-            tail = new_elem;
-        }
-        
-    }
-
-    void InsertAt(T item, size_t index){
-        size_t length = GetLength(); // ИСПРАВЛЕНО
-        if(index > length){
-            throw invalid_argument("Индекс вне диапазона + 1");
-        }
-
-        if(index == 0){
-            this->Prepend(item);
-            return;
-        }
-        if(index == length){
-            this->Append(item);
-            return;
-        }
-
+    if(index < length / 2){
         Node *now_elem = head;
         for(size_t i = 0; i < index; i++){
             now_elem = now_elem->next;
         }
+        return now_elem->value;
+    }
+    else{
+        Node *now_elem = tail;
+        for(size_t i = 0; i < length - index - 1; i++){
+            now_elem = now_elem->prev;
+        }
+        return now_elem->value;
+    }
+}
 
-        Node *new_elem = new Node;
-        new_elem->value = item;
-        new_elem->prev = now_elem->prev;
-        new_elem->next = now_elem;
-        (now_elem->prev)->next = new_elem;
-        now_elem->prev = new_elem;
+template <class T>
+LinkedList<T>* LinkedList<T>::GetSubList(size_t startIndex, size_t endIndex){
+    size_t length = GetLength();
+    if(endIndex < startIndex || startIndex >= length || endIndex >= length){
+        throw invalid_argument("Ошибка индекса");
     }
 
-    LinkedList<T>* Concat(LinkedList<T> *list){
-        if(list == nullptr){
-            return this;
+    size_t len = endIndex - startIndex + 1;
+    T* items = new T[len];
+
+    Node *now_elem = head;
+    size_t index = 0;
+    size_t current_pos = 0;
+    while(now_elem != nullptr){
+        if(current_pos >= startIndex && current_pos <= endIndex){
+            items[index] = now_elem->value;
+            index++;
         }
-        
-        size_t other_length = list->GetLength();
-        for(size_t i = 0; i < other_length; i++){
-            this->Append(list->Get(i));
-        }
+        now_elem = now_elem->next;
+        current_pos++;
+    }
+    LinkedList<T>* result = new LinkedList<T>(items, len);
+    delete[] items;
+    return result;
+}
+
+template <class T>
+size_t LinkedList<T>::GetLength() const{
+    size_t count = 0;
+    Node *now_elem = head;
+    while(now_elem != nullptr){
+        count++;
+        now_elem = now_elem->next;
+    }
+    return count;
+}
+
+template <class T>
+void LinkedList<T>::Append(T item){
+    Node *new_elem = new Node;
+    new_elem->value = item;
+    
+    if(head != nullptr){
+        new_elem->prev = tail;
+        tail->next = new_elem;
+        tail = new_elem;
+    }
+    else{
+        head = new_elem;
+        tail = new_elem;
+    }
+}
+
+template <class T>
+void LinkedList<T>::Prepend(T item){
+    Node *new_elem = new Node;
+    new_elem->value = item;
+
+    if(head != nullptr){
+        new_elem->next = head;
+        head->prev = new_elem;
+        head = new_elem;
+    }
+    else{
+        head = new_elem;
+        tail = new_elem;
+    }
+}
+
+template <class T>
+void LinkedList<T>::InsertAt(T item, size_t index){
+    size_t length = GetLength();
+    if(index > length){
+        throw invalid_argument("Индекс вне диапазона + 1");
+    }
+
+    if(index == 0){
+        this->Prepend(item);
+        return;
+    }
+    if(index == length){
+        this->Append(item);
+        return;
+    }
+
+    Node *now_elem = head;
+    for(size_t i = 0; i < index; i++){
+        now_elem = now_elem->next;
+    }
+
+    Node *new_elem = new Node;
+    new_elem->value = item;
+    new_elem->prev = now_elem->prev;
+    new_elem->next = now_elem;
+    (now_elem->prev)->next = new_elem;
+    now_elem->prev = new_elem;
+}
+
+template <class T>
+LinkedList<T>* LinkedList<T>::Concat(LinkedList<T> *list){
+    if(list == nullptr){
         return this;
     }
-
-    ~LinkedList(){
-        Node *now_elem = head;
-        while(now_elem != nullptr){
-            Node *next_elem = now_elem->next;
-            delete now_elem;
-            now_elem = next_elem;
-        }
-        head = nullptr;
-        tail = nullptr;
+    
+    size_t other_length = list->GetLength();
+    for(size_t i = 0; i < other_length; i++){
+        this->Append(list->Get(i));
     }
+    return this;
+}
 
-
-};
+template <class T>
+LinkedList<T>::~LinkedList(){
+    Node *now_elem = head;
+    while(now_elem != nullptr){
+        Node *next_elem = now_elem->next;
+        delete now_elem;
+        now_elem = next_elem;
+    }
+    head = nullptr;
+    tail = nullptr;
+}
