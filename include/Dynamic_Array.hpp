@@ -7,7 +7,7 @@
 using namespace std;
 
 
-template <class T>
+template <typename T >
 class DynamicArray{
 private:
     T* data;
@@ -29,10 +29,10 @@ public:
 
 
 //public
-template <class T>
+template <typename T >
 DynamicArray<T>::DynamicArray() : data(nullptr), size(0) {}
 
-template <class T>
+template <typename T >
 DynamicArray<T>::DynamicArray(size_t count){
     if(count == 0){
         throw invalid_argument("Длинна массива < 1");
@@ -41,7 +41,7 @@ DynamicArray<T>::DynamicArray(size_t count){
     data = new T[size];
 }
 
-template <class T>
+template <typename T >
 DynamicArray<T>::DynamicArray(T* items, size_t count) : DynamicArray(count){
     if(items == nullptr){
         throw invalid_argument("Переданный массив пуст");
@@ -51,7 +51,7 @@ DynamicArray<T>::DynamicArray(T* items, size_t count) : DynamicArray(count){
     }
 }
 
-template <class T>
+template <typename T >
 DynamicArray<T>::DynamicArray(const DynamicArray<T> & array) : size(array.size){
     data = new T[size];
     for(size_t i = 0; i < size; i++){
@@ -59,7 +59,7 @@ DynamicArray<T>::DynamicArray(const DynamicArray<T> & array) : size(array.size){
     }
 }
 
-template <class T>
+template <typename T >
 T DynamicArray<T>::Get(size_t index){
     if(index >= size){
         throw invalid_argument("Ошибка индекса");
@@ -67,7 +67,7 @@ T DynamicArray<T>::Get(size_t index){
     return data[index];
 }
 
-template <class T>
+template <typename T >
 void DynamicArray<T>::Set(size_t index, T value){
     if(index >= size){
         throw invalid_argument("Ошибка индекса");
@@ -75,7 +75,7 @@ void DynamicArray<T>::Set(size_t index, T value){
     data[index] = value;
 }
 
-template <class T>
+template <typename T >
 void DynamicArray<T>::Resize(size_t newSize){
     T *new_data = new T[newSize];
     if(size != 0){
@@ -93,19 +93,19 @@ void DynamicArray<T>::Resize(size_t newSize){
     size = newSize;
 }
 
-template <class T>
+template <typename T >
 size_t DynamicArray<T>::GetSize(){
     return size;
 }
 
 
-template <class T>
+template <typename T >
 T DynamicArray<T>::operator[](size_t index){
     return Get(index); 
 }
 
 
-template <class T>
+template <typename T >
 DynamicArray<T>::~DynamicArray(){
     delete[] data;
 }

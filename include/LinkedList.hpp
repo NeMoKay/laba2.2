@@ -7,7 +7,7 @@
 using namespace std;
 
 
-template <class T> 
+template <typename T > 
 class LinkedList{
 private:
     struct Node{
@@ -45,20 +45,20 @@ public:
 
 //private Node
 
-template <class T>
+template <typename T >
 LinkedList<T>::Node::Node(T new_value, Node *new_next, Node *new_prev){
     value = new_value;
     next = new_next;
     prev = new_prev;
 }
 
-template <class T>
+template <typename T >
 LinkedList<T>::Node::Node(){
     next = nullptr;
     prev = nullptr;
 }
 
-template <class T>
+template <typename T >
 LinkedList<T>::Node::Node(T val){
     next = nullptr;
     prev = nullptr;
@@ -68,7 +68,7 @@ LinkedList<T>::Node::Node(T val){
 
 //public
 
-template <class T>
+template <typename T >
 LinkedList<T>::LinkedList(T* items, size_t count){
     if(count == 0){
         throw invalid_argument("Размер <= 0 ");
@@ -101,10 +101,10 @@ LinkedList<T>::LinkedList(T* items, size_t count){
     }
 }
 
-template <class T>
+template <typename T >
 LinkedList<T>::LinkedList() : head(nullptr), tail(nullptr) {}
 
-template <class T>
+template <typename T >
 LinkedList<T>::LinkedList(const LinkedList<T>& list) : head(nullptr), tail(nullptr){
     Node* now_elem = list.head;
 
@@ -114,7 +114,7 @@ LinkedList<T>::LinkedList(const LinkedList<T>& list) : head(nullptr), tail(nullp
     }
 }
 
-template <class T>
+template <typename T >
 T LinkedList<T>::GetFirst() {
     if(head == nullptr){
         throw invalid_argument("Список пуст");
@@ -122,7 +122,7 @@ T LinkedList<T>::GetFirst() {
     return head->value;
 }
 
-template <class T>
+template <typename T >
 T LinkedList<T>::GetLast(){
     if(tail == nullptr){
         throw invalid_argument("Список пуст");
@@ -130,7 +130,7 @@ T LinkedList<T>::GetLast(){
     return tail->value;
 }
 
-template <class T>
+template <typename T >
 T LinkedList<T>::Get(size_t index) const{
     size_t length = GetLength();
     if(index >= length){
@@ -153,7 +153,7 @@ T LinkedList<T>::Get(size_t index) const{
     }
 }
 
-template <class T>
+template <typename T >
 LinkedList<T>* LinkedList<T>::GetSubList(size_t startIndex, size_t endIndex){
     size_t length = GetLength();
     if(endIndex < startIndex || startIndex >= length || endIndex >= length){
@@ -179,7 +179,7 @@ LinkedList<T>* LinkedList<T>::GetSubList(size_t startIndex, size_t endIndex){
     return result;
 }
 
-template <class T>
+template <typename T >
 size_t LinkedList<T>::GetLength() const{
     size_t count = 0;
     Node *now_elem = head;
@@ -190,7 +190,7 @@ size_t LinkedList<T>::GetLength() const{
     return count;
 }
 
-template <class T>
+template <typename T >
 void LinkedList<T>::Append(T item){
     Node *new_elem = new Node;
     new_elem->value = item;
@@ -206,7 +206,7 @@ void LinkedList<T>::Append(T item){
     }
 }
 
-template <class T>
+template <typename T >
 void LinkedList<T>::Prepend(T item){
     Node *new_elem = new Node;
     new_elem->value = item;
@@ -222,7 +222,7 @@ void LinkedList<T>::Prepend(T item){
     }
 }
 
-template <class T>
+template <typename T >
 void LinkedList<T>::InsertAt(T item, size_t index){
     size_t length = GetLength();
     if(index > length){
@@ -251,7 +251,7 @@ void LinkedList<T>::InsertAt(T item, size_t index){
     now_elem->prev = new_elem;
 }
 
-template <class T>
+template <typename T >
 LinkedList<T>* LinkedList<T>::Concat(LinkedList<T> *list){
     if(list == nullptr){
         return this;
@@ -264,7 +264,7 @@ LinkedList<T>* LinkedList<T>::Concat(LinkedList<T> *list){
     return this;
 }
 
-template <class T>
+template <typename T >
 LinkedList<T>::~LinkedList(){
     Node *now_elem = head;
     while(now_elem != nullptr){

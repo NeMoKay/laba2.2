@@ -6,9 +6,11 @@
 #include "iostream"
 #include <cstddef>
 #include <stdexcept>
+
+
 using namespace std;
 
-template <class T>
+template <typename T>
 class ArraySequence : public Sequence<T>{
 private:
     DynamicArray<T>* items;
@@ -38,6 +40,8 @@ public:
     ArraySequence<T>* InsertAt(T item, size_t index) override;
     ArraySequence<T>* Concat(Sequence<T>* list) override;
 
+    Sequence<T> *ReflectSum() const override;
+    
     template<typename T2>
     Sequence<T2>* Map(T2 (*funk)(T));
     template<typename T2>
@@ -60,13 +64,13 @@ ArraySequence<T>* ArraySequence<T>::Instance(){
     return this;
 }
 
-template <class T>
+template <typename T >
 void ArraySequence<T>::AppendInternal(T item){
     items->Resize(items->GetSize()+1);
     items->Set(items->GetSize()-1, item);
 }
 
-template <class T>
+template <typename T >
 void ArraySequence<T>::PrependInternal(T item){
     items->Resize(items->GetSize()+1);
     for(size_t i = items->GetSize() - 1; i >= 1; i--){
@@ -75,7 +79,7 @@ void ArraySequence<T>::PrependInternal(T item){
     items->Set(0, item);
 }
 
-template <class T>
+template <typename T >
 void ArraySequence<T>::InsertAtInternal(T item, size_t index){
     if(index > items->GetSize()){
         throw invalid_argument("Ошибка индекса");
@@ -99,7 +103,7 @@ void ArraySequence<T>::InsertAtInternal(T item, size_t index){
     items->Set(index, item);
 }
 
-template <class T>
+template <typename T >
 void ArraySequence<T>::ConcatInternal(Sequence <T> *list){
     for(size_t i = 0; i < list->GetLength(); i++){
         this->AppendInternal(list->Get(i));
@@ -109,16 +113,16 @@ void ArraySequence<T>::ConcatInternal(Sequence <T> *list){
 
 
 //public
-template <class T>
+template <typename T >
 ArraySequence<T>::ArraySequence(T* new_items, size_t count) : items(new DynamicArray<T>(new_items, count)){}
 
-template <class T>
+template <typename T >
 ArraySequence<T>::ArraySequence() : items(new DynamicArray<T>) {}
 
-template <class T>
+template <typename T >
 ArraySequence<T>::ArraySequence(const ArraySequence<T>& operand) : items(new DynamicArray<T>(*(operand.items))) {}
 
-template <class T>
+template <typename T >
 ArraySequence<T>::ArraySequence(const LinkedList<T>& list){
     size_t count = list.GetLength();
     if(count == 0){
@@ -134,7 +138,7 @@ ArraySequence<T>::ArraySequence(const LinkedList<T>& list){
     delete[] temp_arr;
 }
 
-template <class T>
+template <typename T >
 T ArraySequence<T>::GetFirst() const{
     if(items->GetSize() == 0){
         throw invalid_argument("Список пуст");
@@ -142,7 +146,7 @@ T ArraySequence<T>::GetFirst() const{
     return items->Get(0);
 }
 
-template <class T>
+template <typename T >
 T ArraySequence<T>::GetLast() const{
     if(items->GetSize() == 0){
         throw invalid_argument("Список пуст");
@@ -150,7 +154,7 @@ T ArraySequence<T>::GetLast() const{
     return items->Get(items->GetSize() - 1);
 }
 
-template <class T>
+template <typename T >
 T ArraySequence<T>::Get(size_t index)const{
     if(index >= items->GetSize()){
         throw invalid_argument("Ошибка индекса");
@@ -158,12 +162,12 @@ T ArraySequence<T>::Get(size_t index)const{
     return items->Get(index);
 }
 
-template <class T>
+template <typename T >
 size_t ArraySequence<T>::GetLength() const{
     return items->GetSize();
 }
 
-template <class T>
+template <typename T >
 ArraySequence<T>* ArraySequence<T>::GetSubsequence(size_t startIndex, size_t endIndex) const{
     if(endIndex < startIndex || startIndex >= items->GetSize() || endIndex >= items->GetSize()){
         throw invalid_argument("Ошибка индекса");
@@ -177,28 +181,28 @@ ArraySequence<T>* ArraySequence<T>::GetSubsequence(size_t startIndex, size_t end
     return new_arr;
 }
 
-template <class T>
+template <typename T >
 ArraySequence<T>* ArraySequence<T>::Append(T item){
     ArraySequence<T>* type_Arr = this->Instance();
     type_Arr->AppendInternal(item);
     return type_Arr;
 }
 
-template <class T>
+template <typename T >
 ArraySequence<T>* ArraySequence<T>::Prepend(T item){
     ArraySequence<T>* type_Arr = this->Instance();
     type_Arr->PrependInternal(item);
     return type_Arr;
 }
 
-template <class T>
+template <typename T >
 ArraySequence<T>* ArraySequence<T>::InsertAt(T item, size_t index){
     ArraySequence<T>* arr = this->Instance();
     arr->InsertAtInternal(item, index);
     return arr;
 }
 
-template <class T>
+template <typename T >
 ArraySequence<T>* ArraySequence<T>::Concat(Sequence<T>* list){
     if(list == nullptr){
          return this;
@@ -208,7 +212,7 @@ ArraySequence<T>* ArraySequence<T>::Concat(Sequence<T>* list){
     return type_Arr;
 }
 
-template <class T>
+template <typename T >
 template<typename T2>
 Sequence<T2>* ArraySequence<T>::Map(T2 (*funk)(T)){
     Sequence<T2>* result = new ArraySequence<T2>;
@@ -219,7 +223,7 @@ Sequence<T2>* ArraySequence<T>::Map(T2 (*funk)(T)){
     return result;
 }
 
-template <class T>
+template <typename T >
 template<typename T2>
 T2 ArraySequence<T>::Reduce(T2 (*func)(T2, T), T2 start_val){
     T2 result = start_val;
@@ -230,7 +234,7 @@ T2 ArraySequence<T>::Reduce(T2 (*func)(T2, T), T2 start_val){
     return result;
 }
 
-template <class T>
+template <typename T >
 Sequence<T>* ArraySequence<T>::Where(bool (*check_funk)(T)){
     Sequence<T>* result = new ArraySequence<T>;
 
@@ -243,7 +247,7 @@ Sequence<T>* ArraySequence<T>::Where(bool (*check_funk)(T)){
     return result;
 }
 
-template <class T>
+template <typename T >
 ArraySequence<T>::~ArraySequence(){
     delete items;
 }
@@ -275,3 +279,27 @@ public:
     using ArraySequence<T> :: ArraySequence;
 
 };
+
+template <typename T>
+Sequence<T>* ArraySequence<T>::ReflectSum() const {
+    if constexpr (is_arithmetic_v<T>){
+        size_t len = this->GetLength();
+
+        if (len == 0){
+            throw invalid_argument("ReflectSum: список пуст");
+        }
+        
+        T* arr = new T[len];
+        for(size_t i = 0; i < len; ++i){
+            arr[i] = this->Get(i) + this->Get(len - 1 - i);
+        }  
+
+        Sequence<T>* result = new ArraySequence<T>(arr, len);
+        delete[] arr;
+        return result;
+    } 
+    else{
+        throw invalid_argument("доступна только для числовых типов");
+    }
+}
+

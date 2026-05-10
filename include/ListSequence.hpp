@@ -8,7 +8,7 @@
 
 using namespace std;
 
-template <class T>
+template <typename T >
 class ListSequence : public Sequence<T>{
 private:
     LinkedList<T>* items;
@@ -32,6 +32,8 @@ public:
     T GetLast() const override;
     T Get(size_t index) const override;
 
+    Sequence<T> *ReflectSum() const override;
+
     ListSequence<T>* GetSubsequence(size_t startIndex, size_t endIndex) const override;
 
     size_t GetLength() const override;
@@ -54,27 +56,27 @@ public:
 
 
 // protected
-template <class T>
+template <typename T >
 ListSequence<T>* ListSequence<T>::Clone() const{
     return new ListSequence<T>(*this);
 }
 
-template <class T>
+template <typename T >
 ListSequence<T>* ListSequence<T>::Instance(){
     return this;
 }
 
-template <class T>
+template <typename T >
 void ListSequence<T>::AppendInternal(T item){
     items->Append(item);
 }
 
-template <class T>
+template <typename T >
 void ListSequence<T>::PrependInternal(T item){
     items->Prepend(item);
 }
 
-template <class T>
+template <typename T >
 void ListSequence<T>::InsertAtInternal(T item, size_t index){
     if(index > items->GetLength()){
         throw invalid_argument("Индекс вне диапазона");
@@ -82,7 +84,7 @@ void ListSequence<T>::InsertAtInternal(T item, size_t index){
     items->InsertAt(item, index);
 }
 
-template <class T>
+template <typename T >
 void ListSequence<T>::ConcatInternal(Sequence<T>* list){
     if(list == nullptr){
         return;
@@ -97,16 +99,16 @@ void ListSequence<T>::ConcatInternal(Sequence<T>* list){
 
 // public
 
-template <class T>
+template <typename T >
 ListSequence<T>::ListSequence() : items(new LinkedList<T>) {}
 
-template <class T>
+template <typename T >
 ListSequence<T>::ListSequence(T* new_items, size_t count) : items(new LinkedList<T>(new_items, count)) {}
 
-template <class T>
+template <typename T >
 ListSequence<T>::ListSequence(const ListSequence<T>& list) : items(new LinkedList<T>(*(list.items))) {}
 
-template <class T>
+template <typename T >
 ListSequence<T>::ListSequence(const ArraySequence<T>& arraySeq) : ListSequence(){
 
     size_t count = arraySeq.GetLength();
@@ -116,22 +118,22 @@ ListSequence<T>::ListSequence(const ArraySequence<T>& arraySeq) : ListSequence()
     }
 }
 
-template <class T>
+template <typename T >
 T ListSequence<T>::GetFirst() const{
     return items->Get(0);
 }
 
-template <class T>
+template <typename T >
 T ListSequence<T>::GetLast() const{
     return items->Get(items->GetLength() - 1);
 }
 
-template <class T>
+template <typename T >
 T ListSequence<T>::Get(size_t index) const{
     return items->Get(index);
 }
 
-template <class T>
+template <typename T >
 ListSequence<T>* ListSequence<T>::GetSubsequence(size_t startIndex, size_t endIndex) const{
 
     if(endIndex < startIndex || startIndex >= items->GetLength() || endIndex >= items->GetLength()){
@@ -151,26 +153,26 @@ ListSequence<T>* ListSequence<T>::GetSubsequence(size_t startIndex, size_t endIn
     return Sub_list;
 }
 
-template <class T>
+template <typename T >
 size_t ListSequence<T>::GetLength() const{
     return items->GetLength();
 }
 
-template <class T>
+template <typename T >
 ListSequence<T>* ListSequence<T>::Append(T item){
     ListSequence<T>* list = Instance();
     list->AppendInternal(item);
     return list;
 }
 
-template <class T>
+template <typename T >
 ListSequence<T>* ListSequence<T>::Prepend(T item){
     ListSequence<T>* list = Instance();
     list->PrependInternal(item);
     return list;
 }
 
-template <class T>
+template <typename T >
 ListSequence<T>* ListSequence<T>::InsertAt(T item, size_t index){
 
     if(index > items->GetLength()){
@@ -183,7 +185,7 @@ ListSequence<T>* ListSequence<T>::InsertAt(T item, size_t index){
     return list;
 }
 
-template <class T>
+template <typename T >
 Sequence<T>* ListSequence<T>::Concat(Sequence<T>* list_p){
 
     ListSequence<T>* list = Instance();
@@ -199,7 +201,7 @@ Sequence<T>* ListSequence<T>::Concat(Sequence<T>* list_p){
     return list;
 }
 
-template <class T>
+template <typename T >
 template <typename T2>
 Sequence<T2>* ListSequence<T>::Map(T2 (*funk)(T)){
 
@@ -212,7 +214,7 @@ Sequence<T2>* ListSequence<T>::Map(T2 (*funk)(T)){
     return result;
 }
 
-template <class T>
+template <typename T >
 template <typename T2>
 T2 ListSequence<T>::Reduce(T2 (*funk)(T2, T), T2 start_val){
 
@@ -225,7 +227,7 @@ T2 ListSequence<T>::Reduce(T2 (*funk)(T2, T), T2 start_val){
     return result;
 }
 
-template <class T>
+template <typename T >
 Sequence<T>* ListSequence<T>::Where(bool (*check_funk)(T)){
 
     Sequence<T>* result = new ListSequence<T>;
@@ -242,7 +244,7 @@ Sequence<T>* ListSequence<T>::Where(bool (*check_funk)(T)){
     return result;
 }
 
-template <class T>
+template <typename T >
 ListSequence<T>::~ListSequence(){
     delete items;
 }
@@ -277,3 +279,27 @@ protected:
 public:
     using ListSequence<T> :: ListSequence;
 };
+
+
+template <typename T>
+Sequence<T>* ListSequence<T>::ReflectSum() const {
+    if constexpr (is_arithmetic_v<T>){
+        size_t len = this->GetLength();
+
+        if (len == 0){
+            throw invalid_argument("ReflectSum: список пуст");
+        }
+        
+        T* arr = new T[len];
+        for(size_t i = 0; i < len; ++i){
+            arr[i] = this->Get(i) + this->Get(len - 1 - i);
+        }  
+
+        Sequence<T>* result = new ListSequence<T>(arr, len);
+        delete[] arr;
+        return result;
+    } 
+    else{
+        throw invalid_argument("доступна только для числовых типов");
+    }
+}
