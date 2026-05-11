@@ -7,6 +7,8 @@
 #include <cstddef>
 #include <stdexcept>
 
+#include <format>
+
 
 using namespace std;
 
@@ -82,7 +84,7 @@ void ArraySequence<T>::PrependInternal(T item){
 template <typename T >
 void ArraySequence<T>::InsertAtInternal(T item, size_t index){
     if(index > items->GetSize()){
-        throw invalid_argument("Ошибка индекса");
+        throw invalid_argument(format("Ошибка индекса (переданный инндекс {} > максимальный индекс последовательности{})",index,  items->GetSize() - 1));
     }
 
     if(index == 0){
@@ -157,7 +159,7 @@ T ArraySequence<T>::GetLast() const{
 template <typename T >
 T ArraySequence<T>::Get(size_t index)const{
     if(index >= items->GetSize()){
-        throw invalid_argument("Ошибка индекса");
+        throw invalid_argument(format("Ошибка индекса (индекс {} >= размер {})", index, items->GetSize()));
     }
     return items->Get(index);
 }
@@ -170,7 +172,7 @@ size_t ArraySequence<T>::GetLength() const{
 template <typename T >
 ArraySequence<T>* ArraySequence<T>::GetSubsequence(size_t startIndex, size_t endIndex) const{
     if(endIndex < startIndex || startIndex >= items->GetSize() || endIndex >= items->GetSize()){
-        throw invalid_argument("Ошибка индекса");
+        throw invalid_argument(format("Ошибка индекса (start: {}, end: {}, size: {})", startIndex, endIndex, items->GetSize()));
     }
     size_t len = endIndex-startIndex+1;
     ArraySequence<T>* new_arr = new ArraySequence<T>;
@@ -247,7 +249,7 @@ Sequence<T>* ArraySequence<T>::Where(bool (*check_funk)(T)){
     return result;
 }
 
-template <typename T >
+template <typename T>
 ArraySequence<T>::~ArraySequence(){
     delete items;
 }
@@ -302,4 +304,5 @@ Sequence<T>* ArraySequence<T>::ReflectSum() const {
         throw invalid_argument("доступна только для числовых типов");
     }
 }
+
 

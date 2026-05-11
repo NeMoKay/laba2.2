@@ -5,6 +5,7 @@
 #include "iostream"
 #include <cstddef>
 #include <stdexcept>
+#include <format>
 
 using namespace std;
 
@@ -79,7 +80,7 @@ void ListSequence<T>::PrependInternal(T item){
 template <typename T >
 void ListSequence<T>::InsertAtInternal(T item, size_t index){
     if(index > items->GetLength()){
-        throw invalid_argument("Индекс вне диапазона");
+        throw invalid_argument(format("Индекс вне диапазона (индекс: {}, максимум: {})", index, items->GetLength()));
     }
     items->InsertAt(item, index);
 }
@@ -138,7 +139,7 @@ ListSequence<T>* ListSequence<T>::GetSubsequence(size_t startIndex, size_t endIn
 
     if(endIndex < startIndex || startIndex >= items->GetLength() || endIndex >= items->GetLength()){
 
-        throw invalid_argument("Ошибка индекса");
+        throw invalid_argument(format("Ошибка индекса (start: {}, end: {}, size: {})", startIndex, endIndex, items->GetLength()));
     }
 
     LinkedList<T>* items_sub_list;
@@ -176,7 +177,7 @@ template <typename T >
 ListSequence<T>* ListSequence<T>::InsertAt(T item, size_t index){
 
     if(index > items->GetLength()){
-        throw invalid_argument("Индекс вне диапазона");
+        throw invalid_argument(format("Индекс вне диапазона (индекс: {}, максимум: {})", index, items->GetLength()));
     }
 
     ListSequence<T>* list = Instance();

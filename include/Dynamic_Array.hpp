@@ -4,6 +4,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <cstddef>
+#include <format>
 using namespace std;
 
 
@@ -62,7 +63,7 @@ DynamicArray<T>::DynamicArray(const DynamicArray<T> & array) : size(array.size){
 template <typename T >
 T DynamicArray<T>::Get(size_t index){
     if(index >= size){
-        throw invalid_argument("Ошибка индекса");
+        throw invalid_argument(format("Ошибка индекса (индекс: {}, размер: {})", index, size));
     }
     return data[index];
 }
@@ -70,7 +71,7 @@ T DynamicArray<T>::Get(size_t index){
 template <typename T >
 void DynamicArray<T>::Set(size_t index, T value){
     if(index >= size){
-        throw invalid_argument("Ошибка индекса");
+        throw invalid_argument(format("Ошибка индекса (индекс: {}, размер: {})", index, size));
     }
     data[index] = value;
 }

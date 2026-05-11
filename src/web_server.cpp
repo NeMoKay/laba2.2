@@ -13,17 +13,16 @@ using json = nlohmann::json;
 using json = nlohmann::json;
 std::mutex state_mutex;
 
-// Умные указатели
 std::unique_ptr<ArraySequence<int>> arr_seq = std::make_unique<ArraySequence<int>>();
 std::unique_ptr<ListSequence<int>> list_seq = std::make_unique<ListSequence<int>>();
 std::unique_ptr<BitSequence<int>> bit_seq = std::make_unique<BitSequence<int>>();
 
-// Функции для Map/Where/Reduce
+
 int mapMult2(int x) { return x * 2; }
 bool isEven(int x) { return x % 2 == 0; }
 int reduceSum(int acc, int x) { return acc + x; }
 
-// Хелперы для JSON
+
 json toJson(const Sequence<int>* seq) {
     json j = json::array();
     if (seq) {
@@ -44,7 +43,8 @@ json bitToJson(const BitSequence<int>* seq) {
     return j;
 }
 
-// Формирование ответа
+
+
 std::string build_response(const std::string& type, const std::string& log) {
     json response;
     
@@ -62,14 +62,12 @@ int main(){
 
     svr.set_mount_point("/", "./interface_html");
 
-    // Чтение состояния (оставляем GET, т.к. только читает данные)
     svr.Get("/api/get_state", [](const httplib::Request& req, httplib::Response& res) {
         std::lock_guard<std::mutex> lock(state_mutex);
         std::string type = req.get_param_value("type");
         res.set_content(build_response(type, "Retrieved State"), "application/json");
     });
-    
-    // Очистка 
+     
     svr.Get("/api/clear", [](const httplib::Request& req, httplib::Response& res) {
         std::lock_guard<std::mutex> lock(state_mutex);
         std::string type = req.get_param_value("type");
@@ -81,7 +79,6 @@ int main(){
         res.set_content(build_response(type, "Cleared!"), "application/json");
     });
 
-    // Основные действия переведены на POST (правильная REST архитектура)
     svr.Post("/api/action", [](const httplib::Request& req, httplib::Response& res) {
         std::lock_guard<std::mutex> lock(state_mutex);
         
@@ -89,7 +86,6 @@ int main(){
         std::string type = "array"; 
         
         try {
-            // Парсим входящий JSON
             auto body = json::parse(req.body);
             
             type = body.value("type", "array");
@@ -113,7 +109,6 @@ int main(){
                 else if (act == "get") log = "Item: " + std::to_string(s->Get(idx));
                 else if (act == "concat") {
                     ArraySequence<int> temp;
-                    // Итерируемся по массиву JSON — чистая сериализация без костылей
                     if (body.contains("items") && body["items"].is_array()) {
                         for (int item_val : body["items"]) {
                             temp.Append(item_val);
@@ -140,7 +135,6 @@ int main(){
                     log = "Applied " + act;
                 }
             } 
-            // Обработка BitSequence
             else if (type == "bit") {
                 BitSequence<int>* b = bit_seq.get();
                 

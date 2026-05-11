@@ -160,7 +160,6 @@
             document.getElementById('bitOps').style.display = e.target.value === 'bit' ? 'block' : 'none';
         });
 
-        // Функция для GET запросов (получение состояния и очистка)
         async function req(endpoint, data = {}) {
             data.type = document.getElementById('seqType').value;
             const params = new URLSearchParams(data);

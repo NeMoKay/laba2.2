@@ -5,19 +5,16 @@
 #include "BitSequence.hpp"
 
 int main(){
+    int sss[5] = {1, 2,3,4,5};
 
-    BitSequence<char> A;
+
+    ArraySequence<int> A(sss, 5);
+
+    A.InsertAt(12, 10);
 
 
-    A.Append(1);
-    A.Append(1);
-    A.Append(1);
-    A.Append(1);
-    A.Append(1);
-    A.Append(0);
-    A.Append(1);
 
-    cout << A.GetInversions();
+
 
 
 

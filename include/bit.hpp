@@ -3,6 +3,8 @@
 #include "iostream"
 #include <cstddef>
 #include <stdexcept>
+#include <format>
+
 using namespace std;
 
 
@@ -19,7 +21,6 @@ public:
     BitProxy& operator=(bool value);
     operator bool() const;
 };
-
 
 
 
@@ -79,7 +80,7 @@ public:
 template <typename T>
 void Bit<T>::CheckIndex(size_t index){
     if(index >= sizeof(T) * 8){
-        throw invalid_argument("Индекс вне диапазона");
+        throw invalid_argument(format("Индекс вне диапазона (индекс: {}, максимум: {})", index, sizeof(T) * 8 - 1));
     }
 }
 
