@@ -5,7 +5,7 @@
 #include "BitSequence.hpp"
 
 int main(){
-    int sss[5] = {1, 2,3,4,5};
+    int sss[5] ={1, 2,3,4,5};
 
 
     ArraySequence<int> A(sss, 5);

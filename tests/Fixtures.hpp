@@ -60,7 +60,7 @@ protected:
 
     void SetUp() override{
         bit8 = Bit<char>(0b01010101);
-        bit32 = Bit<int>(0b00110011001100110011001100110011);
+        bit32 = Bit<int>(0b00110011001100110011001100110011);//прочитать
     }
 };
 
@@ -107,7 +107,7 @@ protected:
 
 class BitSequence_Fixture : public testing::Test{
 protected:
-    Bit<char> data_bits[8] = {
+    Bit<char> data_bits[8] ={
         Bit<char>(1), Bit<char>(0), Bit<char>(1), Bit<char>(0),
         Bit<char>(1), Bit<char>(0), Bit<char>(1), Bit<char>(0)
     };

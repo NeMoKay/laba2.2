@@ -98,7 +98,7 @@ TEST_F(BitSequence_Fixture, insert_invalid_argument){
 }
 
 TEST_F(BitSequence_Fixture, concat){
-    Bit<char> extra[2] = {Bit<char>(1), Bit<char>(0)};
+    Bit<char> extra[2] ={Bit<char>(1), Bit<char>(0)};
     BitSequence<char> extraSeq(extra, 2);
     size_t initLen = Sequence->GetLength();
     Sequence->Concat(&extraSeq);
@@ -133,7 +133,7 @@ TEST_F(BitSequence_Fixture, Sequence_invalid_argument){
 //Битовые операции----------------------------------------------
 
 TEST_F(BitSequence_Fixture, AND){
-    Bit<char> other_bits[8] = {
+    Bit<char> other_bits[8] ={
         Bit<char>(1), Bit<char>(1), Bit<char>(0), Bit<char>(0),
         Bit<char>(1), Bit<char>(1), Bit<char>(0), Bit<char>(0)
     };
@@ -149,14 +149,14 @@ TEST_F(BitSequence_Fixture, AND){
 }
 
 TEST_F(BitSequence_Fixture, AND_diff_length){
-    Bit<char> short_bits[4] = {Bit<char>(1), Bit<char>(0), Bit<char>(1), Bit<char>(0)};
+    Bit<char> short_bits[4] ={Bit<char>(1), Bit<char>(0), Bit<char>(1), Bit<char>(0)};
     BitSequence<char> short_seq(short_bits, 4);
     
     EXPECT_THROW((*Sequence) & short_seq, invalid_argument) << "Ожидается invalid_argument при разных длинах";
 }
 
 TEST_F(BitSequence_Fixture, OR){
-    Bit<char> other_bits[8] = {
+    Bit<char> other_bits[8] ={
         Bit<char>(0), Bit<char>(0), Bit<char>(1), Bit<char>(1),
         Bit<char>(0), Bit<char>(0), Bit<char>(1), Bit<char>(1)
     };
@@ -172,7 +172,7 @@ TEST_F(BitSequence_Fixture, OR){
 }
 
 TEST_F(BitSequence_Fixture, XOR){
-    Bit<char> other_bits[8] = {
+    Bit<char> other_bits[8] ={
         Bit<char>(1), Bit<char>(1), Bit<char>(0), Bit<char>(0),
         Bit<char>(0), Bit<char>(0), Bit<char>(1), Bit<char>(1)
     };

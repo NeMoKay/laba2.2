@@ -3,7 +3,7 @@
 #include <type_traits>
 #include <stdexcept> 
 
-using namespace std;
+using namespace std;//////убрать исключения и переписать интерфейс
 
 template <typename T>
 struct SequenceStats{
@@ -27,7 +27,7 @@ public:
     virtual Sequence <T>* Concat(Sequence <T> *list) = 0;
 
     SequenceStats<T> get_stats() const requires is_arithmetic_v<T>; 
-    virtual Sequence<T> *ReflectSum() const;
+    virtual Sequence<T> *ReflectSum() const;//reduce or fold (foldl, foldr)
     size_t GetInversions() const;
 
     T operator[](size_t index){ 

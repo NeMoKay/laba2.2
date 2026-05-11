@@ -138,7 +138,7 @@ void BitSequence<T>::PrependInternal(Bit<T> item){
 template <typename T>
 void BitSequence<T>::InsertAtInternal(Bit<T> item, size_t index){
     if(index > length_bits){
-        throw invalid_argument(format("Ошибка индекса (индекс: {}, максимум: {})", index, length_bits));
+        throw invalid_argument(format("Ошибка индекса (индекс:{}, максимум:{})", index, length_bits));
     }
     bool val = bool(item);
     size_t oldLen = length_bits;
@@ -230,7 +230,7 @@ Bit<T> BitSequence<T>::GetLast() const{
 template <typename T>
 Bit<T> BitSequence<T>::Get(size_t index) const{
     if(index >= length_bits){
-        throw invalid_argument(format("Ошибка индекса (индекс: {}, размер: {})", index, length_bits));
+        throw invalid_argument(format("Ошибка индекса (индекс:{}, размер:{})", index, length_bits));
     }
     bool isBitSet = GetBit(index);
     T correct_val;
@@ -251,7 +251,7 @@ size_t BitSequence<T>::GetLength() const{
 template <typename T>
 BitSequence<T>* BitSequence<T>::GetSubsequence(size_t startIndex, size_t endIndex) const{
     if(endIndex < startIndex || startIndex >= length_bits || endIndex >= length_bits){
-        throw invalid_argument(format("Ошибка индекса (start: {}, end: {}, size: {})", startIndex, endIndex, length_bits));
+        throw invalid_argument(format("Ошибка индекса (start:{}, end:{}, size:{})", startIndex, endIndex, length_bits));
     }
 
     BitSequence<T>* result = new BitSequence<T>;
@@ -295,7 +295,7 @@ BitSequence<T>* BitSequence<T>::Concat(Sequence<Bit<T>>* list){
 template <typename T>
 BitSequence<T> BitSequence<T>::operator&(const BitSequence<T>& operand) const{
     if(this->length_bits != operand.length_bits){
-        throw invalid_argument(format("Длины последовательностей не совпадают ({} != {})", this->length_bits, operand.length_bits));
+        throw invalid_argument(format("Длины последовательностей не совпадают ({} !={})", this->length_bits, operand.length_bits));
     }
     BitSequence<T> result;
     for (size_t i = 0; i < this->length_bits; i++){
@@ -307,7 +307,7 @@ BitSequence<T> BitSequence<T>::operator&(const BitSequence<T>& operand) const{
 template <typename T>
 BitSequence<T> BitSequence<T>::operator|(const BitSequence<T>& operand) const{
     if(this->length_bits != operand.length_bits){
-        throw invalid_argument(format("Длины последовательностей не совпадают ({} != {})", this->length_bits, operand.length_bits));
+        throw invalid_argument(format("Длины последовательностей не совпадают ({} !={})", this->length_bits, operand.length_bits));
     }
     BitSequence<T> result;
     for (size_t i = 0; i < this->length_bits; i++){
@@ -319,7 +319,7 @@ BitSequence<T> BitSequence<T>::operator|(const BitSequence<T>& operand) const{
 template <typename T>
 BitSequence<T> BitSequence<T>::operator^(const BitSequence<T>& operand) const{
     if(this->length_bits != operand.length_bits){
-        throw invalid_argument(format("Длины последовательностей не совпадают ({} != {})", this->length_bits, operand.length_bits));
+        throw invalid_argument(format("Длины последовательностей не совпадают ({} !={})", this->length_bits, operand.length_bits));
     }
     BitSequence<T> result;
     for (size_t i = 0; i < this->length_bits; i++){

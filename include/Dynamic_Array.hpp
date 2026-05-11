@@ -4,11 +4,13 @@
 #include <iostream>
 #include <stdexcept>
 #include <cstddef>
-#include <format>
+
+
+
 using namespace std;
 
 
-template <typename T >
+template <typename T>
 class DynamicArray{
 private:
     T* data;
@@ -31,16 +33,10 @@ public:
 
 //public
 template <typename T >
-DynamicArray<T>::DynamicArray() : data(nullptr), size(0) {}
+DynamicArray<T>::DynamicArray() : data(nullptr), size(0){}
 
 template <typename T >
-DynamicArray<T>::DynamicArray(size_t count){
-    if(count == 0){
-        throw invalid_argument("Длинна массива < 1");
-    }
-    size = count;
-    data = new T[size];
-}
+DynamicArray<T>::DynamicArray(size_t count) : data(new T[count]), size(count){}
 
 template <typename T >
 DynamicArray<T>::DynamicArray(T* items, size_t count) : DynamicArray(count){
@@ -63,7 +59,7 @@ DynamicArray<T>::DynamicArray(const DynamicArray<T> & array) : size(array.size){
 template <typename T >
 T DynamicArray<T>::Get(size_t index){
     if(index >= size){
-        throw invalid_argument(format("Ошибка индекса (индекс: {}, размер: {})", index, size));
+        throw invalid_argument("Ошибка индекса");
     }
     return data[index];
 }
@@ -71,7 +67,7 @@ T DynamicArray<T>::Get(size_t index){
 template <typename T >
 void DynamicArray<T>::Set(size_t index, T value){
     if(index >= size){
-        throw invalid_argument(format("Ошибка индекса (индекс: {}, размер: {})", index, size));
+        throw invalid_argument("Ошибка индекса");
     }
     data[index] = value;
 }

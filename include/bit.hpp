@@ -80,22 +80,22 @@ public:
 template <typename T>
 void Bit<T>::CheckIndex(size_t index){
     if(index >= sizeof(T) * 8){
-        throw invalid_argument(format("Индекс вне диапазона (индекс: {}, максимум: {})", index, sizeof(T) * 8 - 1));
+        throw invalid_argument(format("Индекс вне диапазона (индекс:{}, максимум:{})", index, sizeof(T) * 8 - 1));
     }
 }
 
 //public
 
 template <typename T>
-Bit<T>::Bit() : value(0) {} 
+Bit<T>::Bit() : value(0){} 
 
 
 template <typename T>
-Bit<T>::Bit(T val) : value(val) {}
+Bit<T>::Bit(T val) : value(val){}
 
 
 template <typename T>
-Bit<T>::Bit(const Bit& operand) : value(operand.value) {}
+Bit<T>::Bit(const Bit& operand) : value(operand.value){}
 
 
 template <typename T>

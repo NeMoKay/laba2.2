@@ -18,10 +18,6 @@ TEST_F(Dynamic_Array_Fixture, SizeConstructor){
     EXPECT_EQ(arr.Get(2), 30) << "Ожидаемый элемент 30. По факту : " << arr.Get(2);
 }
 
-TEST_F(Dynamic_Array_Fixture, SizeConstructor_invalid_argument){
-    EXPECT_THROW(DynamicArray<int>(0), invalid_argument) << "Ожидается invalid_argument. По факту : исключение не выброшено";
-}
-
 
 TEST_F(Dynamic_Array_Fixture, ArrayConstructor){
     int data[3] ={1, 2, 3};

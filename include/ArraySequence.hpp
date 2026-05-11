@@ -84,7 +84,7 @@ void ArraySequence<T>::PrependInternal(T item){
 template <typename T >
 void ArraySequence<T>::InsertAtInternal(T item, size_t index){
     if(index > items->GetSize()){
-        throw invalid_argument(format("Ошибка индекса (переданный инндекс {} > максимальный индекс последовательности{})",index,  items->GetSize() - 1));
+        throw invalid_argument(format("Ошибка индекса (переданный инндекс{} > максимальный индекс последовательности{})",index,  items->GetSize() - 1));
     }
 
     if(index == 0){
@@ -119,10 +119,10 @@ template <typename T >
 ArraySequence<T>::ArraySequence(T* new_items, size_t count) : items(new DynamicArray<T>(new_items, count)){}
 
 template <typename T >
-ArraySequence<T>::ArraySequence() : items(new DynamicArray<T>) {}
+ArraySequence<T>::ArraySequence() : items(new DynamicArray<T>){}
 
 template <typename T >
-ArraySequence<T>::ArraySequence(const ArraySequence<T>& operand) : items(new DynamicArray<T>(*(operand.items))) {}
+ArraySequence<T>::ArraySequence(const ArraySequence<T>& operand) : items(new DynamicArray<T>(*(operand.items))){}
 
 template <typename T >
 ArraySequence<T>::ArraySequence(const LinkedList<T>& list){
@@ -159,7 +159,7 @@ T ArraySequence<T>::GetLast() const{
 template <typename T >
 T ArraySequence<T>::Get(size_t index)const{
     if(index >= items->GetSize()){
-        throw invalid_argument(format("Ошибка индекса (индекс {} >= размер {})", index, items->GetSize()));
+        throw invalid_argument(format("Ошибка индекса (индекс{} >= размер{})", index, items->GetSize()));
     }
     return items->Get(index);
 }
@@ -172,7 +172,7 @@ size_t ArraySequence<T>::GetLength() const{
 template <typename T >
 ArraySequence<T>* ArraySequence<T>::GetSubsequence(size_t startIndex, size_t endIndex) const{
     if(endIndex < startIndex || startIndex >= items->GetSize() || endIndex >= items->GetSize()){
-        throw invalid_argument(format("Ошибка индекса (start: {}, end: {}, size: {})", startIndex, endIndex, items->GetSize()));
+        throw invalid_argument(format("Ошибка индекса (start:{}, end:{}, size:{})", startIndex, endIndex, items->GetSize()));
     }
     size_t len = endIndex-startIndex+1;
     ArraySequence<T>* new_arr = new ArraySequence<T>;
@@ -283,7 +283,7 @@ public:
 };
 
 template <typename T>
-Sequence<T>* ArraySequence<T>::ReflectSum() const {
+Sequence<T>* ArraySequence<T>::ReflectSum() const{
     if constexpr (is_arithmetic_v<T>){
         size_t len = this->GetLength();
 
