@@ -3,11 +3,13 @@
 #include "ArraySequence.hpp"
 #include "ListSequence.hpp"
 #include "bit.hpp"
-#include <format>
+#include <string>
+
+#include "exceptions.hpp"
 
 
 
-using namespace std;
+
 
 
 
@@ -60,7 +62,7 @@ protected:
 
     void SetUp() override{
         bit8 = Bit<char>(0b01010101);
-        bit32 = Bit<int>(0b00110011001100110011001100110011);//прочитать
+        bit32 = Bit<int>(0b00110011001100110011001100110011);
     }
 };
 

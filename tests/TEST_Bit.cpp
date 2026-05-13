@@ -75,9 +75,9 @@ TEST_F(Bit_Fixture, IndexOperator_Int){
 }
 
 TEST_F(Bit_Fixture, invalid_argument){
-    EXPECT_THROW(bit8[8], invalid_argument) << "Ожидается invalid_argument для индекса 8";
-    EXPECT_THROW(bit32[32], invalid_argument) << "Ожидается invalid_argument для индекса 32";
-    EXPECT_THROW(bit32[100], invalid_argument) << "Ожидается invalid_argument для индекса 100";
+    EXPECT_THROW(bit8[8], IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для индекса 8";
+    EXPECT_THROW(bit32[32], IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для индекса 32";
+    EXPECT_THROW(bit32[100], IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для индекса 100";
 }
 
 TEST_F(Bit_Fixture, IndexOperator_Write_Set1){

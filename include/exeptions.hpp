@@ -1,6 +1,0 @@
-//метод what const char *
-
-
-
-
-

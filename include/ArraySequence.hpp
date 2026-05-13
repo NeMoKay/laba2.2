@@ -5,12 +5,12 @@
 #include "LinkedList.hpp"
 #include "iostream"
 #include <cstddef>
-#include <stdexcept>
+#include <string>
 
-#include <format>
+#include "exceptions.hpp"
 
 
-using namespace std;
+
 
 template <typename T>
 class ArraySequence : public Sequence<T>{
@@ -84,7 +84,7 @@ void ArraySequence<T>::PrependInternal(T item){
 template <typename T >
 void ArraySequence<T>::InsertAtInternal(T item, size_t index){
     if(index > items->GetSize()){
-        throw invalid_argument(format("Ошибка индекса (переданный инндекс{} > максимальный индекс последовательности{})",index,  items->GetSize() - 1));
+        throw IndexOutOfRangeException(std::format("Ошибка индекса (переданный инндекс{} > максимальный индекс последовательности{})",index,  items->GetSize() - 1));
     }
 
     if(index == 0){
@@ -143,7 +143,7 @@ ArraySequence<T>::ArraySequence(const LinkedList<T>& list){
 template <typename T >
 T ArraySequence<T>::GetFirst() const{
     if(items->GetSize() == 0){
-        throw invalid_argument("Список пуст");
+        throw EmptySequenceException("Список пуст");
     }
     return items->Get(0);
 }
@@ -151,7 +151,7 @@ T ArraySequence<T>::GetFirst() const{
 template <typename T >
 T ArraySequence<T>::GetLast() const{
     if(items->GetSize() == 0){
-        throw invalid_argument("Список пуст");
+        throw EmptySequenceException("Список пуст");
     }
     return items->Get(items->GetSize() - 1);
 }
@@ -159,7 +159,7 @@ T ArraySequence<T>::GetLast() const{
 template <typename T >
 T ArraySequence<T>::Get(size_t index)const{
     if(index >= items->GetSize()){
-        throw invalid_argument(format("Ошибка индекса (индекс{} >= размер{})", index, items->GetSize()));
+        throw IndexOutOfRangeException(std::format("Ошибка индекса (индекс{} >= размер{})", index, items->GetSize()));
     }
     return items->Get(index);
 }
@@ -172,7 +172,7 @@ size_t ArraySequence<T>::GetLength() const{
 template <typename T >
 ArraySequence<T>* ArraySequence<T>::GetSubsequence(size_t startIndex, size_t endIndex) const{
     if(endIndex < startIndex || startIndex >= items->GetSize() || endIndex >= items->GetSize()){
-        throw invalid_argument(format("Ошибка индекса (start:{}, end:{}, size:{})", startIndex, endIndex, items->GetSize()));
+        throw IndexOutOfRangeException(std::format("Ошибка индекса (start:{}, end:{}, size:{})", startIndex, endIndex, items->GetSize()));
     }
     size_t len = endIndex-startIndex+1;
     ArraySequence<T>* new_arr = new ArraySequence<T>;
@@ -288,7 +288,7 @@ Sequence<T>* ArraySequence<T>::ReflectSum() const{
         size_t len = this->GetLength();
 
         if (len == 0){
-            throw invalid_argument("ReflectSum: список пуст");
+            throw EmptySequenceException("ReflectSum: список пуст");
         }
         
         T* arr = new T[len];
@@ -301,8 +301,6 @@ Sequence<T>* ArraySequence<T>::ReflectSum() const{
         return result;
     } 
     else{
-        throw invalid_argument("доступна только для числовых типов");
+        throw InvalidSizeException("доступна только для числовых типов");
     }
 }
-
-

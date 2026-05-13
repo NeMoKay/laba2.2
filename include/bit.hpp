@@ -2,10 +2,11 @@
 
 #include "iostream"
 #include <cstddef>
-#include <stdexcept>
-#include <format>
+#include <string>
 
-using namespace std;
+#include "exceptions.hpp"
+
+ 
 
 
 template <typename T>
@@ -80,7 +81,7 @@ public:
 template <typename T>
 void Bit<T>::CheckIndex(size_t index){
     if(index >= sizeof(T) * 8){
-        throw invalid_argument(format("Индекс вне диапазона (индекс:{}, максимум:{})", index, sizeof(T) * 8 - 1));
+        throw IndexOutOfRangeException(std::format("Индекс вне диапазона (индекс:{}, максимум:{})", index, sizeof(T) * 8 - 1));
     }
 }
 

@@ -9,7 +9,7 @@ public:             // ИНТЕРФЕЙС КЛАССА
        length = length_; width = width_; height = height_;
    }
    double get_volume(){
-       std::cout << this <<": ";    // выведем указатель объекта
+       std::std::cout << this <<": ";    // выведем указатель объекта
        return length * width * height;
    }
 };  
@@ -18,6 +18,6 @@ int main(){
     Box my_box1, my_box2;
     my_box1.set_dimentions(2.5, 2.5, 2.5);
     my_box2.set_dimentions(3.5, 3.5, 3.5);
-    std::cout << my_box1.get_volume() << "\n";
-    std::cout << my_box2.get_volume() << "\n";
+    std::std::cout << my_box1.get_volume() << "\n";
+    std::std::cout << my_box2.get_volume() << "\n";
 }

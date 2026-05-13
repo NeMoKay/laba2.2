@@ -1,6 +1,6 @@
 #include <iostream>
 #include <stdexcept>
-using namespace std;
+ 
 
 
 
@@ -67,5 +67,5 @@ int main(){
     Ad.num = -10.1;
     Bd.num = 20.2;
     auto sd = save_summ(Ad, Bd);
-    cout << s.num << endl << sd.num << endl;
+    std::cout << s.num << endl << sd.num << endl;
 }

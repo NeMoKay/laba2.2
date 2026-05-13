@@ -1,4 +1,5 @@
 #include "Fixtures.hpp"
+#include "exceptions.hpp"
 
 
 //Тесты конструкторов--------------------------------------------
@@ -6,7 +7,7 @@
 TEST_F(ListSequence_Fixture, def_constructor){
     ListSequence<int> list;
     EXPECT_EQ(list.GetLength(), 0) << "Ожидаемая длина 0. По факту : " << list.GetLength();
-    EXPECT_THROW(list.GetFirst(), invalid_argument) << "Ожидается invalid_argument. По факту : исключение не выброшено";
+    EXPECT_THROW(list.GetFirst(), EmptySequenceException) << "Ожидается EmptySequenceException. По факту : исключение не выброшено";
 }
 
 TEST_F(ListSequence_Fixture, array_constructor){
@@ -45,8 +46,8 @@ TEST_F(ListSequence_Fixture, get){
 }
 
 TEST_F(ListSequence_Fixture, get_invalid_argument){
-    EXPECT_THROW(seq_int->Get(5), invalid_argument) << "Ожидается invalid_argument для индекса 5";
-    EXPECT_THROW(seq_int->Get(100), invalid_argument) << "Ожидается invalid_argument для индекса 100";
+    EXPECT_THROW(seq_int->Get(5), IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для индекса 5";
+    EXPECT_THROW(seq_int->Get(100), IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для индекса 100";
 }
 
 
@@ -70,8 +71,8 @@ TEST_F(ListSequence_Fixture, insert){
 }
 
 TEST_F(ListSequence_Fixture, insert_invalid_argument){
-    EXPECT_THROW(seq_int->InsertAt(10, 6), invalid_argument) << "Ожидается invalid_argument для индекса 6";
-    EXPECT_THROW(seq_int->InsertAt(10, 100), invalid_argument) << "Ожидается invalid_argument для индекса 100";
+    EXPECT_THROW(seq_int->InsertAt(10, 6), IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для индекса 6";
+    EXPECT_THROW(seq_int->InsertAt(10, 100), IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для индекса 100";
 }
 
 TEST_F(ListSequence_Fixture, concat){

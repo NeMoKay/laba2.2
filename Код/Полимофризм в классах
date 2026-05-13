@@ -13,14 +13,14 @@ public:
 };
  
 void Plane::deliver (int cargo, int port1, int port2) const{
-        std::cout << "Доставка груза " << cargo << " из порта " << port1 
+        std::std::cout << "Доставка груза " << cargo << " из порта " << port1 
         << " в порт " << port2 << " самолетом\n";
 }
  
 class Ship: public Vessel{
 public:
     void deliver(int cargo, int port1, int port2) const override{
-        std::cout << "Доставка груза " << cargo << " из порта " << port1 
+        std::std::cout << "Доставка груза " << cargo << " из порта " << port1 
         << " в порт " << port2 << " по морю\n";
     }
 };
@@ -37,7 +37,7 @@ int main(){
 }
 //=--------------------Перегрузка опов
 #include <iostream>
-using namespace std;
+ 
 
 class Box{
 public:
@@ -56,5 +56,5 @@ int main(){
     Box box2(30, 40);
 
     Box result = box1 + box2;  // Вызов перегруженного оператора
-    cout << "Ширина: " << result.width << ", Высота: " << result.height << endl;
+    std::cout << "Ширина: " << result.width << ", Высота: " << result.height << endl;
 }

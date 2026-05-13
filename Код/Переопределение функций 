@@ -1,7 +1,7 @@
 
 
 #include <iostream>
-using namespace std;
+ 
 
 
 
@@ -33,15 +33,15 @@ int main(){
     double x = 2.5, y = 1.5;
     MathOperations<int> mathOperations1(a, b);
 
-    cout << "Сумма целых чисел: " << mathOperations1.add() << endl;
-    cout << "Разность целых чисел: " << mathOperations1.subtract() << endl;
-    cout << "Произведение целых чисел: " << mathOperations1.multiply() << endl;
+    std::cout << "Сумма целых чисел: " << mathOperations1.add() << endl;
+    std::cout << "Разность целых чисел: " << mathOperations1.subtract() << endl;
+    std::cout << "Произведение целых чисел: " << mathOperations1.multiply() << endl;
 
     MathOperations<double> mathOperations2(x, y);
 
-    cout << "Сумма вещественных чисел: " << mathOperations2.add() << endl;
-    cout << "Разность вещественных чисел: " << mathOperations2.subtract() << endl;
-    cout << "Произведение вещественных чисел: " << mathOperations2.multiply() << endl;
+    std::cout << "Сумма вещественных чисел: " << mathOperations2.add() << endl;
+    std::cout << "Разность вещественных чисел: " << mathOperations2.subtract() << endl;
+    std::cout << "Произведение вещественных чисел: " << mathOperations2.multiply() << endl;
 
     return 0;
 }
@@ -50,7 +50,7 @@ int main(){
 
 // #include <iostream>
 // #include <stdexcept>
-// using namespace std;
+//  
 
 
 // template <typename T>
@@ -77,9 +77,9 @@ int main(){
 //     double b = 12.2;
 //     sumiu<int> data1(a, b);
 
-//     cout << data1.summ() << endl << data1.multiplate() << endl;
+//     std::cout << data1.summ() << endl << data1.multiplate() << endl;
 
 //     sumiu<double> data2(a, b);
-//     cout << data2.summ() << endl << data2.multiplate() << endl;
+//     std::cout << data2.summ() << endl << data2.multiplate() << endl;
     
 // }

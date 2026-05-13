@@ -4,10 +4,11 @@
 #include "LinkedList.hpp"
 #include "iostream"
 #include <cstddef>
-#include <stdexcept>
-#include <format>
+#include <string>
 
-using namespace std;
+#include "exceptions.hpp"
+
+ 
 
 template <typename T >
 class ListSequence : public Sequence<T>{
@@ -80,7 +81,7 @@ void ListSequence<T>::PrependInternal(T item){
 template <typename T >
 void ListSequence<T>::InsertAtInternal(T item, size_t index){
     if(index > items->GetLength()){
-        throw invalid_argument(format("Индекс вне диапазона (индекс:{}, максимум:{})", index, items->GetLength()));
+        throw IndexOutOfRangeException(std::format("Индекс вне диапазона (индекс:{}, максимум:{})", index, items->GetLength()));
     }
     items->InsertAt(item, index);
 }
@@ -121,12 +122,12 @@ ListSequence<T>::ListSequence(const ArraySequence<T>& arraySeq) : ListSequence()
 
 template <typename T >
 T ListSequence<T>::GetFirst() const{
-    return items->Get(0);
+    return items->GetFirst();
 }
 
 template <typename T >
 T ListSequence<T>::GetLast() const{
-    return items->Get(items->GetLength() - 1);
+    return items->GetLast();
 }
 
 template <typename T >
@@ -139,7 +140,7 @@ ListSequence<T>* ListSequence<T>::GetSubsequence(size_t startIndex, size_t endIn
 
     if(endIndex < startIndex || startIndex >= items->GetLength() || endIndex >= items->GetLength()){
 
-        throw invalid_argument(format("Ошибка индекса (start:{}, end:{}, size:{})", startIndex, endIndex, items->GetLength()));
+        throw IndexOutOfRangeException(std::format("Ошибка индекса (start:{}, end:{}, size:{})", startIndex, endIndex, items->GetLength()));
     }
 
     LinkedList<T>* items_sub_list;
@@ -177,7 +178,7 @@ template <typename T >
 ListSequence<T>* ListSequence<T>::InsertAt(T item, size_t index){
 
     if(index > items->GetLength()){
-        throw invalid_argument(format("Индекс вне диапазона (индекс:{}, максимум:{})", index, items->GetLength()));
+        throw IndexOutOfRangeException(std::format("Индекс вне диапазона (индекс:{}, максимум:{})", index, items->GetLength()));
     }
 
     ListSequence<T>* list = Instance();
@@ -288,7 +289,7 @@ Sequence<T>* ListSequence<T>::ReflectSum() const{
         size_t len = this->GetLength();
 
         if (len == 0){
-            throw invalid_argument("ReflectSum: список пуст");
+            throw EmptySequenceException("ReflectSum: список пуст");
         }
         
         T* arr = new T[len];
@@ -301,6 +302,6 @@ Sequence<T>* ListSequence<T>::ReflectSum() const{
         return result;
     } 
     else{
-        throw invalid_argument("доступна только для числовых типов");
+        throw InvalidSizeException("доступна только для числовых типов");
     }
 }

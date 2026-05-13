@@ -1,11 +1,12 @@
 #pragma once
 
 #include <iostream>
-#include <stdexcept>
 #include <cstddef>
-#include <format>
+#include <string>
 
-using namespace std;
+#include "exceptions.hpp"
+
+ 
 
 
 template <typename T > 
@@ -72,10 +73,10 @@ LinkedList<T>::Node::Node(T val){
 template <typename T >
 LinkedList<T>::LinkedList(T* items, size_t count){
     if(count == 0){
-        throw invalid_argument("Размер <= 0 ");
+        throw InvalidSizeException("Размер <= 0 ");
     }
     if(items == nullptr){
-        throw invalid_argument("Переданный масив пуст");
+        throw NullPtrException("Переданный масив пуст");
     }
 
     head = nullptr;
@@ -118,7 +119,7 @@ LinkedList<T>::LinkedList(const LinkedList<T>& list) : head(nullptr), tail(nullp
 template <typename T >
 T LinkedList<T>::GetFirst(){
     if(head == nullptr){
-        throw invalid_argument("Список пуст");
+        throw EmptySequenceException("Список пуст");
     }
     return head->value;
 }
@@ -126,7 +127,7 @@ T LinkedList<T>::GetFirst(){
 template <typename T >
 T LinkedList<T>::GetLast(){
     if(tail == nullptr){
-        throw invalid_argument("Список пуст");
+        throw EmptySequenceException("Список пуст");
     }
     return tail->value;
 }
@@ -135,7 +136,7 @@ template <typename T >
 T LinkedList<T>::Get(size_t index) const{
     size_t length = GetLength();
     if(index >= length){
-        throw invalid_argument(format("Индекс вне списка (индекс:{}, размер:{})", index, length));
+        throw IndexOutOfRangeException(std::format("Индекс вне списка (индекс:{}, размер:{})", index, length));
     }
 
     if(index < length / 2){
@@ -158,7 +159,7 @@ template <typename T >
 LinkedList<T>* LinkedList<T>::GetSubList(size_t startIndex, size_t endIndex){
     size_t length = GetLength();
     if(endIndex < startIndex || startIndex >= length || endIndex >= length){
-        throw invalid_argument(format("Ошибка индекса (start:{}, end:{}, size:{})", startIndex, endIndex, length));
+        throw IndexOutOfRangeException(std::format("Ошибка индекса (start:{}, end:{}, size:{})", startIndex, endIndex, length));
     }
 
     size_t len = endIndex - startIndex + 1;
@@ -227,7 +228,7 @@ template <typename T >
 void LinkedList<T>::InsertAt(T item, size_t index){
     size_t length = GetLength();
     if(index > length){
-        throw invalid_argument(format("Индекс вне диапазона (индекс:{}, максимум:{})", index, length));
+        throw IndexOutOfRangeException(std::format("Индекс вне диапазона (индекс:{}, максимум:{})", index, length));
     }
 
     if(index == 0){

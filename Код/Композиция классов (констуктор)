@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-using namespace std;
+ 
 
 class Engine{
 public:
@@ -10,7 +10,7 @@ public:
     Engine(int hp) : horsepower(hp){}
 
     void displayInfo(){
-        cout << "Двигатель: " << horsepower << " л.с." << endl;
+        std::cout << "Двигатель: " << horsepower << " л.с." << endl;
     }
 
 };
@@ -29,7 +29,7 @@ class Car{
     }
     //---------------------
     void displayInfo(){
-        cout <<"Марка: " <<  brand << ", Модель: " << model << ", Год: " << year << endl;
+        std::cout <<"Марка: " <<  brand << ", Модель: " << model << ", Год: " << year << endl;
         engine.displayInfo();
 
     }

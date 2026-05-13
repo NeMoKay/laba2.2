@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-using namespace std;
+ 
 
 class Employee{
     private:
@@ -15,15 +15,15 @@ class Employee{
             position = new_position;
         }
         void ShowInfo(){
-            cout << "Имя: " << name << endl << "Должность: " << position << endl << "Зарплата: " << salary << " руб." <<  endl;
+            std::cout << "Имя: " << name << endl << "Должность: " << position << endl << "Зарплата: " << salary << " руб." <<  endl;
         }
         void Promote(string new_position){
             position = new_position;
-            cout << "Должность изменена на: " << position << endl;
+            std::cout << "Должность изменена на: " << position << endl;
         }
         void SetSalary(double new_salary){
             salary = new_salary;
-            cout << "Зарплата изменена: стала " << new_salary << " руб." << endl;
+            std::cout << "Зарплата изменена: стала " << new_salary << " руб." << endl;
         }
 
        

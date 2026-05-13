@@ -4,20 +4,12 @@
 #include "ListSequence.hpp"
 #include "BitSequence.hpp"
 
+
 int main(){
-    int sss[5] ={1, 2,3,4,5};
+    int sss[5] ={1, 2, 3, 4, 5};
+    LinkedList<int> A(sss, 5);
 
-
-    ArraySequence<int> A(sss, 5);
-
-    A.InsertAt(12, 10);
-
-
-
-
-
-
+    std::cout << A.Get(100);
 
     return 0;
-
 }

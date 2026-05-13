@@ -1,11 +1,12 @@
 #include "Fixtures.hpp"
+#include "exceptions.hpp"
 
 
 //Тесты конструкторов--------------------------------------------
 
 TEST_F(Dynamic_Array_Fixture, Defoult_Constructor_invalid_argument){
     DynamicArray<int> arr;
-    EXPECT_THROW(arr.Get(0), invalid_argument) << "Ожидается invalid_argument. По факту : исключение не выброшено";
+    EXPECT_THROW(arr.Get(0), IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException. По факту : исключение не выброшено";
 }
 
 TEST_F(Dynamic_Array_Fixture, SizeConstructor){
@@ -29,7 +30,7 @@ TEST_F(Dynamic_Array_Fixture, ArrayConstructor){
 }
 
 TEST_F(Dynamic_Array_Fixture, ArrayConstructor_invalid_argument){
-    EXPECT_THROW(DynamicArray<int>(nullptr, 5), invalid_argument) << "Ожидается invalid_argument. По факту : исключение не выброшено";
+    EXPECT_THROW(DynamicArray<int>(nullptr, 5), NullPtrException) << "Ожидается NullPtrException. По факту : исключение не выброшено";
 }
 
 TEST_F(Dynamic_Array_Fixture, CopyConstructor){
@@ -56,7 +57,7 @@ TEST_F(Dynamic_Array_Fixture, GET){
 }
 
 TEST_F(Dynamic_Array_Fixture, GET_invalid_argument){
-    EXPECT_THROW(array_int->Get(100), invalid_argument) << "Ожидается invalid_argument для индекса 100";
+    EXPECT_THROW(array_int->Get(100), IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для индекса 100";
 }
 
 
@@ -69,7 +70,7 @@ TEST_F(Dynamic_Array_Fixture, SET){
 }
 
 TEST_F(Dynamic_Array_Fixture, SET_invalid_argument){
-    EXPECT_THROW(array_int->Set(100, 42), invalid_argument) << "Ожидается invalid_argument для индекса 100";
+    EXPECT_THROW(array_int->Set(100, 42), IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для индекса 100";
 }
 
 TEST_F(Dynamic_Array_Fixture, Resize_positive){
@@ -85,14 +86,14 @@ TEST_F(Dynamic_Array_Fixture, Resize_negative){
 
     EXPECT_EQ(array_int->Get(0), 42) << "Ожидаемый элемент 42. По факту : " << array_int->Get(0);
     EXPECT_EQ(array_int->Get(2), 69) << "Ожидаемый элемент 69. По факту : " << array_int->Get(2);
-    EXPECT_THROW(array_int->Get(3), invalid_argument) << "Ожидается invalid_argument для индекса 3";
+    EXPECT_THROW(array_int->Get(3), IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для индекса 3";
 }
 
 
 TEST_F(Dynamic_Array_Fixture, Resize_ToZero){
     array_int->Resize(0);
 
-    EXPECT_THROW(array_int->Get(0), invalid_argument) << "Ожидается invalid_argument для индекса 0";
+    EXPECT_THROW(array_int->Get(0), IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для индекса 0";
 }
 
 
@@ -100,7 +101,7 @@ TEST_F(Dynamic_Array_Fixture, Resize_1){
     array_int->Resize(1);
 
     EXPECT_EQ(array_int->Get(0), 42) << "Ожидаемый элемент 42. По факту : " << array_int->Get(0);
-    EXPECT_THROW(array_int->Get(1), invalid_argument) << "Ожидается invalid_argument для индекса 1";
+    EXPECT_THROW(array_int->Get(1), IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для индекса 1";
 }
 
 TEST_F(Dynamic_Array_Fixture, Resize_Set){

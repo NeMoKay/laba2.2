@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cmath>
-using namespace std;
+ 
 
 // Базовый абстрактный класс Vector
 class Vector{
@@ -19,7 +19,7 @@ class Vector2D : public Vector{
     Vector2D(int new_x, int new_y) : Vector( new_x,  new_y){};
 
     void print(){
-        cout << "(" << x << ", " << y << ")";
+        std::cout << "(" << x << ", " << y << ")";
     }
     Vector2D add(Vector2D& A, Vector2D& B){
         return{A.x + B.x, A.y + B.y};
@@ -40,17 +40,17 @@ int main(){
     Vector2D* v1 = new Vector2D(1.0, 2.0);
     Vector2D* v2 = new Vector2D(3.0, 4.0);
 
-    cout << "v1 = "; v1->print(); cout << endl;
-    cout << "v2 = "; v2->print(); cout << endl;
+    std::cout << "v1 = "; v1->print(); std::cout << endl;
+    std::cout << "v2 = "; v2->print(); std::cout << endl;
 
     Vector2D* sum = v1->add(v2);
-    cout << "v1 + v2 = "; sum->print(); cout << endl;
+    std::cout << "v1 + v2 = "; sum->print(); std::cout << endl;
 
     Vector2D* diff = v1->subtract(v2);
-    cout << "v1 - v2 = "; diff->print(); cout << endl;
+    std::cout << "v1 - v2 = "; diff->print(); std::cout << endl;
 
-    cout << "v1 * v2 = " << v1->dotProduct(v2) << endl;
-    cout << "v1 == v2? " << (v1->equals(v2) ? "true" : "false") << endl;
+    std::cout << "v1 * v2 = " << v1->dotProduct(v2) << endl;
+    std::cout << "v1 == v2? " << (v1->equals(v2) ? "true" : "false") << endl;
 
     // Удалите выделенную память
 

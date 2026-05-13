@@ -1,4 +1,5 @@
 #include "Fixtures.hpp"
+#include "exceptions.hpp"
 
 
 //Тесты конструкторов--------------------------------------------
@@ -6,9 +7,9 @@
 TEST_F(LinkedList_Fixture, Defoult_Constructor_invalid_argument){
     LinkedList<int> list;
     EXPECT_EQ(list.GetLength(), 0) << "Ожидаемая длина 0. По факту : " << list.GetLength();
-    EXPECT_THROW(list.GetFirst(), invalid_argument) << "Ожидается invalid_argument. По факту : исключение не выброшено";
-    EXPECT_THROW(list.GetLast(), invalid_argument) << "Ожидается invalid_argument. По факту : исключение не выброшено";
-    EXPECT_THROW(list.Get(0), invalid_argument) << "Ожидается invalid_argument. По факту : исключение не выброшено";
+    EXPECT_THROW(list.GetFirst(), EmptySequenceException) << "Ожидается EmptySequenceException. По факту : исключение не выброшено";
+    EXPECT_THROW(list.GetLast(), EmptySequenceException) << "Ожидается EmptySequenceException. По факту : исключение не выброшено";
+    EXPECT_THROW(list.Get(0), IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException. По факту : исключение не выброшено";
 }
 
 TEST_F(LinkedList_Fixture, SizeConstructor){
@@ -20,8 +21,8 @@ TEST_F(LinkedList_Fixture, SizeConstructor){
 }
 
 TEST_F(LinkedList_Fixture, ArrayConstructor_invalid_argument){
-    EXPECT_THROW(LinkedList<int>(nullptr, 5), invalid_argument) << "Ожидается invalid_argument. По факту : исключение не выброшено";
-    EXPECT_THROW(LinkedList<int>(data_int, 0), invalid_argument) << "Ожидается invalid_argument. По факту : исключение не выброшено";
+    EXPECT_THROW(LinkedList<int>(nullptr, 5), NullPtrException) << "Ожидается NullPtrException. По факту : исключение не выброшено";
+    EXPECT_THROW(LinkedList<int>(data_int, 0), InvalidSizeException) << "Ожидается InvalidSizeException. По факту : исключение не выброшено";
 }
 
 TEST_F(LinkedList_Fixture, CopyConstructor_separation){
@@ -33,7 +34,7 @@ TEST_F(LinkedList_Fixture, CopyConstructor_separation){
     copy.Append(42);
     EXPECT_EQ(copy.GetLength(), 6) << "Ожидаемая длина 6. По факту : " << copy.GetLength();
     EXPECT_EQ(List_int->GetLength(), 5) << "Ожидаемая длина 5. По факту : " << List_int->GetLength();
-    EXPECT_THROW(List_int->Get(5), invalid_argument) << "Ожидается invalid_argument для индекса 5";
+    EXPECT_THROW(List_int->Get(5), IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для индекса 5";
 }
 
 //Методы--------------------------------------------------------
@@ -45,7 +46,7 @@ TEST_F(LinkedList_Fixture, GetFirst){
 
 TEST_F(LinkedList_Fixture, GetFirst_invalid_argument){
     LinkedList<int> list;
-    EXPECT_THROW(list.GetFirst(), invalid_argument) << "Ожидается invalid_argument. По факту : исключение не выброшено";
+    EXPECT_THROW(list.GetFirst(), EmptySequenceException) << "Ожидается EmptySequenceException. По факту : исключение не выброшено";
 }
 
 TEST_F(LinkedList_Fixture, GetLast){
@@ -55,7 +56,7 @@ TEST_F(LinkedList_Fixture, GetLast){
 
 TEST_F(LinkedList_Fixture, GetLast_invalid_argument){
     LinkedList<int> list;
-    EXPECT_THROW(list.GetLast(), invalid_argument) << "Ожидается invalid_argument. По факту : исключение не выброшено";
+    EXPECT_THROW(list.GetLast(), EmptySequenceException) << "Ожидается EmptySequenceException. По факту : исключение не выброшено";
 }
 
 
@@ -68,8 +69,8 @@ TEST_F(LinkedList_Fixture, Get){
 }
 
 TEST_F(LinkedList_Fixture, Get_invalid_argument){
-    EXPECT_THROW(List_int->Get(5), invalid_argument) << "Ожидается invalid_argument для индекса 5";
-    EXPECT_THROW(List_int->Get(100), invalid_argument) << "Ожидается invalid_argument для индекса 100";
+    EXPECT_THROW(List_int->Get(5), IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для индекса 5";
+    EXPECT_THROW(List_int->Get(100), IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для индекса 100";
 }
 
 TEST_F(LinkedList_Fixture, GetSubList){
@@ -89,9 +90,9 @@ TEST_F(LinkedList_Fixture, GetSubList_1){
 }
 
 TEST_F(LinkedList_Fixture, GetSubList_invalid_argument){
-    EXPECT_THROW(List_int->GetSubList(2, 1), invalid_argument) << "Ожидается invalid_argument для диапазона (2,1)";
-    EXPECT_THROW(List_int->GetSubList(2, 10), invalid_argument) << "Ожидается invalid_argument для диапазона (2,10)";
-    EXPECT_THROW(List_int->GetSubList(5, 6), invalid_argument) << "Ожидается invalid_argument для диапазона (5,6)";
+    EXPECT_THROW(List_int->GetSubList(2, 1), IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для диапазона (2,1)";
+    EXPECT_THROW(List_int->GetSubList(2, 10), IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для диапазона (2,10)";
+    EXPECT_THROW(List_int->GetSubList(5, 6), IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для диапазона (5,6)";
 }
 
 
@@ -164,8 +165,8 @@ TEST_F(LinkedList_Fixture, InsertAt_middle){
 }
 
 TEST_F(LinkedList_Fixture, InsertAt_invalid_argument){
-    EXPECT_THROW(List_int->InsertAt(10, 10), invalid_argument) << "Ожидается invalid_argument для индекса 10";
-    EXPECT_THROW(List_int->InsertAt(10, 100), invalid_argument) << "Ожидается invalid_argument для индекса 100";
+    EXPECT_THROW(List_int->InsertAt(10, 10), IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для индекса 10";
+    EXPECT_THROW(List_int->InsertAt(10, 100), IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для индекса 100";
 }
 
 

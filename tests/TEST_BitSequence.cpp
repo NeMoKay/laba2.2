@@ -6,7 +6,7 @@
 TEST_F(BitSequence_Fixture, defolt_constructor){
     BitSequence<char> bs;
     EXPECT_EQ(bs.GetLength(), 0) << "Ожидаемая длина 0. По факту : " << bs.GetLength();
-    EXPECT_THROW(bs.GetFirst(), invalid_argument) << "Ожидается invalid_argument. По факту : исключение не выброшено";
+    EXPECT_THROW(bs.GetFirst(), EmptySequenceException) << "Ожидается EmptySequenceException. По факту : исключение не выброшено";
 }
 
 TEST_F(BitSequence_Fixture, array_constructor){
@@ -18,7 +18,7 @@ TEST_F(BitSequence_Fixture, array_constructor){
 }
 
 TEST_F(BitSequence_Fixture, array_invalid_argument){
-    EXPECT_THROW(BitSequence<char>(nullptr, 5), invalid_argument) << "Ожидается invalid_argument. По факту : исключение не выброшено";
+    EXPECT_THROW(BitSequence<char>(nullptr, 5), NullPtrException) << "Ожидается NullPtrException. По факту : исключение не выброшено";
 }
 
 TEST_F(BitSequence_Fixture, copy_constructor){
@@ -38,8 +38,8 @@ TEST_F(BitSequence_Fixture, get_first_last){
 
 TEST_F(BitSequence_Fixture, get_first_last_invalid_argument){
     BitSequence<char> empty;
-    EXPECT_THROW(empty.GetFirst(), invalid_argument) << "Ожидается invalid_argument при GetFirst()";
-    EXPECT_THROW(empty.GetLast(), invalid_argument) << "Ожидается invalid_argument при GetLast()";
+    EXPECT_THROW(empty.GetFirst(), EmptySequenceException) << "Ожидается EmptySequenceException при GetFirst()";
+    EXPECT_THROW(empty.GetLast(), EmptySequenceException) << "Ожидается EmptySequenceException при GetLast()";
 }
 
 TEST_F(BitSequence_Fixture, get){
@@ -50,8 +50,8 @@ TEST_F(BitSequence_Fixture, get){
 }
 
 TEST_F(BitSequence_Fixture, get_invalid_argument){
-    EXPECT_THROW(Sequence->Get(8), invalid_argument) << "Ожидается invalid_argument для индекса 8";
-    EXPECT_THROW(Sequence->Get(100), invalid_argument) << "Ожидается invalid_argument для индекса 100";
+    EXPECT_THROW(Sequence->Get(8), IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для индекса 8";
+    EXPECT_THROW(Sequence->Get(100), IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для индекса 100";
 }
 
 TEST_F(BitSequence_Fixture, get_length){
@@ -93,8 +93,8 @@ TEST_F(BitSequence_Fixture, insert_end){
 }
 
 TEST_F(BitSequence_Fixture, insert_invalid_argument){
-    EXPECT_THROW(Sequence->InsertAt(Bit<char>(1), 9), invalid_argument) << "Ожидается invalid_argument для индекса 9";
-    EXPECT_THROW(Sequence->InsertAt(Bit<char>(1), 100), invalid_argument) << "Ожидается invalid_argument для индекса 100";
+    EXPECT_THROW(Sequence->InsertAt(Bit<char>(1), 9), IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для индекса 9";
+    EXPECT_THROW(Sequence->InsertAt(Bit<char>(1), 100), IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для индекса 100";
 }
 
 TEST_F(BitSequence_Fixture, concat){
@@ -125,9 +125,9 @@ TEST_F(BitSequence_Fixture, subseq){
 }
 
 TEST_F(BitSequence_Fixture, Sequence_invalid_argument){
-    EXPECT_THROW(Sequence->GetSubsequence(2, 1), invalid_argument) << "Ожидается invalid_argument для диапазона (2,1)";
-    EXPECT_THROW(Sequence->GetSubsequence(2, 10), invalid_argument) << "Ожидается invalid_argument для диапазона (2,10)";
-    EXPECT_THROW(Sequence->GetSubsequence(5, 8), invalid_argument) << "Ожидается invalid_argument для диапазона (5,8)";
+    EXPECT_THROW(Sequence->GetSubsequence(2, 1), IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для диапазона (2,1)";
+    EXPECT_THROW(Sequence->GetSubsequence(2, 10), IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для диапазона (2,10)";
+    EXPECT_THROW(Sequence->GetSubsequence(5, 8), IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для диапазона (5,8)";
 }
 
 //Битовые операции----------------------------------------------
@@ -152,7 +152,7 @@ TEST_F(BitSequence_Fixture, AND_diff_length){
     Bit<char> short_bits[4] ={Bit<char>(1), Bit<char>(0), Bit<char>(1), Bit<char>(0)};
     BitSequence<char> short_seq(short_bits, 4);
     
-    EXPECT_THROW((*Sequence) & short_seq, invalid_argument) << "Ожидается invalid_argument при разных длинах";
+    EXPECT_THROW((*Sequence) & short_seq, LengthMismatchException) << "Ожидается LengthMismatchException при разных длинах";
 }
 
 TEST_F(BitSequence_Fixture, OR){

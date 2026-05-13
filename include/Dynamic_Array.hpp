@@ -2,12 +2,14 @@
 
 #include "sequence.hpp"
 #include <iostream>
-#include <stdexcept>
 #include <cstddef>
+#include <string>
+
+#include "exceptions.hpp"
 
 
 
-using namespace std;
+ 
 
 
 template <typename T>
@@ -41,7 +43,7 @@ DynamicArray<T>::DynamicArray(size_t count) : data(new T[count]), size(count){}
 template <typename T >
 DynamicArray<T>::DynamicArray(T* items, size_t count) : DynamicArray(count){
     if(items == nullptr){
-        throw invalid_argument("Переданный массив пуст");
+        throw NullPtrException("Переданный массив пуст");
     }
     for(size_t i = 0; i < size; i++){
         data[i] = items[i];
@@ -59,7 +61,7 @@ DynamicArray<T>::DynamicArray(const DynamicArray<T> & array) : size(array.size){
 template <typename T >
 T DynamicArray<T>::Get(size_t index){
     if(index >= size){
-        throw invalid_argument("Ошибка индекса");
+        throw IndexOutOfRangeException("Ошибка индекса");
     }
     return data[index];
 }
@@ -67,7 +69,7 @@ T DynamicArray<T>::Get(size_t index){
 template <typename T >
 void DynamicArray<T>::Set(size_t index, T value){
     if(index >= size){
-        throw invalid_argument("Ошибка индекса");
+        throw IndexOutOfRangeException("Ошибка индекса");
     }
     data[index] = value;
 }

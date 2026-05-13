@@ -1,9 +1,14 @@
 #pragma once
 #include <iostream>
 #include <type_traits>
-#include <stdexcept> 
+#include <string>
 
-using namespace std;//////убрать исключения и переписать интерфейс
+#include "exceptions.hpp"
+
+using namespace std;
+
+
+
 
 template <typename T>
 struct SequenceStats{
@@ -27,7 +32,7 @@ public:
     virtual Sequence <T>* Concat(Sequence <T> *list) = 0;
 
     SequenceStats<T> get_stats() const requires is_arithmetic_v<T>; 
-    virtual Sequence<T> *ReflectSum() const;//reduce or fold (foldl, foldr)
+    virtual Sequence<T> *ReflectSum() const;
     size_t GetInversions() const;
 
     T operator[](size_t index){ 
@@ -40,7 +45,7 @@ template <typename T>
 SequenceStats<T> Sequence<T>::get_stats() const requires is_arithmetic_v<T>{
     size_t len = this->GetLength();
     if (len == 0){
-        throw invalid_argument("Список пуст");
+        throw EmptySequenceException("Список пуст");
     }
 
     SequenceStats<T> Stats{};
@@ -65,7 +70,7 @@ SequenceStats<T> Sequence<T>::get_stats() const requires is_arithmetic_v<T>{
 
 template <typename T>
 Sequence<T>* Sequence<T>::ReflectSum() const{
-    throw invalid_argument("Нет реализации");
+    throw InvalidSizeException("Нет реализации");
 }
 
 
@@ -83,5 +88,3 @@ size_t Sequence<T>::GetInversions() const{
     }
     return count;
 }
-
-
