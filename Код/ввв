@@ -1,0 +1,407 @@
+#include "httplib.h"
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+#include "ArraySequence.hpp"
+#include "ListSequence.hpp"
+#include "BitSequence.hpp"
+#include <iostream>
+#include <string>
+#include <memory>
+#include <mutex>
+#include <stdexcept>
+
+
+
+
+
+using json = nlohmann::json;
+std::mutex state_mutex;
+
+std::unique_ptr<ArraySequence<int>> arr_seq = std::make_unique<ArraySequence<int>>();
+std::unique_ptr<ListSequence<int>> list_seq = std::make_unique<ListSequence<int>>(); // не полиморфизм нужно сделай умный полиморфзм
+std::unique_ptr<BitSequence<int>> bit_seq = std::make_unique<BitSequence<int>>();
+
+
+int mapMult2(int x){ return x * 2; }
+bool isEven(int x){ return x % 2 == 0; } // зачем если есть готовые функции в фикстурах 
+int reduceSum(int acc, int x){ return acc + x; }
+
+
+json toJson(const Sequence<int>* seq){
+    json j = json::array();
+    if (seq){
+        for(size_t i = 0; i < seq->GetLength(); i++){
+            j.push_back(seq->Get(i));
+        }
+    }
+    return j;
+}
+
+json bitToJson(const BitSequence<int>* seq){
+    json j = json::array();
+    if (seq){
+        for(size_t i = 0; i < seq->GetLength(); i++){
+            j.push_back(static_cast<bool>(seq->Get(i)) ? 1 : 0);
+        }
+    }
+    return j;
+}
+
+
+
+std::string build_response(const std::string& type, const std::string& log){
+    json response;
+    
+    if(type == "array") response["state"] = toJson(arr_seq.get());
+    else if(type == "list") response["state"] = toJson(list_seq.get());
+    else if(type == "bit") response["state"] = bitToJson(bit_seq.get());
+    else response["state"] = json::array();
+    
+    response["log"] = log;
+    return response.dump();
+}
+
+int main(){
+    httplib::Server svr;
+
+    svr.set_mount_point("/", "./interface_html");
+
+    svr.Get("/api/get_state", [](const httplib::Request& req, httplib::Response& res){
+        std::lock_guard<std::mutex> lock(state_mutex);
+        std::string type = req.get_param_value("type");
+        res.set_content(build_response(type, "Retrieved State"), "application/json");
+    });
+     
+    svr.Get("/api/clear", [](const httplib::Request& req, httplib::Response& res){
+        std::lock_guard<std::mutex> lock(state_mutex);
+        std::string type = req.get_param_value("type");
+        
+        if(type == "array") arr_seq = std::make_unique<ArraySequence<int>>();
+        else if(type == "list") list_seq = std::make_unique<ListSequence<int>>();
+        else if(type == "bit") bit_seq = std::make_unique<BitSequence<int>>();
+        
+        res.set_content(build_response(type, "Cleared!"), "application/json");
+    });
+
+    svr.Post("/api/action", [](const httplib::Request& req, httplib::Response& res){
+        std::lock_guard<std::mutex> lock(state_mutex);
+        
+        std::string log = "Success";
+        std::string type = "array"; 
+        
+        try{
+            auto body = json::parse(req.body);
+            
+            type = body.value("type", "array");
+            std::string act = body.value("act", "");
+            int val = body.value("val", 0);
+            size_t idx = body.value("idx", 0);
+            size_t start = body.value("start", 0);
+            size_t end = body.value("end", 0);
+            std::string mask = body.value("mask", "");
+
+            if (type == "array" || type == "list"){
+                Sequence<int>* s = (type == "array") ? static_cast<Sequence<int>*>(arr_seq.get()) 
+                                                     : static_cast<Sequence<int>*>(list_seq.get());
+                
+                if (act == "append") s->Append(val);
+                else if (act == "prepend") s->Prepend(val);//("/api/action" надо так if else if else if else говно проще говоря нужны отдельные эндпоинты для каждой операции
+                else if (act == "insert") s->InsertAt(val, idx);
+                else if (act == "get_first") log = "First: " + std::to_string(s->GetFirst());
+                else if (act == "get_last") log = "Last: " + std::to_string(s->GetLast());
+                else if (act == "get") log = "Item: " + std::to_string(s->Get(idx));
+                else if (act == "concat"){
+                    ArraySequence<int> temp;
+                    if (body.contains("items") && body["items"].is_array()){
+                        for (int item_val : body["items"]){
+                            temp.Append(item_val);
+                        }
+                    }
+                    s->Concat(&temp);
+                }
+                else if (act == "subseq"){ 
+                    std::unique_ptr<Sequence<int>> sub(s->GetSubsequence(start, end)); 
+                    log = "Subseq : " + toJson(sub.get()).dump(); 
+                }
+                else if (act == "reduce"){
+                    if (type == "array") log = "Result: " + std::to_string(arr_seq->Reduce(reduceSum, 0));
+                    else log = "Result: " + std::to_string(list_seq->Reduce(reduceSum, 0));
+                }
+                else if (act == "map" || act == "where"){
+                    if (type == "array"){
+                        auto result = (act == "map") ? arr_seq->Map(mapMult2) : arr_seq->Where(isEven);
+                        arr_seq.reset(dynamic_cast<ArraySequence<int>*>(result));
+                    } else{
+                        auto result = (act == "map") ? list_seq->Map(mapMult2) : list_seq->Where(isEven);
+                        list_seq.reset(dynamic_cast<ListSequence<int>*>(result));
+                    }
+                    log = "Applied " + act;
+                }
+            } 
+            else if (type == "bit"){
+                BitSequence<int>* b = bit_seq.get();
+                
+                if (act == "append") b->Append(Bit<int>(val));
+                else if (act == "prepend") b->Prepend(Bit<int>(val));
+                else if (act == "insert") b->InsertAt(Bit<int>(val), idx);
+                else if (act == "get_first") log = "First: " + std::to_string(static_cast<bool>(b->GetFirst()) ? 1 : 0);
+                else if (act == "get_last") log = "Last: " + std::to_string(static_cast<bool>(b->GetLast()) ? 1 : 0);
+                else if (act == "get") log = "Item: " + std::to_string(static_cast<bool>(b->Get(idx)) ? 1 : 0);
+                else if (act == "concat"){
+                    BitSequence<int> temp; 
+                    if (body.contains("items") && body["items"].is_array()){
+                        for (int item_val : body["items"]){
+                            temp.Append(Bit<int>(item_val));
+                        }
+                    }
+                    b->Concat(&temp);
+                }
+                else if (act == "subseq"){ 
+                    std::unique_ptr<BitSequence<int>> sub(b->GetSubsequence(start, end)); 
+                    log = "Subseq : " + bitToJson(sub.get()).dump(); 
+                }
+                else if (act == "bit_not"){ 
+                    bit_seq = std::make_unique<BitSequence<int>>(~(*b)); 
+                }
+                else if (act == "bit_and" || act == "bit_or" || act == "bit_xor"){
+                    BitSequence<int> maskSeq; 
+                    for (char c : mask) maskSeq.Append(Bit<int>(c == '1' ? 1 : 0));
+                    
+                    if (act == "bit_and") bit_seq = std::make_unique<BitSequence<int>>(*b & maskSeq);
+                    else if (act == "bit_or") bit_seq = std::make_unique<BitSequence<int>>(*b | maskSeq);
+                    else if (act == "bit_xor") bit_seq = std::make_unique<BitSequence<int>>(*b ^ maskSeq);
+                }
+            } else{
+                log = "Unknown sequence type";
+            }
+        } catch(const json::exception& e){
+            log = std::string("JSON Parse Error: ") + e.what();
+        } catch(const std::exception& e){
+            log = std::string("Error: ") + e.what();
+        }
+        
+        res.set_content(build_response(type, log), "application/json");
+    });
+
+    std::cout << "\n============================================\n";
+    std::cout << "SERVER STARTED ON: http://localhost:8080\n";
+    std::cout << "Open this URL in your browser.\n";
+    std::cout << "Press Ctrl+C to stop.\n";
+    std::cout << "============================================\n\n";
+    
+    svr.listen("0.0.0.0", 8080);
+    return 0;
+}
+///----------------------------
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>C++ Sequences UI</title>
+    <style>
+        :root{
+            --bg-color: #0b0710;
+            --panel-bg: rgba(21, 14, 31, 0.85);
+            --primary: #9d4edd;
+            --primary-hover: #e0aaff;
+            --text: #e0d4f5;
+            --border: #5a189a;
+            --accent: #c77dff;
+        }
+        body{
+            background-color: var(--bg-color);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0b0710 0%, #1c0b2b 100%);
+        }
+        h1{
+            color: var(--primary-hover);
+            text-shadow: 0 0 15px var(--primary);
+            margin: 30px 0; font-size: 2.5em; letter-spacing: 2px;
+        }
+        .container{
+            background: var(--panel-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            width: 100%; max-width: 800px;
+            box-shadow: 0 0 25px rgba(157, 78, 221, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        .header-controls{
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 20px;
+        }
+        select{
+            background: #240046; border: 1px solid var(--border); color: white;
+            padding: 10px 15px; border-radius: 8px; font-size: 1.1em; outline: none; cursor: pointer;
+            box-shadow: 0 0 10px rgba(90, 24, 154, 0.5);
+        }
+        button{
+            background: var(--primary); color: white; border: none;
+            padding: 10px 16px; border-radius: 6px; font-size: 0.95em;
+            cursor: pointer; transition: all 0.2s ease;
+            font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
+            box-shadow: 0 0 8px rgba(157, 78, 221, 0.4);
+        }
+        button:hover{ background: var(--accent); box-shadow: 0 0 15px var(--primary-hover); transform: translateY(-1px); }
+        button:active{ transform: translateY(1px); }
+        
+        .display{
+            background: #000; padding: 25px; border-radius: 10px;
+            font-family: 'Courier New', Courier, monospace; font-size: 1.6em; letter-spacing: 3px;
+            color: var(--accent); border: 1px solid var(--border);
+            min-height: 45px; word-wrap: break-word; text-align: center;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.8);
+            margin-bottom: 15px;
+        }
+        .log{ font-size: 1em; color: #a491bc; margin-bottom: 25px; display:flex; justify-content: space-between; }
+        
+        .grid{ display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .control-group{
+            border: 1px solid var(--border); padding: 20px; border-radius: 10px;
+            background: rgba(36, 0, 70, 0.3);
+        }
+        .control-group h3{ margin-top: 0; color: var(--primary-hover); font-size: 1.2em; border-bottom: 1px solid var(--border); padding-bottom: 10px;}
+        .input-row{ display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+        input{
+            background: #10002b; border: 1px solid var(--border); color: white;
+            padding: 8px 10px; border-radius: 6px; outline: none; width: 60px; text-align: center; font-size: 1em;
+        }
+        input:focus{ border-color: var(--accent); box-shadow: 0 0 8px var(--accent); }
+        .btn-grid{ display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    </style>
+</head>
+<body>
+    <h1>SEQUENCE</h1>
+    <div class="container">
+        <div class="header-controls">
+            <select id="seqType" onchange="load()">
+                <option value="array">ArraySequence</option>
+                <option value="list">ListSequence</option>
+                <option value="bit">BitSequence</option>
+            </select>
+            <button onclick="req('clear')" style="background: #e5383b; box-shadow: 0 0 10px rgba(229, 56, 59, 0.4);">Clear C++ Memory</button>
+        </div>
+        
+        <div class="display" id="display">[]</div>
+        <div class="log">
+            <span id="log">Status: Initialized...</span>
+        </div>
+        
+        <div class="grid">
+            <div class="control-group">
+                <h3>Modify Data</h3>
+                <div class="input-row">
+                    Val: <input type="number" id="val" value="1">
+                    Idx: <input type="number" id="idx" value="0">
+                </div>
+                <div class="btn-grid">
+                    <button onclick="action('append')">Append</button>
+                    <button onclick="action('prepend')">Prepend</button>
+                    <button onclick="action('insert')">Insert At</button>
+                </div>
+                
+                <h3 style="margin-top: 15px; padding-top: 10px; border-top: 1px solid var(--border);">Concat</h3>
+                <div class="input-row">
+                    Array (CSV): <input type="text" id="csv" value="10,20" style="width: 120px; text-align: left;">
+                </div>
+                <button onclick="action('concat')" style="width: 100%;">Concat</button>
+            </div>
+            
+            <div class="control-group">
+                <h3>Retrieve Elements</h3>
+                <div class="input-row">
+                    Start: <input type="number" id="start" value="0">
+                    End: <input type="number" id="end" value="1">
+                </div>
+                <div class="btn-grid">
+                    <button onclick="action('get_first')">Get First</button>
+                    <button onclick="action('get_last')">Get Last</button>
+                    <button onclick="action('get')">Get by Idx</button>
+                    <button onclick="action('subseq')">Subsequence</button>
+                </div>
+
+                <div id="funcOps">
+                    <h3 style="margin-top: 15px; padding-top: 10px; border-top: 1px solid var(--border);">Functional (Map/Where)</h3>
+                    <div class="btn-grid">
+                        <button onclick="action('map')">Map (*2)</button>
+                        <button onclick="action('where')">Where (Evens)</button>
+                        <button onclick="action('reduce')">Reduce (Sum)</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-group" id="bitOps" style="display:none; grid-column: span 2;">
+                <h3>Binary Operations</h3>
+                <div class="input-row">
+                    Mask (binary string): <input type="text" id="mask" value="101" style="width: 200px; text-align: left; padding-left: 15px;">
+                </div>
+                <div class="btn-grid" style="grid-template-columns: repeat(4, 1fr);">
+                    <button onclick="action('bit_not')">NOT (~)</button>
+                    <button onclick="action('bit_and')">AND (&)</button>
+                    <button onclick="action('bit_or')">OR (|)</button>
+                    <button onclick="action('bit_xor')">XOR (^)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('seqType').addEventListener('change', (e) =>{
+            document.getElementById('bitOps').style.display = e.target.value === 'bit' ? 'block' : 'none';
+        });
+
+        // Функция для GET запросов (получение состояния и очистка)
+        async function req(endpoint, data ={}){
+            data.type = document.getElementById('seqType').value;
+            const params = new URLSearchParams(data);
+            try{
+                const res = await fetch(`/api/${endpoint}?${params.toString()}`);
+                const json = await res.json();
+                const displayStr = Array.isArray(json.state) ? "[ " + json.state.join(", ") + " ]" : "[]";
+                document.getElementById('display').innerText = displayStr;
+                document.getElementById('log').innerText = "Status: " + json.log;
+            } catch(e){
+                document.getElementById('log').innerText = "Status: Error calling server";
+            }
+        }
+        
+        const load = () => req('get_state');
+        async function action(act){
+            const data ={
+                type: document.getElementById('seqType').value,
+                act: act,
+                val: parseInt(document.getElementById('val').value) || 0,
+                idx: parseInt(document.getElementById('idx').value) || 0,
+                start: parseInt(document.getElementById('start').value) || 0,
+                end: parseInt(document.getElementById('end').value) || 0,
+                mask: document.getElementById('mask') ? document.getElementById('mask').value : '',
+                items: document.getElementById('csv').value.split(',').filter(x => x.trim() !== '').map(Number)
+            };
+
+            try{
+                const res = await fetch('/api/action',{
+                    method: 'POST',
+                    headers:{
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const jsonRes = await res.json();
+                const displayStr = Array.isArray(jsonRes.state) ? "[ " + jsonRes.state.join(", ") + " ]" : "[]";
+                document.getElementById('display').innerText = displayStr;
+                document.getElementById('log').innerText = "Status: " + jsonRes.log;
+            } catch(e){
+                document.getElementById('log').innerText = "Status: Error calling server";
+            }
+        }
+        
+        load();
+    </script>
+</body>
+</html>
