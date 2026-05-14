@@ -37,26 +37,31 @@
             backdrop-filter: blur(10px);
         }
         .header-controls{
-            display: flex; justify-content: space-between; align-items: center;
+            display: flex;
+            justify-content: space-between; align-items: center;
             margin-bottom: 25px; border-bottom: 1px solid var(--border); padding-bottom: 20px;
         }
         select{
-            background: #240046; border: 1px solid var(--border); color: white;
+            background: #240046;
+            border: 1px solid var(--border); color: white;
             padding: 10px 15px; border-radius: 8px; font-size: 1.1em; outline: none; cursor: pointer;
             box-shadow: 0 0 10px rgba(90, 24, 154, 0.5);
         }
         button{
-            background: var(--primary); color: white; border: none;
+            background: var(--primary);
+            color: white; border: none;
             padding: 10px 16px; border-radius: 6px; font-size: 0.95em;
             cursor: pointer; transition: all 0.2s ease;
-            font-weight: 600; text-transform: uppercase; letter-spacing: 1px;
+            font-weight: 600;
+            text-transform: uppercase; letter-spacing: 1px;
             box-shadow: 0 0 8px rgba(157, 78, 221, 0.4);
         }
         button:hover{ background: var(--accent); box-shadow: 0 0 15px var(--primary-hover); transform: translateY(-1px); }
         button:active{ transform: translateY(1px); }
         
         .display{
-            background: #000; padding: 25px; border-radius: 10px;
+            background: #000;
+            padding: 25px; border-radius: 10px;
             font-family: 'Courier New', Courier, monospace; font-size: 1.6em; letter-spacing: 3px;
             color: var(--accent); border: 1px solid var(--border);
             min-height: 45px; word-wrap: break-word; text-align: center;
@@ -67,13 +72,15 @@
         
         .grid{ display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .control-group{
-            border: 1px solid var(--border); padding: 20px; border-radius: 10px;
+            border: 1px solid var(--border);
+            padding: 20px; border-radius: 10px;
             background: rgba(36, 0, 70, 0.3);
         }
         .control-group h3{ margin-top: 0; color: var(--primary-hover); font-size: 1.2em; border-bottom: 1px solid var(--border); padding-bottom: 10px;}
         .input-row{ display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
         input{
-            background: #10002b; border: 1px solid var(--border); color: white;
+            background: #10002b;
+            border: 1px solid var(--border); color: white;
             padding: 8px 10px; border-radius: 6px; outline: none; width: 60px; text-align: center; font-size: 1em;
         }
         input:focus{ border-color: var(--accent); box-shadow: 0 0 8px var(--accent); }
@@ -134,7 +141,7 @@
                     <h3 style="margin-top: 15px; padding-top: 10px; border-top: 1px solid var(--border);">Functional (Map/Where)</h3>
                     <div class="btn-grid">
                         <button onclick="action('map')">Map (*2)</button>
-                        <button onclick="action('where')">Where (Evens)</button>
+                        <button onclick="action('where')">Where (>60)</button>
                         <button onclick="action('reduce')">Reduce (Sum)</button>
                     </div>
                 </div>
@@ -175,10 +182,10 @@
         }
         
         const load = () => req('get_state');
+
         async function action(act){
             const data ={
                 type: document.getElementById('seqType').value,
-                act: act,
                 val: parseInt(document.getElementById('val').value) || 0,
                 idx: parseInt(document.getElementById('idx').value) || 0,
                 start: parseInt(document.getElementById('start').value) || 0,
@@ -186,16 +193,14 @@
                 mask: document.getElementById('mask') ? document.getElementById('mask').value : '',
                 items: document.getElementById('csv').value.split(',').filter(x => x.trim() !== '').map(Number)
             };
-
             try{
-                const res = await fetch('/api/action',{
+                const res = await fetch(`/api/${act}`,{
                     method: 'POST',
                     headers:{
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(data)
                 });
-                
                 const jsonRes = await res.json();
                 const displayStr = Array.isArray(jsonRes.state) ? "[ " + jsonRes.state.join(", ") + " ]" : "[]";
                 document.getElementById('display').innerText = displayStr;

@@ -6,10 +6,5 @@
 
 
 int main(){
-    int sss[5] ={1, 2, 3, 4, 5};
-    LinkedList<int> A(sss, 5);
-
-    std::cout << A.Get(100);
-
     return 0;
 }
