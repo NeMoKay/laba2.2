@@ -138,7 +138,7 @@ TEST_F(ArraySequence_Fixture, subseq_invalid_argument){
 
 
 TEST_F(ArraySequence_Fixture, map){
-    Sequence<int>* mapped = seq_int->Map(double_val);
+    Sequence<int>* mapped = Map(seq_int, double_val);
     EXPECT_EQ(mapped->GetLength(), 5) << "Функция выволнения map (x * 2)" << endl << "Ожидаемая длинна 5. По факту : " << mapped->GetLength();
     EXPECT_EQ(mapped->Get(0), 84) <<  "Функция выволнения map (x * 2)" << endl << "Ожидаемый элемент 84. По факту : " << mapped->Get(0);
     EXPECT_EQ(mapped->Get(2), 138) << "Функция выволнения map (x * 2)" << endl << "Ожидаемый элемент 138. По факту : " << mapped->Get(2);
@@ -146,7 +146,7 @@ TEST_F(ArraySequence_Fixture, map){
 }
 
 TEST_F(ArraySequence_Fixture, where){
-    Sequence<int>* filtered = seq_int->Where(is_big);
+    Sequence<int>* filtered = Where(seq_int, is_big);
     EXPECT_EQ(filtered->GetLength(), 3) << "Ожидаемая длинна 3. По факту : " << filtered->GetLength();
     EXPECT_EQ(filtered->Get(0), 69) << "Функция выволнения Where (x > 60)" << endl << "Ожидаемый элемент 69. По факту : " << filtered->Get(0);
     EXPECT_EQ(filtered->Get(1), 67) <<  "Функция выволнения Where (x > 60)" << endl <<"Ожидаемый элемент 67. По факту : " << filtered->Get(1);
@@ -155,7 +155,7 @@ TEST_F(ArraySequence_Fixture, where){
 }
 
 TEST_F(ArraySequence_Fixture, reduce){
-    int total = seq_int->Reduce(sum_func, 0);
+    int total = Reduce(seq_int, sum_func, 0);
     EXPECT_EQ(total, 42 + 52 + 69 + 67 + 228) <<  "Функция выволнения reduce (sum(xi))" << endl <<"Ожидаемый элемент " << 42 + 52 + 69 + 67 + 228 << ". По факту : " << total;
 }
 

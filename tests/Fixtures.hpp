@@ -107,6 +107,7 @@ protected:
 };
 
 
+
 class BitSequence_Fixture : public testing::Test{
 protected:
     Bit<char> data_bits[8] ={

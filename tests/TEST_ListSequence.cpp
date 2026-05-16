@@ -91,19 +91,19 @@ TEST_F(ListSequence_Fixture, subseq){
 }
 
 TEST_F(ListSequence_Fixture, map){
-    Sequence<int>* mapped = seq_int->Map(double_val);
+    Sequence<int>* mapped = Map(seq_int, double_val);
     EXPECT_EQ(mapped->Get(0), 84) << "Функция выполнения map (x * 2)" << endl << "Ожидаемый элемент 84. По факту : " << mapped->Get(0);
     delete mapped;
 }
 
 TEST_F(ListSequence_Fixture, where){
-    Sequence<int>* filtered = seq_int->Where(is_big);
+    Sequence<int>* filtered = Where(seq_int, is_big);
     EXPECT_EQ(filtered->GetLength(), 3) << "Функция выполнения Where (x > 60)" << endl << "Ожидаемая длина 3. По факту : " << filtered->GetLength();
     delete filtered;
 }
 
 TEST_F(ListSequence_Fixture, reduce){
-    int total = seq_int->Reduce(sum_func, 0);
+    int total = Reduce(seq_int, sum_func, 0);
     EXPECT_EQ(total, 42 + 52 + 69 + 67 + 228) << "Функция выполнения reduce (sum(xi))" << endl << "Ожидаемый элемент " << 42 + 52 + 69 + 67 + 228 << ". По факту : " << total;
 }
 
