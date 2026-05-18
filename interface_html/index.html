@@ -176,7 +176,8 @@
                 const displayStr = Array.isArray(json.state) ? "[ " + json.state.join(", ") + " ]" : "[]";
                 document.getElementById('display').innerText = displayStr;
                 document.getElementById('log').innerText = "Status: " + json.log;
-            } catch(e){
+            } 
+            catch(e){
                 document.getElementById('log').innerText = "Status: Error calling server";
             }
         }
@@ -205,7 +206,8 @@
                 const displayStr = Array.isArray(jsonRes.state) ? "[ " + jsonRes.state.join(", ") + " ]" : "[]";
                 document.getElementById('display').innerText = displayStr;
                 document.getElementById('log').innerText = "Status: " + jsonRes.log;
-            } catch(e){
+            } 
+            catch(e){
                 document.getElementById('log').innerText = "Status: Error calling server";
             }
         }
