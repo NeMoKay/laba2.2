@@ -257,10 +257,10 @@ int main(){
             type = body.value("type", "array");
             
             if (type == "array"){
-                log = "Result: " + std::to_string(Reduce(dynamic_cast<ArraySequence<int>*>(arr_seq.get()), sum_func, 0));
+                log = "Result: " + std::to_string(Reduce(static_cast<ArraySequence<int>*>(arr_seq.get()), sum_func, 0));
             } 
             else if (type == "list"){
-                log = "Result: " + std::to_string(Reduce(dynamic_cast<ListSequence<int>*>(list_seq.get()), sum_func, 0));
+                log = "Result: " + std::to_string(Reduce(static_cast<ListSequence<int>*>(list_seq.get()), sum_func, 0));
             }
         } 
         catch(const std::exception& e){
@@ -277,10 +277,10 @@ int main(){
             type = body.value("type", "array");
             
             if (type == "array"){
-                arr_seq.reset(Map(dynamic_cast<ArraySequence<int>*>(arr_seq.get()), double_val));
+                arr_seq.reset(Map(static_cast<ArraySequence<int>*>(arr_seq.get()), double_val));
             } 
             else if (type == "list"){
-                list_seq.reset(Map(dynamic_cast<ListSequence<int>*>(list_seq.get()), double_val));
+                list_seq.reset(Map(static_cast<ListSequence<int>*>(list_seq.get()), double_val));
             }
             log = "Applied Map (*2)";
         } 
@@ -298,10 +298,10 @@ int main(){
             type = body.value("type", "array");
             
             if (type == "array"){
-                arr_seq.reset(Where(dynamic_cast<ArraySequence<int>*>(arr_seq.get()), is_big));
+                arr_seq.reset(Where(static_cast<ArraySequence<int>*>(arr_seq.get()), is_big));
             } 
             else if (type == "list"){
-                list_seq.reset(Where(dynamic_cast<ListSequence<int>*>(list_seq.get()), is_big));
+                list_seq.reset(Where(static_cast<ListSequence<int>*>(list_seq.get()), is_big));
             }
             log = "Applied Where (>60)";
         } 
