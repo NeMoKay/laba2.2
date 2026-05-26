@@ -5,32 +5,31 @@
 #include "BitSequence.hpp"
 #include <iostream>
 #include <string>
-#include <memory>
 
 using json = nlohmann::json;
 
-std::unique_ptr<Sequence<int>> arr_seq = std::make_unique<ArraySequence<int>>();
-std::unique_ptr<Sequence<int>> list_seq = std::make_unique<ListSequence<int>>();
-std::unique_ptr<BitSequence<int>> bit_seq = std::make_unique<BitSequence<int>>();
+Sequence<int>* arr_seq = new ArraySequence<int>();
+Sequence<int>* list_seq = new ListSequence<int>();
+BitSequence<int>* bit_seq = new BitSequence<int>();
 
-inline int double_val(int x){
+int double_val(int x){
     return x * 2; 
 }
 
-inline bool is_big(int x){ 
+bool is_big(int x){ 
     return x > 60;
 }
 
-inline int sum_func(int acc, int x){ 
+int sum_func(int acc, int x){ 
     return acc + x; 
 }
 
 Sequence<int>* get_seq(const std::string& type){
     if (type == "list"){
-        return list_seq.get();
+        return list_seq;
     } 
     else{
-        return arr_seq.get();
+        return arr_seq;
     }
 }
 
@@ -63,7 +62,7 @@ std::string build_response(const std::string& type, const std::string& log){
     json response;
     
     if (type == "bit"){
-        response["state"] = bitToJson(bit_seq.get());
+        response["state"] = bitToJson(bit_seq);
     } 
     else{
         response["state"] = toJson(get_seq(type));
@@ -88,13 +87,16 @@ int main(){
     svr.Get("/api/clear", [](const httplib::Request& req, httplib::Response& res){
         std::string type = req.get_param_value("type");
         if (type == "array"){
-            arr_seq = std::make_unique<ArraySequence<int>>();
+            delete arr_seq;
+            arr_seq = new ArraySequence<int>();
         } 
         else if (type == "list"){
-            list_seq = std::make_unique<ListSequence<int>>();
+            delete list_seq;
+            list_seq = new ListSequence<int>();
         } 
         else if (type == "bit"){
-            bit_seq = std::make_unique<BitSequence<int>>();
+            delete bit_seq;
+            bit_seq = new BitSequence<int>();
         }
         res.set_content(build_response(type, "Cleared!"), "application/json");
     });
@@ -234,12 +236,14 @@ int main(){
             size_t end = body.value("end", 0);
             
             if (type == "bit"){
-                std::unique_ptr<BitSequence<int>> sub(bit_seq->GetSubsequence(start, end));
-                log = "Subseq: " + bitToJson(sub.get()).dump(); 
+                BitSequence<int>* sub = bit_seq->GetSubsequence(start, end);
+                log = "Subseq: " + bitToJson(sub).dump(); 
+                delete sub;
             } 
             else{
-                std::unique_ptr<Sequence<int>> sub(get_seq(type)->GetSubsequence(start, end));
-                log = "Subseq: " + toJson(sub.get()).dump(); 
+                Sequence<int>* sub = get_seq(type)->GetSubsequence(start, end);
+                log = "Subseq: " + toJson(sub).dump(); 
+                delete sub;
             }
         } 
         catch(const std::exception& e){
@@ -256,10 +260,10 @@ int main(){
             type = body.value("type", "array");
             
             if (type == "array"){
-                log = "Result: " + std::to_string(Reduce(static_cast<ArraySequence<int>*>(arr_seq.get()), sum_func, 0));
+                log = "Result: " + std::to_string(Reduce(static_cast<ArraySequence<int>*>(arr_seq), sum_func, 0));
             } 
             else if (type == "list"){
-                log = "Result: " + std::to_string(Reduce(static_cast<ListSequence<int>*>(list_seq.get()), sum_func, 0));
+                log = "Result: " + std::to_string(Reduce(static_cast<ListSequence<int>*>(list_seq), sum_func, 0));
             }
         } 
         catch(const std::exception& e){
@@ -276,10 +280,14 @@ int main(){
             type = body.value("type", "array");
             
             if (type == "array"){
-                arr_seq.reset(Map(static_cast<ArraySequence<int>*>(arr_seq.get()), double_val));
+                auto new_seq = Map(static_cast<ArraySequence<int>*>(arr_seq), double_val);
+                delete arr_seq;
+                arr_seq = new_seq;
             } 
             else if (type == "list"){
-                list_seq.reset(Map(static_cast<ListSequence<int>*>(list_seq.get()), double_val));
+                auto new_seq = Map(static_cast<ListSequence<int>*>(list_seq), double_val);
+                delete list_seq;
+                list_seq = new_seq;
             }
             log = "Applied Map (*2)";
         } 
@@ -297,10 +305,14 @@ int main(){
             type = body.value("type", "array");
             
             if (type == "array"){
-                arr_seq.reset(Where(static_cast<ArraySequence<int>*>(arr_seq.get()), is_big));
+                auto new_seq = Where(static_cast<ArraySequence<int>*>(arr_seq), is_big);
+                delete arr_seq;
+                arr_seq = new_seq;
             } 
             else if (type == "list"){
-                list_seq.reset(Where(static_cast<ListSequence<int>*>(list_seq.get()), is_big));
+                auto new_seq = Where(static_cast<ListSequence<int>*>(list_seq), is_big);
+                delete list_seq;
+                list_seq = new_seq;
             }
             log = "Applied Where (>60)";
         } 
@@ -318,7 +330,9 @@ int main(){
             type = body.value("type", "array");
             
             if(type == "bit"){
-                bit_seq = std::make_unique<BitSequence<int>>(~(*bit_seq));
+                auto new_seq = new BitSequence<int>(~(*bit_seq));
+                delete bit_seq;
+                bit_seq = new_seq;
             }
         } 
         catch(const std::exception& e){
@@ -329,5 +343,10 @@ int main(){
 
     std::cout << "\nhttp://localhost:8080\n";
     svr.listen("0.0.0.0", 8080);
+
+    delete arr_seq;
+    delete list_seq;
+    delete bit_seq;
+    
     return 0;
 }
