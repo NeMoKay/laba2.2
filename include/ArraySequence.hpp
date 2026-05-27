@@ -23,6 +23,8 @@ protected:
     void InsertAtInternal(T item, size_t index);
     void ConcatInternal(Sequence <T> *list);
     
+    Sequence<T>* DoReflectSum() const override;
+    
 public:
 
     ArraySequence(T* new_items, size_t count);
@@ -39,7 +41,6 @@ public:
     ArraySequence<T>* Prepend(T item) override;
     ArraySequence<T>* InsertAt(T item, size_t index) override;
     ArraySequence<T>* Concat(Sequence<T>* list) override;
-    Sequence<T> *ReflectSum() const override;
     
     ~ArraySequence();
 };
@@ -239,28 +240,29 @@ public:
 
 };
 
+
 template <typename T>
-Sequence<T>* ArraySequence<T>::ReflectSum() const{
-    if constexpr (is_arithmetic_v<T>){
-        size_t len = this->GetLength();
-
-        if (len == 0){
-            throw EmptySequenceException("ReflectSum: список пуст");
-        }
-        
-        T* arr = new T[len];
-        for(size_t i = 0; i < len; ++i){
-            arr[i] = this->Get(i) + this->Get(len - 1 - i);
-        }  
-
-        Sequence<T>* result = new ArraySequence<T>(arr, len);
-        delete[] arr;
-        return result;
-    } 
-    else{
-        throw InvalidSizeException("доступна только для числовых типов");
-    }
+Sequence<T>* ArrayReflectSumImpl(const ArraySequence<T>* seq) requires std::is_arithmetic_v<T>{
+    size_t len = seq->GetLength();
+    T* arr = new T[len];
+    for(size_t i = 0; i < len; ++i){
+        arr[i] = seq->Get(i) + seq->Get(len - 1 - i);
+    }  
+    Sequence<T>* result = new ArraySequence<T>(arr, len);
+    delete[] arr;
+    return result;
 }
+
+template <typename T>
+Sequence<T>* ArrayReflectSumImpl(const ArraySequence<T>* seq) requires (!std::is_arithmetic_v<T>){
+    return nullptr;
+}
+
+template <typename T>
+Sequence<T>* ArraySequence<T>::DoReflectSum() const{
+    return ArrayReflectSumImpl<T>(this);
+}
+
 
 
 template <typename T, typename T2>
