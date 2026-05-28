@@ -16,23 +16,30 @@ bool is_big(int x){
     return x > 60;
 }
 
+
 int sum_func(int acc, int x){
     return acc + x;
 }
 
+
+
+
 class ISequenceHandler{
 public:
     virtual ~ISequenceHandler() = default;
+
     virtual void Append(int val) = 0;
     virtual void Prepend(int val) = 0;
     virtual void InsertAt(int val, size_t index) = 0;
     virtual void Concat(const json& items) = 0;
+
     virtual std::string GetFirst() = 0;
     virtual std::string GetLast() = 0;
     virtual std::string Get(size_t index) = 0;
     virtual json GetState() = 0;
     virtual void Map() = 0;
     virtual void Where() = 0;
+
     virtual std::string Reduce() = 0;
     virtual std::string Subsequence(size_t s, size_t e) = 0;
     virtual std::string BitNot() = 0;
@@ -44,9 +51,11 @@ public:
 template <typename Seq>
 class StandardHandler : public ISequenceHandler{
     Seq* seq;
+
+
+
 public:
-    StandardHandler() : seq(new Seq()){
-    }
+    StandardHandler() : seq(new Seq()) {}
 
     ~StandardHandler(){
         delete seq;
@@ -106,8 +115,8 @@ public:
         return std::to_string(::Reduce(seq, sum_func, 0));
     }
 
-    std::string Subsequence(size_t s, size_t e) override{
-        auto sub = seq->GetSubsequence(s, e);
+    std::string Subsequence(size_t start, size_t end) override{
+        auto sub = seq->GetSubsequence(start, end);
         json j = json::array();
         for(size_t i = 0; i < sub->GetLength(); i++){
             j.push_back(sub->Get(i));
@@ -137,16 +146,26 @@ class BitHandler : public ISequenceHandler{
     BitSequence<int>* seq;
     
     BitSequence<int> create_mask(const std::string& mask_str){
-        BitSequence<int> m;
+        BitSequence<int> val;
+
+        
         for (char c : mask_str){
-            m.Append(Bit<int>(c == '1' ? 1 : 0));
+            int bit_value;
+
+            if (c == '1'){
+                bit_value = 1;
+            } 
+            else{
+                bit_value = 0;
+            }
+
+            val.Append(Bit<int>(bit_value));
         }
-        return m;
+        return val;
     }
 
 public:
-    BitHandler() : seq(new BitSequence<int>()){
-    }
+    BitHandler() : seq(new BitSequence<int>()){}
 
     ~BitHandler(){
         delete seq;
@@ -185,26 +204,34 @@ public:
     json GetState() override{
         json j = json::array();
         for(size_t i = 0; i < seq->GetLength(); i++){
-            j.push_back(static_cast<bool>(seq->Get(i)) ? 1 : 0);
+            if (static_cast<bool>(seq->Get(i))){
+                j.push_back(1);
+            }
+            else{
+                j.push_back(0);
+            }
         }
         return j;
     }
 
-    void Map() override{
-    }
+    void Map() override{}
 
-    void Where() override{
-    }
+    void Where() override{}
 
     std::string Reduce() override{
         return "0";
     }
 
-    std::string Subsequence(size_t s, size_t e) override{
-        auto sub = seq->GetSubsequence(s, e);
+    std::string Subsequence(size_t start, size_t end) override{
+        auto sub = seq->GetSubsequence(start, end);
         json j = json::array();
         for(size_t i = 0; i < sub->GetLength(); i++){
-            j.push_back(static_cast<bool>(sub->Get(i)) ? 1 : 0);
+            if (static_cast<bool>(sub->Get(i))){
+                j.push_back(1);
+            }
+            else{
+                j.push_back(0);
+            }
         }
         delete sub;
         return j.dump();
@@ -257,7 +284,8 @@ std::string build_response(const std::string& type, const std::string& log){
     json response;
     try{
         response["state"] = get_h(type)->GetState();
-    } catch (...){
+    } 
+    catch (...){
         response["state"] = json::array();
     }
     response["log"] = log;
@@ -293,9 +321,11 @@ int main(){
         try{
             action(get_h(type), b);
             res.set_content(build_response(type, "Success"), "application/json");
-        } catch (const Exception& e){
+        } 
+        catch (const Exception& e){
             res.set_content(build_response(type, std::string("Error: ") + e.what()), "application/json");
-        } catch (const std::exception& e){
+        } 
+        catch (const std::exception& e){
             res.set_content(build_response(type, std::string("Internal Error: ") + e.what()), "application/json");
         }
     };
@@ -340,7 +370,8 @@ int main(){
         auto b = json::parse(req.body);
         try{
             res.set_content(build_response(b["type"], "Item: " + get_h(b["type"])->Get(b.value("index", 0))), "application/json");
-        } catch (const Exception& e){
+        } 
+        catch (const Exception& e){
             res.set_content(build_response(b["type"], std::string("Error: ") + e.what()), "application/json");
         }
     });
@@ -349,7 +380,8 @@ int main(){
         auto b = json::parse(req.body);
         try{
             res.set_content(build_response(b["type"], "First: " + get_h(b["type"])->GetFirst()), "application/json");
-        } catch (const Exception& e){
+        } 
+        catch (const Exception& e){
             res.set_content(build_response(b["type"], std::string("Error: ") + e.what()), "application/json");
         }
     });
@@ -358,7 +390,8 @@ int main(){
         auto b = json::parse(req.body);
         try{
             res.set_content(build_response(b["type"], "Last: " + get_h(b["type"])->GetLast()), "application/json");
-        } catch (const Exception& e){
+        } 
+        catch (const Exception& e){
             res.set_content(build_response(b["type"], std::string("Error: ") + e.what()), "application/json");
         }
     });
@@ -367,7 +400,8 @@ int main(){
         auto b = json::parse(req.body);
         try{
             res.set_content(build_response(b["type"], "Result: " + get_h(b["type"])->Reduce()), "application/json");
-        } catch (const Exception& e){
+        } 
+        catch (const Exception& e){
             res.set_content(build_response(b["type"], std::string("Error: ") + e.what()), "application/json");
         }
     });
@@ -376,7 +410,8 @@ int main(){
         auto b = json::parse(req.body);
         try{
             res.set_content(build_response(b["type"], "Subseq: " + get_h(b["type"])->Subsequence(b.value("start", 0), b.value("end", 0))), "application/json");
-        } catch (const Exception& e){
+        } 
+        catch (const Exception& e){
             res.set_content(build_response(b["type"], std::string("Error: ") + e.what()), "application/json");
         }
     });
@@ -384,7 +419,8 @@ int main(){
     svr.Post("/api/bit_not", [](const auto& req, auto& res){
         try{
             res.set_content(build_response("bit", get_h("bit")->BitNot()), "application/json");
-        } catch (const Exception& e){
+        } 
+        catch (const Exception& e){
             res.set_content(build_response("bit", std::string("Error: ") + e.what()), "application/json");
         }
     });
@@ -393,7 +429,8 @@ int main(){
         auto b = json::parse(req.body);
         try{
             res.set_content(build_response("bit", get_h("bit")->BitAnd(b.value("mask", ""))), "application/json");
-        } catch (const Exception& e){
+        } 
+        catch (const Exception& e){
             res.set_content(build_response("bit", std::string("Error: ") + e.what()), "application/json");
         }
     });
@@ -402,7 +439,8 @@ int main(){
         auto b = json::parse(req.body);
         try{
             res.set_content(build_response("bit", get_h("bit")->BitOr(b.value("mask", ""))), "application/json");
-        } catch (const Exception& e){
+        } 
+        catch (const Exception& e){
             res.set_content(build_response("bit", std::string("Error: ") + e.what()), "application/json");
         }
     });
@@ -411,7 +449,8 @@ int main(){
         auto b = json::parse(req.body);
         try{
             res.set_content(build_response("bit", get_h("bit")->BitXor(b.value("mask", ""))), "application/json");
-        } catch (const Exception& e){
+        } 
+        catch (const Exception& e){
             res.set_content(build_response("bit", std::string("Error: ") + e.what()), "application/json");
         }
     });
