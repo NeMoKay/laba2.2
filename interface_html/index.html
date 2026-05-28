@@ -109,7 +109,7 @@
                 <h3>Modify Data</h3>
                 <div class="input-row">
                     Val: <input type="number" id="val" value="1">
-                    Idx: <input type="number" id="idx" value="0">
+                    index: <input type="number" id="index" value="0">
                 </div>
                 <div class="btn-grid">
                     <button onclick="action('append')">Append</button>
@@ -133,7 +133,7 @@
                 <div class="btn-grid">
                     <button onclick="action('get_first')">Get First</button>
                     <button onclick="action('get_last')">Get Last</button>
-                    <button onclick="action('get')">Get by Idx</button>
+                    <button onclick="action('get')">Get by index</button>
                     <button onclick="action('subseq')">Subsequence</button>
                 </div>
 
@@ -188,7 +188,7 @@
             const data ={
                 type: document.getElementById('seqType').value,
                 val: parseInt(document.getElementById('val').value) || 0,
-                idx: parseInt(document.getElementById('idx').value) || 0,
+                index: parseInt(document.getElementById('index').value) || 0,
                 start: parseInt(document.getElementById('start').value) || 0,
                 end: parseInt(document.getElementById('end').value) || 0,
                 mask: document.getElementById('mask') ? document.getElementById('mask').value : '',
