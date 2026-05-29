@@ -356,7 +356,7 @@ int main(){
         });
 
         // Функция для GET запросов (получение состояния и очистка)
-        async function req(endpoint, data ={}){
+        async function req(endpoint, data = {}){
             data.type = document.getElementById('seqType').value;
             const params = new URLSearchParams(data);
             try{

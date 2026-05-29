@@ -16,21 +16,17 @@ bool is_big(int x){
     return x > 60;
 }
 
-
-int sum_func(int acc, int x){
-    return acc + x;
+int sum_func(int accumulator, int x){
+    return accumulator + x;
 }
-
-
-
 
 class ISequenceHandler{
 public:
     virtual ~ISequenceHandler() = default;
 
-    virtual void Append(int val) = 0;
-    virtual void Prepend(int val) = 0;
-    virtual void InsertAt(int val, size_t index) = 0;
+    virtual void Append(int value) = 0;
+    virtual void Prepend(int value) = 0;
+    virtual void InsertAt(int value, size_t index) = 0;
     virtual void Concat(const json& items) = 0;
 
     virtual std::string GetFirst() = 0;
@@ -41,36 +37,35 @@ public:
     virtual void Where() = 0;
 
     virtual std::string Reduce() = 0;
-    virtual std::string Subsequence(size_t s, size_t e) = 0;
+    virtual std::string Subsequence(size_t start_index, size_t end_index) = 0;
     virtual std::string BitNot() = 0;
-    virtual std::string BitAnd(const std::string& mask) = 0;
-    virtual std::string BitOr(const std::string& mask) = 0;
-    virtual std::string BitXor(const std::string& mask) = 0;
+    virtual std::string BitAnd(const std::string& mask_string) = 0;
+    virtual std::string BitOr(const std::string& mask_string) = 0;
+    virtual std::string BitXor(const std::string& mask_string) = 0;
 };
 
 template <typename Seq>
 class StandardHandler : public ISequenceHandler{
     Seq* seq;
 
-
-
 public:
-    StandardHandler() : seq(new Seq()) {}
+    StandardHandler() : seq(new Seq()){
+    }
 
     ~StandardHandler(){
         delete seq;
     }
 
-    void Append(int v) override{
-        seq->Append(v);
+    void Append(int value) override{
+        seq->Append(value);
     }
 
-    void Prepend(int v) override{
-        seq->Prepend(v);
+    void Prepend(int value) override{
+        seq->Prepend(value);
     }
 
-    void InsertAt(int v, size_t i) override{
-        seq->InsertAt(v, i);
+    void InsertAt(int value, size_t index) override{
+        seq->InsertAt(value, index);
     }
 
     void Concat(const json& items) override{
@@ -87,57 +82,57 @@ public:
         return std::to_string(seq->GetLast());
     }
 
-    std::string Get(size_t i) override{
-        return std::to_string(seq->Get(i));
+    std::string Get(size_t index) override{
+        return std::to_string(seq->Get(index));
     }
 
     json GetState() override{
-        json j = json::array();
-        for(size_t i = 0; i < seq->GetLength(); i++){
-            j.push_back(seq->Get(i));
+        json json_state = json::array();
+        for(size_t index = 0; index < seq->GetLength(); index++){
+            json_state.push_back(seq->Get(index));
         }
-        return j;
+        return json_state;
     }
 
     void Map() override{
-        auto next = ::Map(seq, double_val);
+        auto next_sequence = ::Map(seq, double_val);
         delete seq;
-        seq = next;
+        seq = next_sequence;
     }
 
     void Where() override{
-        auto next = ::Where(seq, is_big);
+        auto next_sequence = ::Where(seq, is_big);
         delete seq;
-        seq = next;
+        seq = next_sequence;
     }
 
     std::string Reduce() override{
         return std::to_string(::Reduce(seq, sum_func, 0));
     }
 
-    std::string Subsequence(size_t start, size_t end) override{
-        auto sub = seq->GetSubsequence(start, end);
-        json j = json::array();
-        for(size_t i = 0; i < sub->GetLength(); i++){
-            j.push_back(sub->Get(i));
+    std::string Subsequence(size_t start_index, size_t end_index) override{
+        auto sub_sequence = seq->GetSubsequence(start_index, end_index);
+        json json_state = json::array();
+        for(size_t index = 0; index < sub_sequence->GetLength(); index++){
+            json_state.push_back(sub_sequence->Get(index));
         }
-        delete sub;
-        return j.dump();
+        delete sub_sequence;
+        return json_state.dump();
     }
 
     std::string BitNot() override{
         return "Not supported";
     }
 
-    std::string BitAnd(const std::string& mask) override{
+    std::string BitAnd(const std::string& mask_string) override{
         return "Not supported";
     }
 
-    std::string BitOr(const std::string& mask) override{
+    std::string BitOr(const std::string& mask_string) override{
         return "Not supported";
     }
 
-    std::string BitXor(const std::string& mask) override{
+    std::string BitXor(const std::string& mask_string) override{
         return "Not supported";
     }
 };
@@ -145,42 +140,42 @@ public:
 class BitHandler : public ISequenceHandler{
     BitSequence<int>* seq;
     
-    BitSequence<int> create_mask(const std::string& mask_str){
-        BitSequence<int> val;
-
+    BitSequence<int> create_mask(const std::string& mask_string){
+        BitSequence<int> value_mask;
         
-        for (char c : mask_str){
+        for (char character : mask_string){
             int bit_value;
 
-            if (c == '1'){
+            if (character == '1'){
                 bit_value = 1;
             } 
             else{
                 bit_value = 0;
             }
 
-            val.Append(Bit<int>(bit_value));
+            value_mask.Append(Bit<int>(bit_value));
         }
-        return val;
+        return value_mask;
     }
 
 public:
-    BitHandler() : seq(new BitSequence<int>()){}
+    BitHandler() : seq(new BitSequence<int>()){
+    }
 
     ~BitHandler(){
         delete seq;
     }
 
-    void Append(int v) override{
-        seq->Append(Bit<int>(v));
+    void Append(int value) override{
+        seq->Append(Bit<int>(value));
     }
 
-    void Prepend(int v) override{
-        seq->Prepend(Bit<int>(v));
+    void Prepend(int value) override{
+        seq->Prepend(Bit<int>(value));
     }
 
-    void InsertAt(int v, size_t i) override{
-        seq->InsertAt(Bit<int>(v), i);
+    void InsertAt(int value, size_t index) override{
+        seq->InsertAt(Bit<int>(value), index);
     }
 
     void Concat(const json& items) override{
@@ -197,270 +192,452 @@ public:
         return std::to_string(static_cast<bool>(seq->GetLast()));
     }
 
-    std::string Get(size_t i) override{
-        return std::to_string(static_cast<bool>(seq->Get(i)));
+    std::string Get(size_t index) override{
+        return std::to_string(static_cast<bool>(seq->Get(index)));
     }
 
     json GetState() override{
-        json j = json::array();
-        for(size_t i = 0; i < seq->GetLength(); i++){
-            if (static_cast<bool>(seq->Get(i))){
-                j.push_back(1);
+        json json_state = json::array();
+        for(size_t index = 0; index < seq->GetLength(); index++){
+            if (static_cast<bool>(seq->Get(index))){
+                json_state.push_back(1);
             }
             else{
-                j.push_back(0);
+                json_state.push_back(0);
             }
         }
-        return j;
+        return json_state;
     }
 
-    void Map() override{}
+    void Map() override{
+    }
 
-    void Where() override{}
+    void Where() override{
+    }
 
     std::string Reduce() override{
         return "0";
     }
 
-    std::string Subsequence(size_t start, size_t end) override{
-        auto sub = seq->GetSubsequence(start, end);
-        json j = json::array();
-        for(size_t i = 0; i < sub->GetLength(); i++){
-            if (static_cast<bool>(sub->Get(i))){
-                j.push_back(1);
+    std::string Subsequence(size_t start_index, size_t end_index) override{
+        auto sub_sequence = seq->GetSubsequence(start_index, end_index);
+        json json_state = json::array();
+        for(size_t index = 0; index < sub_sequence->GetLength(); index++){
+            if (static_cast<bool>(sub_sequence->Get(index))){
+                json_state.push_back(1);
             }
             else{
-                j.push_back(0);
+                json_state.push_back(0);
             }
         }
-        delete sub;
-        return j.dump();
+        delete sub_sequence;
+        return json_state.dump();
     }
 
     std::string BitNot() override{ 
-        auto next = new BitSequence<int>(~(*seq)); 
+        auto next_sequence = new BitSequence<int>(~(*seq)); 
         delete seq;
-        seq = next; 
+        seq = next_sequence; 
         return "Success"; 
     }
 
-    std::string BitAnd(const std::string& mask) override{
-        auto next = new BitSequence<int>((*seq) & create_mask(mask));
+    std::string BitAnd(const std::string& mask_string) override{
+        auto next_sequence = new BitSequence<int>((*seq) & create_mask(mask_string));
         delete seq;
-        seq = next;
+        seq = next_sequence;
         return "Success";
     }
 
-    std::string BitOr(const std::string& mask) override{
-        auto next = new BitSequence<int>((*seq) | create_mask(mask));
+    std::string BitOr(const std::string& mask_string) override{
+        auto next_sequence = new BitSequence<int>((*seq) | create_mask(mask_string));
         delete seq;
-        seq = next;
+        seq = next_sequence;
         return "Success";
     }
 
-    std::string BitXor(const std::string& mask) override{
-        auto next = new BitSequence<int>((*seq) ^ create_mask(mask));
+    std::string BitXor(const std::string& mask_string) override{
+        auto next_sequence = new BitSequence<int>((*seq) ^ create_mask(mask_string));
         delete seq;
-        seq = next;
+        seq = next_sequence;
         return "Success";
     }
 };
 
-ISequenceHandler* arr_h = new StandardHandler<ArraySequence<int>>();
-ISequenceHandler* list_h = new StandardHandler<ListSequence<int>>();
-ISequenceHandler* bit_h = new BitHandler();
+class AppController{
+private:
+    ISequenceHandler* array_model = nullptr;
+    ISequenceHandler* list_model = nullptr;
+    ISequenceHandler* bit_model = nullptr;
 
-ISequenceHandler* get_h(const std::string& type){
-    if (type == "list"){
-        return list_h;
+public:
+    AppController(){
+        array_model = new StandardHandler<ArraySequence<int>>();
+        list_model = new StandardHandler<ListSequence<int>>();
+        bit_model = new BitHandler();
     }
-    if (type == "bit"){
-        return bit_h;
-    }
-    return arr_h;
-}
 
-std::string build_response(const std::string& type, const std::string& log){
-    json response;
-    try{
-        response["state"] = get_h(type)->GetState();
-    } 
-    catch (...){
-        response["state"] = json::array();
+    ~AppController(){
+        delete array_model;
+        delete list_model;
+        delete bit_model;
     }
-    response["log"] = log;
-    return response.dump();
-}
+
+    ISequenceHandler* GetModel(const std::string& name){
+        if (name == "array"){
+            return array_model;
+        }
+        if (name == "list"){
+            return list_model;
+        }
+        if (name == "bit"){
+            return bit_model;
+        }
+        
+        throw std::invalid_argument("Unknown sequence type: " + name);
+    }
+
+    void ClearModel(const std::string& name){
+        if (name == "array"){
+            delete array_model;
+            array_model = new StandardHandler<ArraySequence<int>>();
+        } 
+        else if (name == "list"){
+            delete list_model;
+            list_model = new StandardHandler<ListSequence<int>>();
+        } 
+        else if (name == "bit"){
+            delete bit_model;
+            bit_model = new BitHandler();
+        }
+    }
+};
 
 int main(){
-    httplib::Server svr;
-    svr.set_mount_point("/", "./interface_html");
+    AppController controller;
 
-    svr.Get("/api/get_state", [](const httplib::Request& req, httplib::Response& res){
-        res.set_content(build_response(req.get_param_value("type"), "State"), "application/json");
-    });
+    httplib::Server server;
+    server.set_mount_point("/", "./interface_html");
 
-    svr.Get("/api/clear", [](const httplib::Request& req, httplib::Response& res){
-        std::string type = req.get_param_value("type");
-        if (type == "array"){
-            delete arr_h;
-            arr_h = new StandardHandler<ArraySequence<int>>();
-        } else if (type == "list"){
-            delete list_h;
-            list_h = new StandardHandler<ListSequence<int>>();
-        } else if (type == "bit"){
-            delete bit_h;
-            bit_h = new BitHandler();
-        }
-        res.set_content(build_response(type, "Cleared!"), "application/json");
-    });
-
-    auto handle = [](const httplib::Request& req, httplib::Response& res, auto action){
-        auto b = json::parse(req.body);
-        std::string type = b.value("type", "array");
+    auto build_response = [](ISequenceHandler* handler, const std::string& log_message){
+        json response_json;
         try{
-            action(get_h(type), b);
-            res.set_content(build_response(type, "Success"), "application/json");
+            response_json["state"] = handler->GetState();
         } 
-        catch (const Exception& e){
-            res.set_content(build_response(type, std::string("Error: ") + e.what()), "application/json");
+        catch (...){
+            response_json["state"] = json::array();
+        }
+        response_json["log"] = log_message;
+        return response_json.dump();
+    };
+
+    auto build_error_response = [](const std::string& log_message){
+        json response_json;
+        response_json["state"] = json::array();
+        response_json["log"] = log_message;
+        return response_json.dump();
+    };
+
+    server.Get("/api/get_state", [&](const httplib::Request& request, httplib::Response& response){
+        try{
+            std::string type = request.get_param_value("type");
+            ISequenceHandler* handler = controller.GetModel(type);
+            response.set_content(build_response(handler, "State"), "application/json");
         } 
-        catch (const std::exception& e){
-            res.set_content(build_response(type, std::string("Internal Error: ") + e.what()), "application/json");
+        catch (const std::exception& error){
+            response.set_content(build_error_response(std::string("Error: ") + error.what()), "application/json");
+        }
+    });
+
+    server.Get("/api/clear", [&](const httplib::Request& request, httplib::Response& response){
+        try{
+            std::string type = request.get_param_value("type");
+            controller.ClearModel(type);
+            ISequenceHandler* handler = controller.GetModel(type);
+            response.set_content(build_response(handler, "Cleared!"), "application/json");
+        } 
+        catch (const std::exception& error){
+            response.set_content(build_error_response(std::string("Error: ") + error.what()), "application/json");
+        }
+    });
+
+    auto handle_post_request = [&](const httplib::Request& request, httplib::Response& response, auto action_function){
+        try{
+            json request_json = json::parse(request.body);
+            
+            std::string type = "array";
+            if (request_json.contains("type")){
+                type = request_json["type"];
+            }
+            
+            ISequenceHandler* handler = controller.GetModel(type);
+            
+            action_function(handler, request_json);
+            response.set_content(build_response(handler, "Success"), "application/json");
+        } 
+        catch (const Exception& error){
+            response.set_content(build_error_response(std::string("Error: ") + error.what()), "application/json");
+        } 
+        catch (const std::exception& error){
+            response.set_content(build_error_response(std::string("Internal Error: ") + error.what()), "application/json");
         }
     };
 
-    svr.Post("/api/append", [&](const auto& req, auto& res){
-        handle(req, res, [](auto h, auto b){
-            h->Append(b.value("val", 0));
+    server.Post("/api/append", [&](const httplib::Request& request, httplib::Response& response){
+        handle_post_request(request, response, [](ISequenceHandler* handler, json request_json){
+            int value = 0;
+            if (request_json.contains("val")){
+                value = request_json["val"];
+            }
+            handler->Append(value);
         });
     });
 
-    svr.Post("/api/prepend", [&](const auto& req, auto& res){
-        handle(req, res, [](auto h, auto b){
-            h->Prepend(b.value("val", 0));
+    server.Post("/api/prepend", [&](const httplib::Request& request, httplib::Response& response){
+        handle_post_request(request, response, [](ISequenceHandler* handler, json request_json){
+            int value = 0;
+            if (request_json.contains("val")){
+                value = request_json["val"];
+            }
+            handler->Prepend(value);
         });
     });
 
-    svr.Post("/api/insert", [&](const auto& req, auto& res){
-        handle(req, res, [](auto h, auto b){
-            h->InsertAt(b.value("val", 0), b.value("index", 0));
+    server.Post("/api/insert", [&](const httplib::Request& request, httplib::Response& response){
+        handle_post_request(request, response, [](ISequenceHandler* handler, json request_json){
+            int value = 0;
+            if (request_json.contains("val")){
+                value = request_json["val"];
+            }
+            
+            int index = 0;
+            if (request_json.contains("index")){
+                index = request_json["index"];
+            }
+            
+            handler->InsertAt(value, index);
         });
     });
 
-    svr.Post("/api/concat", [&](const auto& req, auto& res){
-        handle(req, res, [](auto h, auto b){
-            h->Concat(b["items"]);
+    server.Post("/api/concat", [&](const httplib::Request& request, httplib::Response& response){
+        handle_post_request(request, response, [](ISequenceHandler* handler, json request_json){
+            if (request_json.contains("items")){
+                handler->Concat(request_json["items"]);
+            }
         });
     });
 
-    svr.Post("/api/map", [&](const auto& req, auto& res){
-        handle(req, res, [](auto h, auto b){
-            h->Map();
+    server.Post("/api/map", [&](const httplib::Request& request, httplib::Response& response){
+        handle_post_request(request, response, [](ISequenceHandler* handler, json request_json){
+            handler->Map();
         });
     });
 
-    svr.Post("/api/where", [&](const auto& req, auto& res){
-        handle(req, res, [](auto h, auto b){
-            h->Where();
+    server.Post("/api/where", [&](const httplib::Request& request, httplib::Response& response){
+        handle_post_request(request, response, [](ISequenceHandler* handler, json request_json){
+            handler->Where();
         });
     });
 
-    svr.Post("/api/get", [](const auto& req, auto& res){
-        auto b = json::parse(req.body);
+    server.Post("/api/get", [&](const httplib::Request& request, httplib::Response& response){
         try{
-            res.set_content(build_response(b["type"], "Item: " + get_h(b["type"])->Get(b.value("index", 0))), "application/json");
+            json request_json = json::parse(request.body);
+            
+            std::string type = "array";
+            if (request_json.contains("type")){
+                type = request_json["type"];
+            }
+            
+            ISequenceHandler* handler = controller.GetModel(type);
+            
+            int index = 0;
+            if (request_json.contains("index")){
+                index = request_json["index"];
+            }
+            
+            response.set_content(build_response(handler, "Item: " + handler->Get(index)), "application/json");
         } 
-        catch (const Exception& e){
-            res.set_content(build_response(b["type"], std::string("Error: ") + e.what()), "application/json");
+        catch (const Exception& error){
+            response.set_content(build_error_response(std::string("Error: ") + error.what()), "application/json");
+        }
+        catch (const std::exception& error){
+            response.set_content(build_error_response(std::string("Error: ") + error.what()), "application/json");
         }
     });
     
-    svr.Post("/api/get_first", [](const auto& req, auto& res){
-        auto b = json::parse(req.body);
+    server.Post("/api/get_first", [&](const httplib::Request& request, httplib::Response& response){
         try{
-            res.set_content(build_response(b["type"], "First: " + get_h(b["type"])->GetFirst()), "application/json");
+            json request_json = json::parse(request.body);
+            
+            std::string type = "array";
+            if (request_json.contains("type")){
+                type = request_json["type"];
+            }
+            
+            ISequenceHandler* handler = controller.GetModel(type);
+            
+            response.set_content(build_response(handler, "First: " + handler->GetFirst()), "application/json");
         } 
-        catch (const Exception& e){
-            res.set_content(build_response(b["type"], std::string("Error: ") + e.what()), "application/json");
+        catch (const Exception& error){
+            response.set_content(build_error_response(std::string("Error: ") + error.what()), "application/json");
+        }
+        catch (const std::exception& error){
+            response.set_content(build_error_response(std::string("Error: ") + error.what()), "application/json");
         }
     });
 
-    svr.Post("/api/get_last", [](const auto& req, auto& res){
-        auto b = json::parse(req.body);
+    server.Post("/api/get_last", [&](const httplib::Request& request, httplib::Response& response){
         try{
-            res.set_content(build_response(b["type"], "Last: " + get_h(b["type"])->GetLast()), "application/json");
+            json request_json = json::parse(request.body);
+            
+            std::string type = "array";
+            if (request_json.contains("type")){
+                type = request_json["type"];
+            }
+            
+            ISequenceHandler* handler = controller.GetModel(type);
+            
+            response.set_content(build_response(handler, "Last: " + handler->GetLast()), "application/json");
         } 
-        catch (const Exception& e){
-            res.set_content(build_response(b["type"], std::string("Error: ") + e.what()), "application/json");
+        catch (const Exception& error){
+            response.set_content(build_error_response(std::string("Error: ") + error.what()), "application/json");
+        }
+        catch (const std::exception& error){
+            response.set_content(build_error_response(std::string("Error: ") + error.what()), "application/json");
         }
     });
 
-    svr.Post("/api/reduce", [](const auto& req, auto& res){
-        auto b = json::parse(req.body);
+    server.Post("/api/reduce", [&](const httplib::Request& request, httplib::Response& response){
         try{
-            res.set_content(build_response(b["type"], "Result: " + get_h(b["type"])->Reduce()), "application/json");
+            json request_json = json::parse(request.body);
+            
+            std::string type = "array";
+            if (request_json.contains("type")){
+                type = request_json["type"];
+            }
+            
+            ISequenceHandler* handler = controller.GetModel(type);
+            
+            response.set_content(build_response(handler, "Result: " + handler->Reduce()), "application/json");
         } 
-        catch (const Exception& e){
-            res.set_content(build_response(b["type"], std::string("Error: ") + e.what()), "application/json");
+        catch (const Exception& error){
+            response.set_content(build_error_response(std::string("Error: ") + error.what()), "application/json");
+        }
+        catch (const std::exception& error){
+            response.set_content(build_error_response(std::string("Error: ") + error.what()), "application/json");
         }
     });
 
-    svr.Post("/api/subseq", [](const auto& req, auto& res){
-        auto b = json::parse(req.body);
+    server.Post("/api/subseq", [&](const httplib::Request& request, httplib::Response& response){
         try{
-            res.set_content(build_response(b["type"], "Subseq: " + get_h(b["type"])->Subsequence(b.value("start", 0), b.value("end", 0))), "application/json");
+            json request_json = json::parse(request.body);
+            
+            std::string type = "array";
+            if (request_json.contains("type")){
+                type = request_json["type"];
+            }
+            
+            ISequenceHandler* handler = controller.GetModel(type);
+            
+            int start_index = 0;
+            if (request_json.contains("start")){
+                start_index = request_json["start"];
+            }
+            
+            int end_index = 0;
+            if (request_json.contains("end")){
+                end_index = request_json["end"];
+            }
+
+            response.set_content(build_response(handler, "Subseq: " + handler->Subsequence(start_index, end_index)), "application/json");
         } 
-        catch (const Exception& e){
-            res.set_content(build_response(b["type"], std::string("Error: ") + e.what()), "application/json");
+        catch (const Exception& error){
+            response.set_content(build_error_response(std::string("Error: ") + error.what()), "application/json");
+        }
+        catch (const std::exception& error){
+            response.set_content(build_error_response(std::string("Error: ") + error.what()), "application/json");
         }
     });
 
-    svr.Post("/api/bit_not", [](const auto& req, auto& res){
+    server.Post("/api/bit_not", [&](const httplib::Request& request, httplib::Response& response){
         try{
-            res.set_content(build_response("bit", get_h("bit")->BitNot()), "application/json");
+            ISequenceHandler* handler = controller.GetModel("bit");
+            response.set_content(build_response(handler, handler->BitNot()), "application/json");
         } 
-        catch (const Exception& e){
-            res.set_content(build_response("bit", std::string("Error: ") + e.what()), "application/json");
+        catch (const Exception& error){
+            response.set_content(build_error_response(std::string("Error: ") + error.what()), "application/json");
+        }
+        catch (const std::exception& error){
+            response.set_content(build_error_response(std::string("Error: ") + error.what()), "application/json");
         }
     });
 
-    svr.Post("/api/bit_and", [](const auto& req, auto& res){
-        auto b = json::parse(req.body);
+    server.Post("/api/bit_and", [&](const httplib::Request& request, httplib::Response& response){
         try{
-            res.set_content(build_response("bit", get_h("bit")->BitAnd(b.value("mask", ""))), "application/json");
+            json request_json = json::parse(request.body);
+            
+            std::string mask_string = "";
+            if (request_json.contains("mask")){
+                mask_string = request_json["mask"];
+            }
+            
+            ISequenceHandler* handler = controller.GetModel("bit");
+            
+            response.set_content(build_response(handler, handler->BitAnd(mask_string)), "application/json");
         } 
-        catch (const Exception& e){
-            res.set_content(build_response("bit", std::string("Error: ") + e.what()), "application/json");
+        catch (const Exception& error){
+            response.set_content(build_error_response(std::string("Error: ") + error.what()), "application/json");
+        }
+        catch (const std::exception& error){
+            response.set_content(build_error_response(std::string("Error: ") + error.what()), "application/json");
         }
     });
 
-    svr.Post("/api/bit_or", [](const auto& req, auto& res){
-        auto b = json::parse(req.body);
+    server.Post("/api/bit_or", [&](const httplib::Request& request, httplib::Response& response){
         try{
-            res.set_content(build_response("bit", get_h("bit")->BitOr(b.value("mask", ""))), "application/json");
+            json request_json = json::parse(request.body);
+            
+            std::string mask_string = "";
+            if (request_json.contains("mask")){
+                mask_string = request_json["mask"];
+            }
+            
+            ISequenceHandler* handler = controller.GetModel("bit");
+            
+            response.set_content(build_response(handler, handler->BitOr(mask_string)), "application/json");
         } 
-        catch (const Exception& e){
-            res.set_content(build_response("bit", std::string("Error: ") + e.what()), "application/json");
+        catch (const Exception& error){
+            response.set_content(build_error_response(std::string("Error: ") + error.what()), "application/json");
+        }
+        catch (const std::exception& error){
+            response.set_content(build_error_response(std::string("Error: ") + error.what()), "application/json");
         }
     });
 
-    svr.Post("/api/bit_xor", [](const auto& req, auto& res){
-        auto b = json::parse(req.body);
+    server.Post("/api/bit_xor", [&](const httplib::Request& request, httplib::Response& response){
         try{
-            res.set_content(build_response("bit", get_h("bit")->BitXor(b.value("mask", ""))), "application/json");
+            json request_json = json::parse(request.body);
+            
+            std::string mask_string = "";
+            if (request_json.contains("mask")){
+                mask_string = request_json["mask"];
+            }
+            
+            ISequenceHandler* handler = controller.GetModel("bit");
+            
+            response.set_content(build_response(handler, handler->BitXor(mask_string)), "application/json");
         } 
-        catch (const Exception& e){
-            res.set_content(build_response("bit", std::string("Error: ") + e.what()), "application/json");
+        catch (const Exception& error){
+            response.set_content(build_error_response(std::string("Error: ") + error.what()), "application/json");
+        }
+        catch (const std::exception& error){
+            response.set_content(build_error_response(std::string("Error: ") + error.what()), "application/json");
         }
     });
 
     std::cout << "\nhttp://localhost:8080\n";
-    svr.listen("0.0.0.0", 8080);
-    
-    delete arr_h; 
-    delete list_h; 
-    delete bit_h;
+    if (!server.listen("0.0.0.0", 8080)){
+        std::cerr << "ОШИБКА: Не удалось запустить сервер! Порт 8080 занят.\n";
+    }
     
     return 0;
 }

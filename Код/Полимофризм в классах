@@ -4,7 +4,7 @@ enum Ports{TOKYO, LOS_ANGELES};
  
 class Vessel{
 public:
-    virtual void deliver(int a, int b, int c) const{}
+    virtual void deliver(int a, int b, int c) const {}
 };
  
 class Plane: public Vessel{
@@ -43,7 +43,7 @@ class Box{
 public:
     int width, height;
 
-    Box(int w, int h) : width(w), height(h){}
+    Box(int w, int h) : width(w), height(h) {}
 
     // Перегрузка оператора +
     Box operator+(const Box& other){

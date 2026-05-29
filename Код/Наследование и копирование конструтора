@@ -34,7 +34,7 @@ class Manager : public Employee{
     string name;
     double salary;
 public:
-    Manager(string new_name, double new_salary, string new_position) : Employee(new_name, new_salary, new_position){};
+    Manager(string new_name, double new_salary, string new_position) : Employee(new_name, new_salary, new_position) {};
 };
 
 

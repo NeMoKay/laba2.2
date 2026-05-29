@@ -16,7 +16,7 @@ public:
 
 class Vector2D : public Vector{
     public:
-    Vector2D(int new_x, int new_y) : Vector( new_x,  new_y){};
+    Vector2D(int new_x, int new_y) : Vector( new_x,  new_y) {};
 
     void print(){
         std::cout << "(" << x << ", " << y << ")";

@@ -139,7 +139,7 @@ void BitSequence<T>::PrependInternal(Bit<T> item){
 template <typename T>
 void BitSequence<T>::InsertAtInternal(Bit<T> item, size_t index){
     if(index > length_bits){
-        throw IndexOutOfRangeException(std::format("Ошибка индекса (индекс:{}, максимум:{})", index, length_bits));
+        throw IndexOutOfRangeException(std::format("Ошибка индекса (индекс: {}, максимум: {})", index, length_bits));
     }
     bool val = bool(item);
     size_t oldLen = length_bits;
@@ -184,7 +184,7 @@ void BitSequence<T>::ConcatInternal(Sequence<Bit<T>>* list){
 
 
 template <typename T>
-BitSequence<T>::BitSequence() : data(new DynamicArray<T>), bits_in_T(sizeof(T) * 8), length_bits(0){}
+BitSequence<T>::BitSequence() : data(new DynamicArray<T>), bits_in_T(sizeof(T) * 8), length_bits(0) {}
 
 template <typename T>
 BitSequence<T>::BitSequence(Bit<T>* new_items, size_t count) : bits_in_T(sizeof(T) * 8){
@@ -210,7 +210,7 @@ BitSequence<T>::BitSequence(Bit<T>* new_items, size_t count) : bits_in_T(sizeof(
 }
 
 template <typename T>
-BitSequence<T>::BitSequence(const BitSequence<T>& operand) : data(new DynamicArray<T>(*(operand.data))), bits_in_T(operand.bits_in_T), length_bits(operand.length_bits){}
+BitSequence<T>::BitSequence(const BitSequence<T>& operand) : data(new DynamicArray<T>(*(operand.data))), bits_in_T(operand.bits_in_T), length_bits(operand.length_bits) {}
 
 template <typename T>
 Bit<T> BitSequence<T>::GetFirst() const{
@@ -231,7 +231,7 @@ Bit<T> BitSequence<T>::GetLast() const{
 template <typename T>
 Bit<T> BitSequence<T>::Get(size_t index) const{
     if(index >= length_bits){
-        throw IndexOutOfRangeException(std::format("Ошибка индекса (индекс:{}, размер:{})", index, length_bits));
+        throw IndexOutOfRangeException(std::format("Ошибка индекса (индекс: {}, размер: {})", index, length_bits));
     }
     bool isBitSet = GetBit(index);
     T correct_val;
@@ -252,7 +252,7 @@ size_t BitSequence<T>::GetLength() const{
 template <typename T>
 BitSequence<T>* BitSequence<T>::GetSubsequence(size_t startIndex, size_t endIndex) const{
     if(endIndex < startIndex || startIndex >= length_bits || endIndex >= length_bits){
-        throw IndexOutOfRangeException(std::format("Ошибка индекса (start:{}, end:{}, size:{})", startIndex, endIndex, length_bits));
+        throw IndexOutOfRangeException(std::format("Ошибка индекса (start: {}, end: {}, size: {})", startIndex, endIndex, length_bits));
     }
 
     BitSequence<T>* result = new BitSequence<T>;
@@ -296,7 +296,7 @@ BitSequence<T>* BitSequence<T>::Concat(Sequence<Bit<T>>* list){
 template <typename T>
 BitSequence<T> BitSequence<T>::operator&(const BitSequence<T>& operand) const{
     if(this->length_bits != operand.length_bits){
-        throw LengthMismatchException(std::format("Длины последовательностей не совпадают ({} !={})", this->length_bits, operand.length_bits));
+        throw LengthMismatchException(std::format("Длины последовательностей не совпадают ( {} != {})", this->length_bits, operand.length_bits));
     }
     BitSequence<T> result;
     for (size_t i = 0; i < this->length_bits; i++){
@@ -308,7 +308,7 @@ BitSequence<T> BitSequence<T>::operator&(const BitSequence<T>& operand) const{
 template <typename T>
 BitSequence<T> BitSequence<T>::operator|(const BitSequence<T>& operand) const{
     if(this->length_bits != operand.length_bits){
-        throw LengthMismatchException(std::format("Длины последовательностей не совпадают ({} !={})", this->length_bits, operand.length_bits));
+        throw LengthMismatchException(std::format("Длины последовательностей не совпадают ( {} != {})", this->length_bits, operand.length_bits));
     }
     BitSequence<T> result;
     for (size_t i = 0; i < this->length_bits; i++){
@@ -320,7 +320,7 @@ BitSequence<T> BitSequence<T>::operator|(const BitSequence<T>& operand) const{
 template <typename T>
 BitSequence<T> BitSequence<T>::operator^(const BitSequence<T>& operand) const{
     if(this->length_bits != operand.length_bits){
-        throw LengthMismatchException(std::format("Длины последовательностей не совпадают ({} !={})", this->length_bits, operand.length_bits));
+        throw LengthMismatchException(std::format("Длины последовательностей не совпадают ( {} != {})", this->length_bits, operand.length_bits));
     }
     BitSequence<T> result;
     for (size_t i = 0; i < this->length_bits; i++){

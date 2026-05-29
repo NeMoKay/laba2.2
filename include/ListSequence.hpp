@@ -73,7 +73,7 @@ void ListSequence<T>::PrependInternal(T item){
 template <typename T >
 void ListSequence<T>::InsertAtInternal(T item, size_t index){
     if(index > items->GetLength()){
-        throw IndexOutOfRangeException(std::format("Индекс вне диапазона (индекс:{}, максимум:{})", index, items->GetLength()));
+        throw IndexOutOfRangeException(std::format("Индекс вне диапазона (индекс: {}, максимум: {})", index, items->GetLength()));
     }
     items->InsertAt(item, index);
 }
@@ -94,13 +94,13 @@ void ListSequence<T>::ConcatInternal(Sequence<T>* list){
 // public
 
 template <typename T >
-ListSequence<T>::ListSequence() : items(new LinkedList<T>){}
+ListSequence<T>::ListSequence() : items(new LinkedList<T>) {}
 
 template <typename T >
-ListSequence<T>::ListSequence(T* new_items, size_t count) : items(new LinkedList<T>(new_items, count)){}
+ListSequence<T>::ListSequence(T* new_items, size_t count) : items(new LinkedList<T>(new_items, count)) {}
 
 template <typename T >
-ListSequence<T>::ListSequence(const ListSequence<T>& list) : items(new LinkedList<T>(*(list.items))){}
+ListSequence<T>::ListSequence(const ListSequence<T>& list) : items(new LinkedList<T>(*(list.items))) {}
 
 template <typename T >
 ListSequence<T>::ListSequence(const ArraySequence<T>& arraySeq) : ListSequence(){
@@ -132,7 +132,7 @@ ListSequence<T>* ListSequence<T>::GetSubsequence(size_t startIndex, size_t endIn
 
     if(endIndex < startIndex || startIndex >= items->GetLength() || endIndex >= items->GetLength()){
 
-        throw IndexOutOfRangeException(std::format("Ошибка индекса (start:{}, end:{}, size:{})", startIndex, endIndex, items->GetLength()));
+        throw IndexOutOfRangeException(std::format("Ошибка индекса (start: {}, end: {}, size: {})", startIndex, endIndex, items->GetLength()));
     }
 
     LinkedList<T>* items_sub_list;
@@ -170,7 +170,7 @@ template <typename T >
 ListSequence<T>* ListSequence<T>::InsertAt(T item, size_t index){
 
     if(index > items->GetLength()){
-        throw IndexOutOfRangeException(std::format("Индекс вне диапазона (индекс:{}, максимум:{})", index, items->GetLength()));
+        throw IndexOutOfRangeException(std::format("Индекс вне диапазона (индекс: {}, максимум: {})", index, items->GetLength()));
     }
 
     ListSequence<T>* list = Instance();
@@ -233,7 +233,7 @@ public:
 
 
 template <typename T>
-Sequence<T>* ListReflectSumImpl(const ListSequence<T>* seq) requires std::is_arithmetic_v<T>{
+Sequence<T>* ListReflectSum(const ListSequence<T>* seq) requires std::is_arithmetic_v<T>{
     size_t len = seq->GetLength();
     T* arr = new T[len];
     for(size_t i = 0; i < len; ++i){
@@ -245,13 +245,13 @@ Sequence<T>* ListReflectSumImpl(const ListSequence<T>* seq) requires std::is_ari
 }
 
 template <typename T>
-Sequence<T>* ListReflectSumImpl(const ListSequence<T>* seq) requires (!std::is_arithmetic_v<T>){
+Sequence<T>* ListReflectSum(const ListSequence<T>* seq) requires (!std::is_arithmetic_v<T>){
     return nullptr;
 }
 
 template <typename T>
 Sequence<T>* ListSequence<T>::DoReflectSum() const{
-    return ListReflectSumImpl<T>(this);
+    return ListReflectSum<T>(this);
 }
 
 

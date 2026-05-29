@@ -7,7 +7,7 @@ public:
     int horsepower;
 
     // Конструктор, который принимает значение лошадиных сил и инициализирует поле horsepower
-    Engine(int hp) : horsepower(hp){}
+    Engine(int hp) : horsepower(hp) {}
 
     void displayInfo(){
         std::cout << "Двигатель: " << horsepower << " л.с." << endl;
