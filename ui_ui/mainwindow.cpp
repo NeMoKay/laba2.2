@@ -213,9 +213,10 @@ BitSequence<T> createBitSeq(const QString& str){
     Bit<T>* raw = new Bit<T>[parts.size()];
     for(size_t i = 0; i < parts.size(); ++i){
         int parsed = parts[i].toInt();
-        if (parsed != 0) {
+        if (parsed != 0){
             raw[i] = Bit<T>(1);
-        } else {
+        } 
+        else{
             raw[i] = Bit<T>(0);
         }
     }
@@ -253,7 +254,7 @@ void MainWindow::executeStandard(){
     QString res;
     bool mutates = false; 
 
-    switch (op) {
+    switch (op){
         case 0:
             res = QString::number(seqA.GetFirst());
             break;
@@ -359,13 +360,13 @@ void MainWindow::executeBit(){
         case 3:
             res = QString::number(seqA.GetLength());
             break;
-        case 4: {
+        case 4:{
             auto sub = seqA.GetSubsequence(lineStart->text().toULongLong(), lineEnd->text().toULongLong());
             res = formatBitSeq<T>(sub);
             delete sub;
             break;
         }
-        case 5: {
+        case 5:{
             int parsed = lineValue->text().toInt();
             if (parsed != 0) {
                 seqA.Append(Bit<T>(1));
@@ -452,10 +453,12 @@ void MainWindow::onRun(){
         if (cont == 0){
             if(typeIdx == 0) executeStandard<int, ArraySequence>();
             else executeStandard<double, ArraySequence>();
-        } else if (cont == 1){
+        } 
+        else if (cont == 1){
             if(typeIdx == 0) executeStandard<int, ListSequence>();
             else executeStandard<double, ListSequence>();
-        } else if (cont == 2){
+        } 
+        else if (cont == 2){
             executeBit<int>();
         }
     }
