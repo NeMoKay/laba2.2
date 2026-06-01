@@ -10,8 +10,7 @@
 #include <QTextEdit>
 #include <QGroupBox>
 
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow{
     Q_OBJECT
 
 public:
@@ -19,9 +18,6 @@ public:
     ~MainWindow() override;
 
 protected:
-    void paintEvent(QPaintEvent *event) override;
-
-private slots:
     void onContainerChanged();
     void onOperationChanged();
     void onRun();

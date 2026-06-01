@@ -7,28 +7,26 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QFormLayout>
-#include <QPainter>
 #include <QGraphicsDropShadowEffect>
 #include <QMessageBox>
 #include <QRegularExpression>
 
 template <typename T>
-T double_val(T x) { 
+T double_val(T x){ 
     return x * static_cast<T>(2); 
 }
 
 template <typename T>
-bool is_big(T x) { 
+bool is_big(T x){ 
     return x > static_cast<T>(60); 
 }
 
 template <typename T>
-T sum_func(T acc, T x) { 
+T sum_func(T acc, T x){ 
     return acc + x; 
 }
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
-{
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent){
     setWindowTitle(APP_TITLE);
     resize(700, 800);
     setStyleSheet(mainStyle());
@@ -43,22 +41,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     updateOperations();
 }
 
-MainWindow::~MainWindow()
-{
-}
+MainWindow::~MainWindow() {}
 
-QString MainWindow::mainStyle() {
+QString MainWindow::mainStyle(){
     return STYLE_MAIN;
 }
 
-void MainWindow::paintEvent(QPaintEvent *event)
-{
-    QPainter painter(this);
-    painter.fillRect(rect(), QColor(30, 30, 30));
-    QMainWindow::paintEvent(event);
-}
-
-void MainWindow::setupOperationsTab() {
+void MainWindow::setupOperationsTab(){
     QVBoxLayout *lay = new QVBoxLayout(tabOps);
     lay->setSpacing(12);
     lay->setContentsMargins(16, 16, 16, 16);
@@ -135,7 +124,7 @@ void MainWindow::setupOperationsTab() {
     connect(btnRun, &QPushButton::clicked, this, &MainWindow::onRun);
 }
 
-void MainWindow::updateOperations() {
+void MainWindow::updateOperations(){
     comboOperation->blockSignals(true);
     comboOperation->clear();
     comboOperation->addItem("GetFirst()", 0);
@@ -148,12 +137,12 @@ void MainWindow::updateOperations() {
     comboOperation->addItem("InsertAt(item, index)", 7);
     comboOperation->addItem("Concat(list)", 8);
 
-    if(comboContainer->currentText() == CONT_BIT) {
+    if(comboContainer->currentText() == CONT_BIT){
         comboOperation->addItem("AND (&)", 10);
         comboOperation->addItem("OR (|)", 11);
         comboOperation->addItem("XOR (^)", 12);
         comboOperation->addItem("NOT (~)", 13);
-    } else {
+    } else{
         comboOperation->addItem("ReflectSum()", 9);
         comboOperation->addItem("Map (x * 2)", 14);
         comboOperation->addItem("Reduce (sum)", 15);
@@ -163,17 +152,17 @@ void MainWindow::updateOperations() {
     onOperationChanged();
 }
 
-void MainWindow::onContainerChanged() {
-    if(comboContainer->currentText() == CONT_BIT) {
+void MainWindow::onContainerChanged(){
+    if(comboContainer->currentText() == CONT_BIT){
         comboDataType->setCurrentIndex(0);
         comboDataType->setEnabled(false);
-    } else {
+    } else{
         comboDataType->setEnabled(true);
     }
     updateOperations();
 }
 
-void MainWindow::onOperationChanged() {
+void MainWindow::onOperationChanged(){
     int op = comboOperation->currentData().toInt();
     
     groupSeqB->setVisible(op == 8 || op == 10 || op == 11 || op == 12);
@@ -197,18 +186,18 @@ void MainWindow::onOperationChanged() {
 }
 
 template <typename T>
-T parseVal(const QString& str) {
+T parseVal(const QString& str){
     if constexpr (std::is_same_v<T, int>) return str.toInt();
     else return str.toDouble();
 }
 
 template <typename T, template <typename> class Container>
-Container<T> createSeq(const QString& str) {
+Container<T> createSeq(const QString& str){
     if(str.trimmed().isEmpty()) return Container<T>();
     
     QStringList parts = str.split(QRegularExpression("[\\s,]+"), Qt::SkipEmptyParts);
     T* raw = new T[parts.size()];
-    for(size_t i = 0; i < parts.size(); ++i) {
+    for(size_t i = 0; i < parts.size(); ++i){
         raw[i] = parseVal<T>(parts[i]);
     }
     Container<T> seq(raw, parts.size());
@@ -217,14 +206,18 @@ Container<T> createSeq(const QString& str) {
 }
 
 template <typename T>
-BitSequence<T> createBitSeq(const QString& str) {
+BitSequence<T> createBitSeq(const QString& str){
     if(str.trimmed().isEmpty()) return BitSequence<T>();
     
     QStringList parts = str.split(QRegularExpression("[\\s,]+"), Qt::SkipEmptyParts);
     Bit<T>* raw = new Bit<T>[parts.size()];
-    for(size_t i = 0; i < parts.size(); ++i) {
+    for(size_t i = 0; i < parts.size(); ++i){
         int parsed = parts[i].toInt();
-        raw[i] = Bit<T>(parsed != 0 ? 1 : 0);
+        if (parsed != 0) {
+            raw[i] = Bit<T>(1);
+        } else {
+            raw[i] = Bit<T>(0);
+        }
     }
     BitSequence<T> seq(raw, parts.size());
     delete[] raw;
@@ -232,12 +225,12 @@ BitSequence<T> createBitSeq(const QString& str) {
 }
 
 template <typename T>
-QString formatSeq(Sequence<T>* seq) {
+QString formatSeq(Sequence<T>* seq){
     QStringList lst;
-    for(size_t i = 0; i < seq->GetLength(); ++i) {
-        if constexpr (std::is_same_v<T, double>) {
+    for(size_t i = 0; i < seq->GetLength(); ++i){
+        if constexpr (std::is_same_v<T, double>){
             lst << QString::number(seq->Get(i), 'f', 4);
-        } else {
+        } else{
             lst << QString::number(seq->Get(i));
         }
     }
@@ -245,176 +238,231 @@ QString formatSeq(Sequence<T>* seq) {
 }
 
 template <typename T>
-QString formatBitSeq(BitSequence<T>* seq) {
+QString formatBitSeq(BitSequence<T>* seq){
     QStringList lst;
-    for(size_t i = 0; i < seq->GetLength(); ++i) {
+    for(size_t i = 0; i < seq->GetLength(); ++i){
         lst << QString::number(bool(seq->Get(i)));
     }
     return lst.join(" ");
 }
 
 template <typename T, template <typename> class Container>
-void MainWindow::executeStandard() {
+void MainWindow::executeStandard(){
     Container<T> seqA = createSeq<T, Container>(lineSeqA->text());
     int op = comboOperation->currentData().toInt();
     QString res;
     bool mutates = false; 
 
-    if(op == 0) res = QString::number(seqA.GetFirst());
-    else if(op == 1) res = QString::number(seqA.GetLast());
-    else if(op == 2) res = QString::number(seqA.Get(lineIndex->text().toULongLong()));
-    else if(op == 3) res = QString::number(seqA.GetLength());
-    else if(op == 4) {
-        auto sub = seqA.GetSubsequence(lineStart->text().toULongLong(), lineEnd->text().toULongLong());
-        res = formatSeq<T>(sub);
-        delete sub;
-    }
-    else if(op == 5) {
-        seqA.Append(parseVal<T>(lineValue->text()));
-        res = formatSeq<T>(&seqA);
-        mutates = true;
-    }
-    else if(op == 6) {
-        seqA.Prepend(parseVal<T>(lineValue->text()));
-        res = formatSeq<T>(&seqA);
-        mutates = true;
-    }
-    else if(op == 7) {
-        seqA.InsertAt(parseVal<T>(lineValue->text()), lineIndex->text().toULongLong());
-        res = formatSeq<T>(&seqA);
-        mutates = true;
-    }
-    else if(op == 8) {
-        Container<T> seqB = createSeq<T, Container>(lineSeqB->text());
-        seqA.Concat(&seqB);
-        res = formatSeq<T>(&seqA);
-        mutates = true;
-    }
-    else if(op == 9) {
-        Sequence<T>* ref = seqA.ReflectSum();
-        if(ref) {
-            res = formatSeq<T>(ref);
-            delete ref;
-        } else {
-            res = "Не поддерживается";
+    switch (op) {
+        case 0:
+            res = QString::number(seqA.GetFirst());
+            break;
+        case 1:
+            res = QString::number(seqA.GetLast());
+            break;
+        case 2:
+            res = QString::number(seqA.Get(lineIndex->text().toULongLong()));
+            break;
+        case 3:
+            res = QString::number(seqA.GetLength());
+            break;
+        case 4: {
+            auto sub = seqA.GetSubsequence(lineStart->text().toULongLong(), lineEnd->text().toULongLong());
+            res = formatSeq<T>(sub);
+            delete sub;
+            break;
         }
-    }
-    else if(op == 14) {
-        auto mapped = Map<T, T>(&seqA, double_val<T>);
-        res = formatSeq<T>(mapped);
-        delete mapped;
-        mutates = true; 
-    }
-    else if(op == 15) {
-        T reduced = Reduce<T, T>(&seqA, sum_func<T>, static_cast<T>(0));
-        if constexpr (std::is_same_v<T, double>) {
-            res = QString::number(reduced, 'f', 4);
-        } else {
-            res = QString::number(reduced);
+        case 5:
+            seqA.Append(parseVal<T>(lineValue->text()));
+            res = formatSeq<T>(&seqA);
+            mutates = true;
+            break;
+        case 6:
+            seqA.Prepend(parseVal<T>(lineValue->text()));
+            res = formatSeq<T>(&seqA);
+            mutates = true;
+            break;
+        case 7:
+            seqA.InsertAt(parseVal<T>(lineValue->text()), lineIndex->text().toULongLong());
+            res = formatSeq<T>(&seqA);
+            mutates = true;
+            break;
+        case 8: {
+            Container<T> seqB = createSeq<T, Container>(lineSeqB->text());
+            seqA.Concat(&seqB);
+            res = formatSeq<T>(&seqA);
+            mutates = true;
+            break;
         }
-    }
-    else if(op == 16) {
-        auto filtered = Where<T>(&seqA, is_big<T>);
-        res = formatSeq<T>(filtered);
-        delete filtered;
-        mutates = true;
+        case 9: {
+            Sequence<T>* ref = seqA.ReflectSum();
+            if(ref){
+                res = formatSeq<T>(ref);
+                delete ref;
+            } else{
+                res = "Не поддерживается";
+            }
+            break;
+        }
+        case 14: {
+            auto mapped = Map<T, T>(&seqA, double_val<T>);
+            res = formatSeq<T>(mapped);
+            delete mapped;
+            mutates = true; 
+            break;
+        }
+        case 15: {
+            T reduced = Reduce<T, T>(&seqA, sum_func<T>, static_cast<T>(0));
+            if constexpr (std::is_same_v<T, double>){
+                res = QString::number(reduced, 'f', 4);
+            } else{
+                res = QString::number(reduced);
+            }
+            break;
+        }
+        case 16: {
+            auto filtered = Where<T>(&seqA, is_big<T>);
+            res = formatSeq<T>(filtered);
+            delete filtered;
+            mutates = true;
+            break;
+        }
+        default:
+            res = "Неизвестная операция";
+            break;
     }
     
     textResult->setPlainText(res);
     
-    if (mutates) {
+    if (mutates){
         lineSeqA->setText(res);
     }
 }
 
 template <typename T>
-void MainWindow::executeBit() {
+void MainWindow::executeBit(){
     BitSequence<T> seqA = createBitSeq<T>(lineSeqA->text());
     int op = comboOperation->currentData().toInt();
     QString res;
     bool mutates = false;
 
-    if(op == 0) res = QString::number(bool(seqA.GetFirst()));
-    else if(op == 1) res = QString::number(bool(seqA.GetLast()));
-    else if(op == 2) res = QString::number(bool(seqA.Get(lineIndex->text().toULongLong())));
-    else if(op == 3) res = QString::number(seqA.GetLength());
-    else if(op == 4) {
-        auto sub = seqA.GetSubsequence(lineStart->text().toULongLong(), lineEnd->text().toULongLong());
-        res = formatBitSeq<T>(sub);
-        delete sub;
-    }
-    else if(op == 5) {
-        int parsed = lineValue->text().toInt();
-        seqA.Append(Bit<T>(parsed != 0 ? 1 : 0));
-        res = formatBitSeq<T>(&seqA);
-        mutates = true;
-    }
-    else if(op == 6) {
-        int parsed = lineValue->text().toInt();
-        seqA.Prepend(Bit<T>(parsed != 0 ? 1 : 0));
-        res = formatBitSeq<T>(&seqA);
-        mutates = true;
-    }
-    else if(op == 7) {
-        int parsed = lineValue->text().toInt();
-        seqA.InsertAt(Bit<T>(parsed != 0 ? 1 : 0), lineIndex->text().toULongLong());
-        res = formatBitSeq<T>(&seqA);
-        mutates = true;
-    }
-    else if(op == 8) {
-        BitSequence<T> seqB = createBitSeq<T>(lineSeqB->text());
-        seqA.Concat(&seqB);
-        res = formatBitSeq<T>(&seqA);
-        mutates = true;
-    }
-    else if(op == 10) {
-        BitSequence<T> seqB = createBitSeq<T>(lineSeqB->text());
-        BitSequence<T> out = seqA & seqB;
-        res = formatBitSeq<T>(&out);
-        mutates = true;
-    }
-    else if(op == 11) {
-        BitSequence<T> seqB = createBitSeq<T>(lineSeqB->text());
-        BitSequence<T> out = seqA | seqB;
-        res = formatBitSeq<T>(&out);
-        mutates = true;
-    }
-    else if(op == 12) {
-        BitSequence<T> seqB = createBitSeq<T>(lineSeqB->text());
-        BitSequence<T> out = seqA ^ seqB;
-        res = formatBitSeq<T>(&out);
-        mutates = true;
-    }
-    else if(op == 13) {
-        BitSequence<T> out = ~seqA;
-        res = formatBitSeq<T>(&out);
-        mutates = true;
+    switch (op) {
+        case 0:
+            res = QString::number(bool(seqA.GetFirst()));
+            break;
+        case 1:
+            res = QString::number(bool(seqA.GetLast()));
+            break;
+        case 2:
+            res = QString::number(bool(seqA.Get(lineIndex->text().toULongLong())));
+            break;
+        case 3:
+            res = QString::number(seqA.GetLength());
+            break;
+        case 4: {
+            auto sub = seqA.GetSubsequence(lineStart->text().toULongLong(), lineEnd->text().toULongLong());
+            res = formatBitSeq<T>(sub);
+            delete sub;
+            break;
+        }
+        case 5: {
+            int parsed = lineValue->text().toInt();
+            if (parsed != 0) {
+                seqA.Append(Bit<T>(1));
+            } else {
+                seqA.Append(Bit<T>(0));
+            }
+            res = formatBitSeq<T>(&seqA);
+            mutates = true;
+            break;
+        }
+        case 6: {
+            int parsed = lineValue->text().toInt();
+            if (parsed != 0) {
+                seqA.Prepend(Bit<T>(1));
+            } else {
+                seqA.Prepend(Bit<T>(0));
+            }
+            res = formatBitSeq<T>(&seqA);
+            mutates = true;
+            break;
+        }
+        case 7: {
+            int parsed = lineValue->text().toInt();
+            if (parsed != 0) {
+                seqA.InsertAt(Bit<T>(1), lineIndex->text().toULongLong());
+            } else {
+                seqA.InsertAt(Bit<T>(0), lineIndex->text().toULongLong());
+            }
+            res = formatBitSeq<T>(&seqA);
+            mutates = true;
+            break;
+        }
+        case 8: {
+            BitSequence<T> seqB = createBitSeq<T>(lineSeqB->text());
+            seqA.Concat(&seqB);
+            res = formatBitSeq<T>(&seqA);
+            mutates = true;
+            break;
+        }
+        case 10: {
+            BitSequence<T> seqB = createBitSeq<T>(lineSeqB->text());
+            BitSequence<T> out = seqA & seqB;
+            res = formatBitSeq<T>(&out);
+            mutates = true;
+            break;
+        }
+        case 11: {
+            BitSequence<T> seqB = createBitSeq<T>(lineSeqB->text());
+            BitSequence<T> out = seqA | seqB;
+            res = formatBitSeq<T>(&out);
+            mutates = true;
+            break;
+        }
+        case 12: {
+            BitSequence<T> seqB = createBitSeq<T>(lineSeqB->text());
+            BitSequence<T> out = seqA ^ seqB;
+            res = formatBitSeq<T>(&out);
+            mutates = true;
+            break;
+        }
+        case 13: {
+            BitSequence<T> out = ~seqA;
+            res = formatBitSeq<T>(&out);
+            mutates = true;
+            break;
+        }
+        default:
+            res = "Неизвестная операция";
+            break;
     }
     
     textResult->setPlainText(res);
     
-    if (mutates) {
+    if (mutates){
         lineSeqA->setText(res);
     }
 }
 
-void MainWindow::onRun() {
-    try {
+void MainWindow::onRun(){
+    try{
         int cont = comboContainer->currentIndex();
         int typeIdx = comboDataType->currentIndex();
 
-        if (cont == 0) {
+        if (cont == 0){
             if(typeIdx == 0) executeStandard<int, ArraySequence>();
             else executeStandard<double, ArraySequence>();
-        } else if (cont == 1) {
+        } else if (cont == 1){
             if(typeIdx == 0) executeStandard<int, ListSequence>();
             else executeStandard<double, ListSequence>();
-        } else if (cont == 2) {
+        } else if (cont == 2){
             executeBit<int>();
         }
-    } catch (const Exception& e) {
+    }
+    catch (const Exception& e){
         QMessageBox::warning(this, ERR_TITLE, QString::fromUtf8(e.what()));
-    } catch (...) {
+    } 
+    catch (...){
         QMessageBox::warning(this, ERR_TITLE, ERR_INVALID_INPUT);
     }
 }

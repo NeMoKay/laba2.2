@@ -2,7 +2,6 @@
 
 #include <string>
 #include <iostream>
-#include <exception>
 #include <cstdlib>
 
 
@@ -23,7 +22,7 @@ public:
         error = message;
     }
 
-    const char* what() const noexcept{
+    const char* what() const{
         return error.c_str();
     }
 };
