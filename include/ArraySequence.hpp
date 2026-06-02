@@ -29,7 +29,6 @@ public:
     ArraySequence(T* new_items, size_t count);
     
     ArraySequence();
-    ArraySequence(const LinkedList<T>& list);
     ArraySequence(const ArraySequence<T>& operand);
 
     T GetFirst() const override;
@@ -50,7 +49,6 @@ public:
     ~ArraySequence();
 };
 
-//protected
 template <typename T>
 ArraySequence<T>* ArraySequence<T>::Clone() const{
     ArraySequence<T>* copy = new ArraySequence<T>(*this);
@@ -108,24 +106,14 @@ void ArraySequence<T>::ConcatInternal(Sequence <T> *list){
     }
 }
 
-//public
 template <typename T >
 ArraySequence<T>::ArraySequence(T* new_items, size_t count) : items(new_items, count) {}
-
 
 template <typename T >
 ArraySequence<T>::ArraySequence() : items() {}
 
 template <typename T >
 ArraySequence<T>::ArraySequence(const ArraySequence<T>& operand) : items(operand.items) {}
-
-template <typename T >
-ArraySequence<T>::ArraySequence(const LinkedList<T>& list) : items(list.GetLength()) {
-    size_t count = list.GetLength();
-    for(size_t i = 0; i < count; ++i){
-        items.Set(i, list.Get(i));
-    }
-}
 
 template <typename T >
 T ArraySequence<T>::GetFirst() const{

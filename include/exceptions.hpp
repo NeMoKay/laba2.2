@@ -4,7 +4,6 @@
 #include <iostream>
 #include <cstdlib>
 
-
 class Exception{
 private:
     std::string error;
@@ -57,7 +56,6 @@ public:
     LengthMismatchException(const std::string& message) : Exception(message) {}
 };
 
-
 inline void Terminate(){
     try{
         throw;
@@ -67,7 +65,6 @@ inline void Terminate(){
     }
     std::abort();
 }
-
 
 class AutoExceptionOn{
 public:

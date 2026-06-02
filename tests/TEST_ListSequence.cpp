@@ -24,12 +24,6 @@ TEST_F(ListSequence_Fixture, copy_constructor){
     EXPECT_EQ(seq_int->GetLength(), 5) << "Ожидаемая длина 5. По факту : " << seq_int->GetLength();
 }
 
-TEST_F(ListSequence_Fixture, from_array){
-    ArraySequence<int> arr(data_int, 5);
-    ListSequence<int> list(arr);
-    EXPECT_EQ(list.GetLength(), 5) << "Ожидаемая длина 5. По факту : " << list.GetLength();
-    EXPECT_EQ(list.Get(0), 42) << "Ожидаемый элемент 42. По факту : " << list.Get(0);
-}
 
 //Методы--------------------------------------------------------
 

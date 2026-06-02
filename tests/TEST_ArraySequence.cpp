@@ -26,19 +26,6 @@ TEST_F(ArraySequence_Fixture, copy_constructor){
     EXPECT_EQ(seq_int->GetLength(), 5) << "Ожидаемая длинна 5. По факту : " << seq_int->GetLength();
 }
 
-TEST_F(ArraySequence_Fixture, copy_list_Linked){
-    LinkedList<int> list(data_int, 5);
-    ArraySequence<int> arr(list);
-    EXPECT_EQ(arr.GetLength(), 5) << "Ожидаемая длинна 5. По факту : " << arr.GetLength();
-    EXPECT_EQ(arr.Get(0), 42) << "Ожидаемый элемент 42. По факту : " << arr.Get(0);
-    EXPECT_EQ(arr.Get(4), 228) << "Ожидаемый элемент 228. По факту : " << arr.Get(4);
-}
-
-// TEST(ArraySeq, arr_init) {
-//     int a[5] = {1,2,3,4,5};
-//     ArraySequence<int> arr(a);
-// }
-
 //Методы--------------------------------------------------------
 
 TEST_F(ArraySequence_Fixture, get_first_last){

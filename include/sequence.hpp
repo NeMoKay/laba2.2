@@ -7,7 +7,9 @@
 
 using namespace std;
 
+
 //21
+
 
 
 
@@ -55,7 +57,6 @@ public:
     }
 };
 
-
 template <typename T>
 SequenceStats<T> Sequence<T>::get_stats() const requires is_arithmetic_v<T>{
     size_t len = this->GetLength();
@@ -82,9 +83,6 @@ SequenceStats<T> Sequence<T>::get_stats() const requires is_arithmetic_v<T>{
 
     return Stats;
 }
-
-
-
 
 template <typename T>
 size_t Sequence<T>::GetInversions() const{

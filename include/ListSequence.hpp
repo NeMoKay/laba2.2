@@ -28,7 +28,6 @@ public:
     ListSequence();
     ListSequence(T* new_items, size_t count);
     ListSequence(const ListSequence<T>& list);
-    ListSequence(const ArraySequence<T>& arraySeq);
 
     T GetFirst() const override;
     T GetLast() const override;
@@ -50,7 +49,6 @@ public:
     ~ListSequence();
 };
 
-// protected
 template <typename T >
 ListSequence<T>* ListSequence<T>::Clone() const{
     return new ListSequence<T>(*this);
@@ -90,8 +88,6 @@ void ListSequence<T>::ConcatInternal(Sequence<T>* list){
     }
 }
 
-// public
-
 template <typename T >
 ListSequence<T>::ListSequence() : items() {}
 
@@ -100,13 +96,6 @@ ListSequence<T>::ListSequence(T* new_items, size_t count) : items(new_items, cou
 
 template <typename T >
 ListSequence<T>::ListSequence(const ListSequence<T>& list) : items(list.items) {}
-
-template <typename T >
-ListSequence<T>::ListSequence(const ArraySequence<T>& arraySeq) : items() {
-    for(auto item : arraySeq){
-        items.Append(item);
-    }
-}
 
 template <typename T >
 T ListSequence<T>::GetFirst() const{

@@ -69,7 +69,6 @@ public:
     Iterator end() const;
 };
 
-//private
 template <typename T>
 size_t BitSequence<T>::GetByteIndex(size_t bitIndex) const{
     return bitIndex / bits_in_T;
@@ -104,7 +103,6 @@ bool BitSequence<T>::GetBit(size_t bitIndex) const{
     return (byte_in_arr >> bit_in_byte_index) & static_cast<T>(1);
 }
 
-//protected
 template <typename T>
 BitSequence<T>* BitSequence<T>::Clone() const{
     BitSequence<T>* copy = new BitSequence<T>(*this);
@@ -177,7 +175,6 @@ void BitSequence<T>::ConcatInternal(Sequence<Bit<T>>* list){
     }
 }
 
-//public
 template <typename T>
 BitSequence<T>::BitSequence() : data(), bits_in_T(sizeof(T) * 8), length_bits(0) {}
 
@@ -331,12 +328,8 @@ BitSequence<T> BitSequence<T>::operator~() const{
     return result;
 }
 
-
-
 template <typename T>
 BitSequence<T>::~BitSequence(){}
-
-
 
 template <typename T>
 BitSequence<T>::Iterator::Iterator(const BitSequence<T>* seq, size_t index) : seq(seq), index(index) {}
