@@ -54,6 +54,20 @@ public:
     BitSequence<T> operator~() const;
 
     ~BitSequence();
+
+    class Iterator {
+    private:
+        const BitSequence<T>* seq;
+        size_t index;
+    public:
+        Iterator(const BitSequence<T>* seq, size_t index);
+        Bit<T> operator*() const;
+        Iterator& operator++();
+        bool operator!=(const Iterator& other) const;
+    };
+
+    Iterator begin() const;
+    Iterator end() const;
 };
 
 
@@ -342,6 +356,35 @@ BitSequence<T> BitSequence<T>::operator~() const{
 template <typename T>
 BitSequence<T>::~BitSequence(){
     delete data;
+}
+
+template <typename T>
+BitSequence<T>::Iterator::Iterator(const BitSequence<T>* seq, size_t index) : seq(seq), index(index) {}
+
+template <typename T>
+Bit<T> BitSequence<T>::Iterator::operator*() const{
+    return seq->Get(index);
+}
+
+template <typename T>
+typename BitSequence<T>::Iterator& BitSequence<T>::Iterator::operator++(){
+    index++;
+    return *this;
+}
+
+template <typename T>
+bool BitSequence<T>::Iterator::operator!=(const Iterator& other) const{
+    return index != other.index;
+}
+
+template <typename T>
+typename BitSequence<T>::Iterator BitSequence<T>::begin() const{
+    return Iterator(this, 0);
+}
+
+template <typename T>
+typename BitSequence<T>::Iterator BitSequence<T>::end() const{
+    return Iterator(this, length_bits);
 }
 
 template <typename T>

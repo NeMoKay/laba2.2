@@ -45,6 +45,10 @@ public:
     ListSequence<T>* InsertAt(T item, size_t index) override;
     Sequence<T>* Concat(Sequence<T>* list_p) override;
 
+    using Iterator = typename LinkedList<T>::Iterator;
+    Iterator begin() const { return items->begin(); }
+    Iterator end() const { return items->end(); }
+
     ~ListSequence();
 };
 
@@ -105,10 +109,8 @@ ListSequence<T>::ListSequence(const ListSequence<T>& list) : items(new LinkedLis
 template <typename T >
 ListSequence<T>::ListSequence(const ArraySequence<T>& arraySeq) : ListSequence(){
 
-    size_t count = arraySeq.GetLength();
-
-    for(size_t i = 0; i < count; ++i){
-        items->Append(arraySeq.Get(i));
+    for(auto item : arraySeq){
+        items->Append(item);
     }
 }
 
@@ -258,8 +260,8 @@ Sequence<T>* ListSequence<T>::DoReflectSum() const{
 template <typename T, typename T2>
 ListSequence<T2>* Map(ListSequence<T>* seq, T2 (*func)(T)){
     ListSequence<T2>* result = new ListSequence<T2>();
-    for(size_t i = 0; i < seq->GetLength(); i++){
-        result->Append(func(seq->Get(i)));
+    for(auto item : *seq){
+        result->Append(func(item));
     }
     return result;
 }
@@ -267,8 +269,8 @@ ListSequence<T2>* Map(ListSequence<T>* seq, T2 (*func)(T)){
 template <typename T, typename T2>
 T2 Reduce(ListSequence<T>* seq, T2 (*func)(T2, T), T2 start_val){
     T2 result = start_val;
-    for(size_t i = 0; i < seq->GetLength(); i++){
-        result = func(result, seq->Get(i));
+    for(auto item : *seq){
+        result = func(result, item);
     }
     return result;
 }
@@ -276,8 +278,7 @@ T2 Reduce(ListSequence<T>* seq, T2 (*func)(T2, T), T2 start_val){
 template <typename T>
 ListSequence<T>* Where(ListSequence<T>* seq, bool (*check_func)(T)){
     ListSequence<T>* result = new ListSequence<T>();
-    for(size_t i = 0; i < seq->GetLength(); i++){
-        T item = seq->Get(i);
+    for(auto item : *seq){
         if(check_func(item)){
             result->Append(item);
         }

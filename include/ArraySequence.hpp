@@ -28,6 +28,12 @@ protected:
 public:
 
     ArraySequence(T* new_items, size_t count);
+    
+    // template <size_t N>
+    // ArraySequence(T (&arr)[N]) : items(new DynamicArray<T>(arr, N)) {
+
+    // }
+    
     ArraySequence();
     ArraySequence(const LinkedList<T>& list);
     ArraySequence(const ArraySequence<T>& operand);
@@ -41,6 +47,11 @@ public:
     ArraySequence<T>* Prepend(T item) override;
     ArraySequence<T>* InsertAt(T item, size_t index) override;
     ArraySequence<T>* Concat(Sequence<T>* list) override;
+
+    using Iterator = typename DynamicArray<T>::Iterator;
+
+    Iterator begin() const { return items->begin(); }
+    Iterator end() const { return items->end(); }
     
     ~ArraySequence();
 };
@@ -109,6 +120,7 @@ void ArraySequence<T>::ConcatInternal(Sequence <T> *list){
 //public
 template <typename T >
 ArraySequence<T>::ArraySequence(T* new_items, size_t count) : items(new DynamicArray<T>(new_items, count)) {}
+
 
 template <typename T >
 ArraySequence<T>::ArraySequence() : items(new DynamicArray<T>) {}

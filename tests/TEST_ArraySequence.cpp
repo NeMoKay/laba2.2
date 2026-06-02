@@ -34,6 +34,11 @@ TEST_F(ArraySequence_Fixture, copy_list_Linked){
     EXPECT_EQ(arr.Get(4), 228) << "Ожидаемый элемент 228. По факту : " << arr.Get(4);
 }
 
+// TEST(ArraySeq, arr_init) {
+//     int a[5] = {1,2,3,4,5};
+//     ArraySequence<int> arr(a);
+// }
+
 //Методы--------------------------------------------------------
 
 TEST_F(ArraySequence_Fixture, get_first_last){
