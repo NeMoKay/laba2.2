@@ -331,10 +331,12 @@ BitSequence<T> BitSequence<T>::operator~() const{
     return result;
 }
 
+
+
 template <typename T>
-BitSequence<T>::~BitSequence(){
-    // delete data; больше не нужно
-}
+BitSequence<T>::~BitSequence(){}
+
+
 
 template <typename T>
 BitSequence<T>::Iterator::Iterator(const BitSequence<T>* seq, size_t index) : seq(seq), index(index) {}

@@ -202,9 +202,7 @@ ArraySequence<T>* ArraySequence<T>::Concat(Sequence<T>* list){
 }
 
 template <typename T>
-ArraySequence<T>::~ArraySequence(){
-    // delete items больше не нужно
-}
+ArraySequence<T>::~ArraySequence(){}
 
 template <typename T>
 class MutableArraySequence : public ArraySequence<T>{

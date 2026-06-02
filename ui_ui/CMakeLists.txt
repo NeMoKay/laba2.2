@@ -8,7 +8,7 @@ find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
 
 qt_standard_project_setup() 
 
-qt_add_executable(ui_ui WIN32
+qt_add_executable(ui_ui WIN32 MACOSX_BUNDLE
     main.cpp
     mainwindow.cpp
     mainwindow.h

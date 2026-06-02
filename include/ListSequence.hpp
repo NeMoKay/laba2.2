@@ -138,7 +138,7 @@ ListSequence<T>* ListSequence<T>::GetSubsequence(size_t startIndex, size_t endIn
         Sub_list->Append(items_sub_list->Get(i));
     }
     
-    delete items_sub_list; // предотвращение утечки памяти
+    delete items_sub_list;
     return Sub_list;
 }
 
@@ -191,9 +191,7 @@ Sequence<T>* ListSequence<T>::Concat(Sequence<T>* list_p){
 }
 
 template <typename T >
-ListSequence<T>::~ListSequence(){
-    // delete items; больше не нужно
-}
+ListSequence<T>::~ListSequence(){}
 
 template <typename T>
 class MutableListSequence : public ListSequence<T>{

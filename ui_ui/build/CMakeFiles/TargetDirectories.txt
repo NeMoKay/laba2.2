@@ -1,0 +1,5 @@
+/Users/kay/Proga/laba2.2/ui_ui/build/CMakeFiles/ui_ui.dir
+/Users/kay/Proga/laba2.2/ui_ui/build/CMakeFiles/edit_cache.dir
+/Users/kay/Proga/laba2.2/ui_ui/build/CMakeFiles/rebuild_cache.dir
+/Users/kay/Proga/laba2.2/ui_ui/build/CMakeFiles/ui_ui_autogen_timestamp_deps.dir
+/Users/kay/Proga/laba2.2/ui_ui/build/CMakeFiles/ui_ui_autogen.dir
