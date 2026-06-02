@@ -26,7 +26,9 @@ protected:
     
 public:
 
-    ArraySequence(T* new_items, size_t count);
+
+    template <size_t N>
+    ArraySequence(T (&arr)[N]);
     
     ArraySequence();
     ArraySequence(const ArraySequence<T>& operand);
@@ -106,8 +108,9 @@ void ArraySequence<T>::ConcatInternal(Sequence <T> *list){
     }
 }
 
-template <typename T >
-ArraySequence<T>::ArraySequence(T* new_items, size_t count) : items(new_items, count) {}
+template <typename T>
+template <size_t N>
+ArraySequence<T>::ArraySequence(T (&arr)[N]) : items(arr) {}
 
 template <typename T >
 ArraySequence<T>::ArraySequence() : items() {}
@@ -223,12 +226,10 @@ public:
 template <typename T>
 Sequence<T>* ArrayReflectSum(const ArraySequence<T>* seq) requires std::is_arithmetic_v<T>{
     size_t len = seq->GetLength();
-    T* arr = new T[len];
+    ArraySequence<T>* result = new ArraySequence<T>();
     for(size_t i = 0; i < len; ++i){
-        arr[i] = seq->Get(i) + seq->Get(len - 1 - i);
+        result->Append(seq->Get(i) + seq->Get(len - 1 - i));
     }  
-    Sequence<T>* result = new ArraySequence<T>(arr, len);
-    delete[] arr;
     return result;
 }
 

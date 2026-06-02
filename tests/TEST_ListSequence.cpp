@@ -1,7 +1,6 @@
 #include "Fixtures.hpp"
 #include "exceptions.hpp"
 
-
 //Тесты конструкторов--------------------------------------------
 
 TEST_F(ListSequence_Fixture, def_constructor){
@@ -11,7 +10,7 @@ TEST_F(ListSequence_Fixture, def_constructor){
 }
 
 TEST_F(ListSequence_Fixture, array_constructor){
-    ListSequence<int> list(data_int, 5);
+    ListSequence<int> list(data_int);
     EXPECT_EQ(list.GetLength(), 5) << "Ожидаемая длина 5. По факту : " << list.GetLength();
     EXPECT_EQ(list.Get(0), 42) << "Ожидаемый элемент 42. По факту : " << list.Get(0);
     EXPECT_EQ(list.Get(4), 228) << "Ожидаемый элемент 228. По факту : " << list.Get(4);
@@ -23,7 +22,6 @@ TEST_F(ListSequence_Fixture, copy_constructor){
     copy.Append(999);
     EXPECT_EQ(seq_int->GetLength(), 5) << "Ожидаемая длина 5. По факту : " << seq_int->GetLength();
 }
-
 
 //Методы--------------------------------------------------------
 
@@ -43,7 +41,6 @@ TEST_F(ListSequence_Fixture, get_invalid_argument){
     EXPECT_THROW(seq_int->Get(5), IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для индекса 5";
     EXPECT_THROW(seq_int->Get(100), IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для индекса 100";
 }
-
 
 TEST_F(ListSequence_Fixture, append){
     seq_int->Append(100);
@@ -70,8 +67,8 @@ TEST_F(ListSequence_Fixture, insert_invalid_argument){
 }
 
 TEST_F(ListSequence_Fixture, concat){
-    int extra[2] ={1, 2};
-    ListSequence<int> extraSeq(extra, 2);
+    int extra[] = {1, 2};
+    ListSequence<int> extraSeq(extra);
     seq_int->Concat(&extraSeq);
     EXPECT_EQ(seq_int->GetLength(), 7) << "Ожидаемая длина 7. По факту : " << seq_int->GetLength();
     EXPECT_EQ(seq_int->Get(5), 1) << "Ожидаемый элемент 1. По факту : " << seq_int->Get(5);
@@ -104,7 +101,7 @@ TEST_F(ListSequence_Fixture, reduce){
 //Деструктор----------------------------------------------------
 
 TEST_F(ListSequence_Fixture, destructor){
-    ListSequence<int>* list = new ListSequence<int>(data_int, 5);
+    ListSequence<int>* list = new ListSequence<int>(data_int);
     delete list;
     SUCCEED();
 }

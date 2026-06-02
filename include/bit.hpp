@@ -67,6 +67,7 @@ public:
     bool operator!=(const Bit& operand) const;
 };
 
+//protected
 template <typename T>
 void Bit<T>::CheckIndex(size_t index) const{
     if(index >= sizeof(T) * 8){
@@ -74,6 +75,7 @@ void Bit<T>::CheckIndex(size_t index) const{
     }
 }
 
+//public
 template <typename T>
 Bit<T>::Bit() : value(0) {} 
 

@@ -15,7 +15,10 @@ private:
 public:
     DynamicArray();
     DynamicArray(size_t count);
-    DynamicArray(T* items, size_t count);
+    
+    template <size_t N>
+    DynamicArray(T (&arr)[N]);
+    
     DynamicArray(const DynamicArray<T> & array);
 
     T Get(size_t index) const;
@@ -46,13 +49,11 @@ DynamicArray<T>::DynamicArray() : data(nullptr), size(0) {}
 template <typename T >
 DynamicArray<T>::DynamicArray(size_t count) : data(new T[count]), size(count) {}
 
-template <typename T >
-DynamicArray<T>::DynamicArray(T* items, size_t count) : DynamicArray(count){
-    if(items == nullptr){
-        throw NullPtrException("Переданный массив пуст");
-    }
+template <typename T>
+template <size_t N>
+DynamicArray<T>::DynamicArray(T (&arr)[N]) : DynamicArray(N){
     for(size_t i = 0; i < size; i++){
-        data[i] = items[i];
+        data[i] = arr[i];
     }
 }
 

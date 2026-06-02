@@ -25,8 +25,10 @@ protected:
     Sequence<T>* DoReflectSum() const override;
 
 public:
+    template <size_t N>
+    ListSequence(T (&arr)[N]);
+    
     ListSequence();
-    ListSequence(T* new_items, size_t count);
     ListSequence(const ListSequence<T>& list);
 
     T GetFirst() const override;
@@ -49,6 +51,7 @@ public:
     ~ListSequence();
 };
 
+// protected
 template <typename T >
 ListSequence<T>* ListSequence<T>::Clone() const{
     return new ListSequence<T>(*this);
@@ -88,11 +91,13 @@ void ListSequence<T>::ConcatInternal(Sequence<T>* list){
     }
 }
 
-template <typename T >
-ListSequence<T>::ListSequence() : items() {}
+// public
+template <typename T>
+template <size_t N>
+ListSequence<T>::ListSequence(T (&arr)[N]) : items(arr) {}
 
 template <typename T >
-ListSequence<T>::ListSequence(T* new_items, size_t count) : items(new_items, count) {}
+ListSequence<T>::ListSequence() : items() {}
 
 template <typename T >
 ListSequence<T>::ListSequence(const ListSequence<T>& list) : items(list.items) {}
@@ -212,12 +217,10 @@ public:
 template <typename T>
 Sequence<T>* ListReflectSum(const ListSequence<T>* seq) requires std::is_arithmetic_v<T>{
     size_t len = seq->GetLength();
-    T* arr = new T[len];
+    ListSequence<T>* result = new ListSequence<T>();
     for(size_t i = 0; i < len; ++i){
-        arr[i] = seq->Get(i) + seq->Get(len - 1 - i);
+        result->Append(seq->Get(i) + seq->Get(len - 1 - i));
     }  
-    Sequence<T>* result = new ListSequence<T>(arr, len);
-    delete[] arr;
     return result;
 }
 

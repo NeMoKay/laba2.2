@@ -1,7 +1,6 @@
 #include "Fixtures.hpp"
 #include "exceptions.hpp"
 
-
 //Тесты конструкторов--------------------------------------------
 
 TEST_F(LinkedList_Fixture, Defoult_Constructor_invalid_argument){
@@ -13,16 +12,11 @@ TEST_F(LinkedList_Fixture, Defoult_Constructor_invalid_argument){
 }
 
 TEST_F(LinkedList_Fixture, SizeConstructor){
-    LinkedList<int> list(data_int, 5);
+    LinkedList<int> list(data_int);
     EXPECT_EQ(list.GetLength(), 5) << "Ожидаемая длина 5. По факту : " << list.GetLength();
     EXPECT_EQ(list.GetFirst(), 42) << "Ожидаемый элемент 42. По факту : " << list.GetFirst();
     EXPECT_EQ(list.GetLast(), 228) << "Ожидаемый элемент 228. По факту : " << list.GetLast();
     EXPECT_EQ(list.Get(2), 69) << "Ожидаемый элемент 69. По факту : " << list.Get(2);
-}
-
-TEST_F(LinkedList_Fixture, ArrayConstructor_invalid_argument){
-    EXPECT_THROW(LinkedList<int>(nullptr, 5), NullPtrException) << "Ожидается NullPtrException. По факту : исключение не выброшено";
-    EXPECT_THROW(LinkedList<int>(data_int, 0), InvalidSizeException) << "Ожидается InvalidSizeException. По факту : исключение не выброшено";
 }
 
 TEST_F(LinkedList_Fixture, CopyConstructor_separation){
@@ -46,7 +40,7 @@ TEST_F(LinkedList_Fixture, GetFirst){
 
 TEST_F(LinkedList_Fixture, GetFirst_invalid_argument){
     LinkedList<int> list;
-    EXPECT_THROW(list.GetFirst(), EmptySequenceException) << "Ожидается EmptySequenceException. По факту : исключение не выброшено";
+    EXPECT_THROW(list.GetFirst(), EmptySequenceException) << "Ожидается EmptySequenceException при GetFirst()";
 }
 
 TEST_F(LinkedList_Fixture, GetLast){
@@ -56,9 +50,8 @@ TEST_F(LinkedList_Fixture, GetLast){
 
 TEST_F(LinkedList_Fixture, GetLast_invalid_argument){
     LinkedList<int> list;
-    EXPECT_THROW(list.GetLast(), EmptySequenceException) << "Ожидается EmptySequenceException. По факту : исключение не выброшено";
+    EXPECT_THROW(list.GetLast(), EmptySequenceException) << "Ожидается EmptySequenceException при GetLast()";
 }
-
 
 TEST_F(LinkedList_Fixture, Get){
     EXPECT_EQ(List_int->Get(0), 42) << "Ожидаемый элемент 42. По факту : " << List_int->Get(0);
@@ -95,7 +88,6 @@ TEST_F(LinkedList_Fixture, GetSubList_invalid_argument){
     EXPECT_THROW(List_int->GetSubList(5, 6), IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для диапазона (5,6)";
 }
 
-
 TEST_F(LinkedList_Fixture, GetLength_After){
     LinkedList<int> list;
     EXPECT_EQ(list.GetLength(), 0) << "Ожидаемая длина 0. По факту : " << list.GetLength();
@@ -106,7 +98,6 @@ TEST_F(LinkedList_Fixture, GetLength_After){
     list.InsertAt(7, 1);
     EXPECT_EQ(list.GetLength(), 3) << "Ожидаемая длина 3. По факту : " << list.GetLength();
 }
-
 
 TEST_F(LinkedList_Fixture, Append_5){
     LinkedList<int> list;
@@ -124,7 +115,6 @@ TEST_F(LinkedList_Fixture, Append_0){
     EXPECT_EQ(List_int->Get(4), 228) << "Ожидаемый элемент 228. По факту : " << List_int->Get(4);
 }
 
-
 TEST_F(LinkedList_Fixture, Prepend_5){
     LinkedList<int> list;
     list.Prepend(67);
@@ -140,7 +130,6 @@ TEST_F(LinkedList_Fixture, Prepend_0){
     EXPECT_EQ(List_int->Get(1), 42) << "Ожидаемый элемент 42. По факту : " << List_int->Get(1);
     EXPECT_EQ(List_int->GetLast(), 228) << "Ожидаемый элемент 228. По факту : " << List_int->GetLast();
 }
-
 
 TEST_F(LinkedList_Fixture, InsertAt_first){
     List_int->InsertAt(67, 0);
@@ -169,10 +158,9 @@ TEST_F(LinkedList_Fixture, InsertAt_invalid_argument){
     EXPECT_THROW(List_int->InsertAt(10, 100), IndexOutOfRangeException) << "Ожидается IndexOutOfRangeException для индекса 100";
 }
 
-
 TEST_F(LinkedList_Fixture, Concat){
-    int extraData[2] ={1, 2};
-    LinkedList<int> extraList(extraData, 2);
+    int extraData[] = {1, 2};
+    LinkedList<int> extraList(extraData);
     size_t initialLen = List_int->GetLength();
     LinkedList<int>* concatenated = List_int->Concat(&extraList);
     EXPECT_EQ(concatenated, List_int) << "Ожидаемый тот же объект. По факту : адрес не совпадает";
@@ -197,8 +185,8 @@ TEST_F(LinkedList_Fixture, Concat_0){
 
 TEST_F(LinkedList_Fixture, 0_Concat){
     LinkedList<int> empty;
-    int extraData[2] ={1, 2};
-    LinkedList<int> extra(extraData, 2);
+    int extraData[] = {1, 2};
+    LinkedList<int> extra(extraData);
     LinkedList<int>* result = empty.Concat(&extra);
     EXPECT_EQ(result, &empty) << "Ожидаемый тот же объект. По факту : адрес не совпадает";
     EXPECT_EQ(result->GetLength(), 2) << "Ожидаемая длина 2. По факту : " << result->GetLength();
@@ -209,7 +197,7 @@ TEST_F(LinkedList_Fixture, 0_Concat){
 //Деструктор----------------------------------------------------
 
 TEST_F(LinkedList_Fixture, Destructor_NoLeak){
-    LinkedList<int>* list = new LinkedList<int>(data_int, 5);
+    LinkedList<int>* list = new LinkedList<int>(data_int);
     delete list;
     SUCCEED();
 }

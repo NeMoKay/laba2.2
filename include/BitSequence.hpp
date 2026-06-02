@@ -32,8 +32,10 @@ protected:
     void ConcatInternal(Sequence<Bit<T>>* list);
 
 public:
+    template <size_t N>
+    BitSequence(Bit<T> (&arr)[N]);
+    
     BitSequence();
-    BitSequence(Bit<T>* new_items, size_t count);
     BitSequence(const BitSequence<T>& operand);
 
     Bit<T> GetFirst() const override;
@@ -69,6 +71,7 @@ public:
     Iterator end() const;
 };
 
+//private
 template <typename T>
 size_t BitSequence<T>::GetByteIndex(size_t bitIndex) const{
     return bitIndex / bits_in_T;
@@ -103,6 +106,7 @@ bool BitSequence<T>::GetBit(size_t bitIndex) const{
     return (byte_in_arr >> bit_in_byte_index) & static_cast<T>(1);
 }
 
+//protected
 template <typename T>
 BitSequence<T>* BitSequence<T>::Clone() const{
     BitSequence<T>* copy = new BitSequence<T>(*this);
@@ -175,27 +179,25 @@ void BitSequence<T>::ConcatInternal(Sequence<Bit<T>>* list){
     }
 }
 
+//public
 template <typename T>
 BitSequence<T>::BitSequence() : data(), bits_in_T(sizeof(T) * 8), length_bits(0) {}
 
 template <typename T>
-BitSequence<T>::BitSequence(Bit<T>* new_items, size_t count) : data((count + sizeof(T) * 8 - 1) / (sizeof(T) * 8)), bits_in_T(sizeof(T) * 8) {
-    if(new_items == nullptr){
-        throw NullPtrException("Указатель на массив битов не может быть nullptr");
-    }
-
-    size_t bytesNeeded = (count + bits_in_T - 1) / bits_in_T;
+template <size_t N>
+BitSequence<T>::BitSequence(Bit<T> (&arr)[N]) : data((N + sizeof(T) * 8 - 1) / (sizeof(T) * 8)), bits_in_T(sizeof(T) * 8) {
+    size_t bytesNeeded = (N + bits_in_T - 1) / bits_in_T;
     
     for(size_t i = 0; i < bytesNeeded; i++){
         data.Set(i, 0);
     }
 
-    for(size_t i = 0; i < count; i++){
-        bool val = bool(new_items[i]);
+    for(size_t i = 0; i < N; i++){
+        bool val = bool(arr[i]);
         SetBit(i, val);
     }
 
-    length_bits = count;
+    length_bits = N;
 }
 
 template <typename T>

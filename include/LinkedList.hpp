@@ -23,7 +23,9 @@ private:
     Node *tail;
     
 public:
-    LinkedList(T* items, size_t count);
+    template <size_t N>
+    LinkedList(T (&arr)[N]);
+    
     LinkedList();
     LinkedList(const LinkedList<T>& list);
 
@@ -54,6 +56,7 @@ public:
     Iterator end() const;
 };
 
+//private Node
 template <typename T >
 LinkedList<T>::Node::Node(T new_value, Node *new_next, Node *new_prev){
     value = new_value;
@@ -74,13 +77,12 @@ LinkedList<T>::Node::Node(T val){
     value = val;
 }
 
-template <typename T >
-LinkedList<T>::LinkedList(T* items, size_t count){
-    if(count == 0){
+//public
+template <typename T>
+template <size_t N>
+LinkedList<T>::LinkedList(T (&arr)[N]){
+    if(N == 0){
         throw InvalidSizeException("Размер <= 0 ");
-    }
-    if(items == nullptr){
-        throw NullPtrException("Переданный масив пуст");
     }
 
     head = nullptr;
@@ -88,10 +90,10 @@ LinkedList<T>::LinkedList(T* items, size_t count){
     Node *prev_elem = nullptr;
     Node *now_elem = nullptr;
 
-    for(size_t i = 0; i < count; i++){
+    for(size_t i = 0; i < N; i++){
         now_elem = new Node;
 
-        now_elem->value = items[i];
+        now_elem->value = arr[i];
         now_elem->prev = prev_elem;
         if(i != 0){
             prev_elem->next = now_elem;
@@ -101,7 +103,7 @@ LinkedList<T>::LinkedList(T* items, size_t count){
         if(i == 0){
             head = now_elem;
         }
-        if(i == count - 1){
+        if(i == N - 1){
             tail = now_elem;
         }
     }
@@ -166,22 +168,20 @@ LinkedList<T>* LinkedList<T>::GetSubList(size_t startIndex, size_t endIndex) con
         throw IndexOutOfRangeException(std::format("Ошибка индекса (start: {}, end: {}, size: {})", startIndex, endIndex, length));
     }
 
-    size_t len = endIndex - startIndex + 1;
-    T* items = new T[len];
+    LinkedList<T>* result = new LinkedList<T>();
 
-    Node *now_elem = head;
-    size_t index = 0;
+    Node* now_elem = head;
     size_t current_pos = 0;
+
     while(now_elem != nullptr){
         if(current_pos >= startIndex && current_pos <= endIndex){
-            items[index] = now_elem->value;
-            index++;
+            result->Append(now_elem->value);
         }
+
         now_elem = now_elem->next;
         current_pos++;
     }
-    LinkedList<T>* result = new LinkedList<T>(items, len);
-    delete[] items;
+
     return result;
 }
 
