@@ -193,35 +193,25 @@ T parseVal(const QString& str){
 
 template <typename T, template <typename> class Container>
 Container<T> createSeq(const QString& str){
-    if(str.trimmed().isEmpty()) return Container<T>();
+    Container<T> seq;
+    if(str.trimmed().isEmpty()) return seq;
     
     QStringList parts = str.split(QRegularExpression("[\\s,]+"), Qt::SkipEmptyParts);
-    T* raw = new T[parts.size()];
-    for(size_t i = 0; i < parts.size(); ++i){
-        raw[i] = parseVal<T>(parts[i]);
+    for(const QString& part : parts){
+        seq.Append(parseVal<T>(part));
     }
-    Container<T> seq(raw, parts.size());
-    delete[] raw;
     return seq;
 }
 
 template <typename T>
 BitSequence<T> createBitSeq(const QString& str){
-    if(str.trimmed().isEmpty()) return BitSequence<T>();
+    BitSequence<T> seq;
+    if(str.trimmed().isEmpty()) return seq;
     
     QStringList parts = str.split(QRegularExpression("[\\s,]+"), Qt::SkipEmptyParts);
-    Bit<T>* raw = new Bit<T>[parts.size()];
-    for(size_t i = 0; i < parts.size(); ++i){
-        int parsed = parts[i].toInt();
-        if (parsed != 0){
-            raw[i] = Bit<T>(1);
-        } 
-        else{
-            raw[i] = Bit<T>(0);
-        }
+    for(const QString& part : parts){
+        seq.Append(Bit<T>(part.toInt() != 0 ? 1 : 0));
     }
-    BitSequence<T> seq(raw, parts.size());
-    delete[] raw;
     return seq;
 }
 
