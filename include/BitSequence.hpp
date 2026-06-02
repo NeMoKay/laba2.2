@@ -8,12 +8,11 @@
 #include <string>
 
 #include "exceptions.hpp"
- 
 
 template <typename T>
 class BitSequence : public Sequence<Bit<T>>{
 private:
-    DynamicArray<T>* data;
+    DynamicArray<T> data;
     size_t bits_in_T;
     size_t length_bits;
 
@@ -70,17 +69,14 @@ public:
     Iterator end() const;
 };
 
-
 //private
 template <typename T>
 size_t BitSequence<T>::GetByteIndex(size_t bitIndex) const{
     return bitIndex / bits_in_T;
-
 }
 
 template <typename T>
 size_t BitSequence<T>::Get_i_bit_in_byte(size_t bitIndex) const{
-
     size_t ost = bitIndex % bits_in_T;
     return (bits_in_T - 1) - ost;
 }
@@ -89,30 +85,26 @@ template <typename T>
 void BitSequence<T>::SetBit(size_t bitIndex, bool value){
     size_t byte_index = GetByteIndex(bitIndex);
     size_t bit_in_byte_index = Get_i_bit_in_byte(bitIndex);
-    T byte_in_arr = data->Get(byte_index);
+    T byte_in_arr = data.Get(byte_index);
     T mask = static_cast<T>(1) << bit_in_byte_index;
     if(value){
-        data->Set(byte_index, byte_in_arr | mask);
-
+        data.Set(byte_index, byte_in_arr | mask);
     } 
     else{
-        data->Set(byte_index, byte_in_arr & ~mask);
+        data.Set(byte_index, byte_in_arr & ~mask);
     }
 }
-
 
 template <typename T>
 bool BitSequence<T>::GetBit(size_t bitIndex) const{
     size_t byte_index = GetByteIndex(bitIndex);
     size_t bit_in_byte_index = Get_i_bit_in_byte(bitIndex);
 
-    T byte_in_arr = data->Get(byte_index);
+    T byte_in_arr = data.Get(byte_index);
     return (byte_in_arr >> bit_in_byte_index) & static_cast<T>(1);
 }
 
-
 //protected
-
 template <typename T>
 BitSequence<T>* BitSequence<T>::Clone() const{
     BitSequence<T>* copy = new BitSequence<T>(*this);
@@ -124,7 +116,6 @@ BitSequence<T>* BitSequence<T>::Instance(){
     return this;
 }
 
-
 template <typename T>
 void BitSequence<T>::AppendInternal(Bit<T> item){
     bool val = bool(item);
@@ -133,10 +124,9 @@ void BitSequence<T>::AppendInternal(Bit<T> item){
     size_t oldByteCount = (oldLen  + bits_in_T - 1) / bits_in_T;
     size_t newByteCount = (oldLen  + bits_in_T) / bits_in_T;
 
-
     if(newByteCount > oldByteCount){
-        data->Resize(newByteCount);
-        data->Set(newByteCount - 1, 0);
+        data.Resize(newByteCount);
+        data.Set(newByteCount - 1, 0);
     }
 
     SetBit(oldLen, val);
@@ -147,8 +137,6 @@ template <typename T>
 void BitSequence<T>::PrependInternal(Bit<T> item){
     InsertAtInternal(item, 0);
 }
-
-
 
 template <typename T>
 void BitSequence<T>::InsertAtInternal(Bit<T> item, size_t index){
@@ -166,8 +154,8 @@ void BitSequence<T>::InsertAtInternal(Bit<T> item, size_t index){
     size_t newByteCount = (oldLen  + bits_in_T) / bits_in_T;
 
     if(newByteCount > oldByteCount){
-        data->Resize(newByteCount);
-        data->Set(newByteCount - 1, 0);
+        data.Resize(newByteCount);
+        data.Set(newByteCount - 1, 0);
     }
 
     for (size_t i = oldLen; i > index; --i){
@@ -187,32 +175,22 @@ void BitSequence<T>::ConcatInternal(Sequence<Bit<T>>* list){
     for (size_t i = 0; i < list->GetLength(); i++){
         this->AppendInternal(list->Get(i));
     }
-
 }
 
-
-
-
 //public
-
-
+template <typename T>
+BitSequence<T>::BitSequence() : data(), bits_in_T(sizeof(T) * 8), length_bits(0) {}
 
 template <typename T>
-BitSequence<T>::BitSequence() : data(new DynamicArray<T>), bits_in_T(sizeof(T) * 8), length_bits(0) {}
-
-template <typename T>
-BitSequence<T>::BitSequence(Bit<T>* new_items, size_t count) : bits_in_T(sizeof(T) * 8){
+BitSequence<T>::BitSequence(Bit<T>* new_items, size_t count) : data((count + sizeof(T) * 8 - 1) / (sizeof(T) * 8)), bits_in_T(sizeof(T) * 8) {
     if(new_items == nullptr){
-
         throw NullPtrException("Указатель на массив битов не может быть nullptr");
     }
 
-
     size_t bytesNeeded = (count + bits_in_T - 1) / bits_in_T;
-    data = new DynamicArray<T>(bytesNeeded);
     
     for(size_t i = 0; i < bytesNeeded; i++){
-        data->Set(i, 0);
+        data.Set(i, 0);
     }
 
     for(size_t i = 0; i < count; i++){
@@ -224,7 +202,7 @@ BitSequence<T>::BitSequence(Bit<T>* new_items, size_t count) : bits_in_T(sizeof(
 }
 
 template <typename T>
-BitSequence<T>::BitSequence(const BitSequence<T>& operand) : data(new DynamicArray<T>(*(operand.data))), bits_in_T(operand.bits_in_T), length_bits(operand.length_bits) {}
+BitSequence<T>::BitSequence(const BitSequence<T>& operand) : data(operand.data), bits_in_T(operand.bits_in_T), length_bits(operand.length_bits) {}
 
 template <typename T>
 Bit<T> BitSequence<T>::GetFirst() const{
@@ -355,7 +333,7 @@ BitSequence<T> BitSequence<T>::operator~() const{
 
 template <typename T>
 BitSequence<T>::~BitSequence(){
-    delete data;
+    // delete data; больше не нужно
 }
 
 template <typename T>

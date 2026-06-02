@@ -6,9 +6,6 @@
 
 #include "exceptions.hpp"
 
- 
-
-
 template <typename T > 
 class LinkedList{
 private:
@@ -30,10 +27,10 @@ public:
     LinkedList();
     LinkedList(const LinkedList<T>& list);
 
-    T GetFirst();
-    T GetLast();
+    T GetFirst() const;
+    T GetLast() const;
     T Get(size_t index) const;
-    LinkedList<T>* GetSubList(size_t startIndex, size_t endIndex);
+    LinkedList<T>* GetSubList(size_t startIndex, size_t endIndex) const;
     size_t GetLength() const;
 
     void Append(T item);
@@ -57,9 +54,6 @@ public:
     Iterator end() const;
 };
 
-
-//private Node
-
 template <typename T >
 LinkedList<T>::Node::Node(T new_value, Node *new_next, Node *new_prev){
     value = new_value;
@@ -79,9 +73,6 @@ LinkedList<T>::Node::Node(T val){
     prev = nullptr;
     value = val;
 }
-
-
-//public
 
 template <typename T >
 LinkedList<T>::LinkedList(T* items, size_t count){
@@ -130,7 +121,7 @@ LinkedList<T>::LinkedList(const LinkedList<T>& list) : head(nullptr), tail(nullp
 }
 
 template <typename T >
-T LinkedList<T>::GetFirst(){
+T LinkedList<T>::GetFirst() const{
     if(head == nullptr){
         throw EmptySequenceException("Список пуст");
     }
@@ -138,7 +129,7 @@ T LinkedList<T>::GetFirst(){
 }
 
 template <typename T >
-T LinkedList<T>::GetLast(){
+T LinkedList<T>::GetLast() const{
     if(tail == nullptr){
         throw EmptySequenceException("Список пуст");
     }
@@ -169,7 +160,7 @@ T LinkedList<T>::Get(size_t index) const{
 }
 
 template <typename T >
-LinkedList<T>* LinkedList<T>::GetSubList(size_t startIndex, size_t endIndex){
+LinkedList<T>* LinkedList<T>::GetSubList(size_t startIndex, size_t endIndex) const{
     size_t length = GetLength();
     if(endIndex < startIndex || startIndex >= length || endIndex >= length){
         throw IndexOutOfRangeException(std::format("Ошибка индекса (start: {}, end: {}, size: {})", startIndex, endIndex, length));
@@ -290,7 +281,6 @@ LinkedList<T>::~LinkedList(){
     head = nullptr;
     tail = nullptr;
 }
-
 
 template <typename T>
 LinkedList<T>::Iterator::Iterator(Node* node) : current(node) {}

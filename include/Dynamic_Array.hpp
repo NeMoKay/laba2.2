@@ -7,11 +7,6 @@
 
 #include "exceptions.hpp"
 
-
-
- 
-
-
 template <typename T>
 class DynamicArray{
 private:
@@ -23,11 +18,11 @@ public:
     DynamicArray(T* items, size_t count);
     DynamicArray(const DynamicArray<T> & array);
 
-    T Get(size_t index);
+    T Get(size_t index) const;
     void Set(size_t index, T value);
     void Resize(size_t newSize);
-    size_t GetSize();
-    T operator[](size_t index);
+    size_t GetSize() const;
+    T operator[](size_t index) const;
 
     ~DynamicArray();
 
@@ -45,8 +40,6 @@ public:
     Iterator end() const;
 };
 
-
-//public
 template <typename T >
 DynamicArray<T>::DynamicArray() : data(nullptr), size(0) {}
 
@@ -72,7 +65,7 @@ DynamicArray<T>::DynamicArray(const DynamicArray<T> & array) : size(array.size){
 }
 
 template <typename T >
-T DynamicArray<T>::Get(size_t index){
+T DynamicArray<T>::Get(size_t index) const{
     if(index >= size){
         throw IndexOutOfRangeException("Ошибка индекса");
     }
@@ -106,23 +99,19 @@ void DynamicArray<T>::Resize(size_t newSize){
 }
 
 template <typename T >
-size_t DynamicArray<T>::GetSize(){
+size_t DynamicArray<T>::GetSize() const{
     return size;
 }
 
-
 template <typename T >
-T DynamicArray<T>::operator[](size_t index){
+T DynamicArray<T>::operator[](size_t index) const{
     return Get(index); 
 }
-
 
 template <typename T >
 DynamicArray<T>::~DynamicArray(){
     delete[] data;
 }
-
-
 
 template <typename T>
 DynamicArray<T>::Iterator::Iterator(T* ptr) : ptr(ptr) {}
